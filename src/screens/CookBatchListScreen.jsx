@@ -48,7 +48,17 @@ const CookBatchListScreen = () => {
       {!loading && !error && (
         <>
           {!batches || batches.length === 0 ? (
-            <p style={{ marginTop: 12 }}>No batches yet.</p>
+            <div style={emptyBox}>
+              <p style={{ marginTop: 0 }}>
+                No batches yet. Create your first prediction run.
+              </p>
+              <button
+                type="button"
+                onClick={() => navigate("/cooking/batches/create")}
+              >
+                Create Batch
+              </button>
+            </div>
           ) : (
             <div style={{ overflowX: "auto", marginTop: 12 }}>
               <table
@@ -74,7 +84,7 @@ const CookBatchListScreen = () => {
                   {batches.map((b) => (
                     <tr
                       key={b.id}
-                      style={rowStyle}
+                      style={{ cursor: "pointer" }}
                       onClick={() => navigate(`/cooking/batches/${b.id}`)}
                       title="Open batch detail"
                     >
@@ -101,6 +111,13 @@ const CookBatchListScreen = () => {
   );
 };
 
+const emptyBox = {
+  marginTop: 14,
+  padding: 14,
+  border: "1px solid #eee",
+  borderRadius: 10,
+};
+
 const th = {
   textAlign: "left",
   borderBottom: "1px solid #ddd",
@@ -112,10 +129,6 @@ const td = {
   borderBottom: "1px solid #f0f0f0",
   padding: "10px 8px",
   whiteSpace: "nowrap",
-};
-
-const rowStyle = {
-  cursor: "pointer",
 };
 
 function formatDateTime(value) {

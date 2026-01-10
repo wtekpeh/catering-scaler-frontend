@@ -1,8 +1,465 @@
-import { useParams } from "react-router-dom";
+import { useEffect, useMemo, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate, useParams } from "react-router-dom";
+
+import {
+  getCookBatchDetail,
+  updateCookBatchActuals,
+} from "../actions/cookBatchActions";
+
+import { COOKBATCH_ACTUALS_UPDATE_RESET } from "../constants/cookBatchConstants";
 
 const CookBatchDetailScreen = () => {
   const { id } = useParams();
-  return <div>Detail screen for batch #{id} (next)</div>;
+  const batchId = Number(id);
+
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  const cookBatchDetail = useSelector((state) => state.cookBatchDetail);
+  const { loading, error, batch } = cookBatchDetail;
+
+  const cookBatchActualsUpdate = useSelector(
+    (state) => state.cookBatchActualsUpdate
+  );
+  const {
+    loading: updating,
+    error: updateError,
+    success: updateSuccess,
+    updatedBatch,
+  } = cookBatchActualsUpdate;
+
+  // Local edit map: { [itemId]: { actual_kg: string, notes: string } }
+  const [actualEdits, setActualEdits] = useState({});
+
+  // Load batch detail
+  useEffect(() => {
+    if (!Number.isFinite(batchId)) return;
+    dispatch(getCookBatchDetail(batchId));
+  }, [dispatch, batchId]);
+
+  // Seed inputs from server actual_kg (preferred for UI)
+  useEffect(() => {
+    if (!batch?.items) return;
+
+    const seed = {};
+    batch.items.forEach((it) => {
+      seed[it.id] = {
+        actual_kg:
+          it.actual_kg !== null && it.actual_kg !== undefined
+            ? String(it.actual_kg)
+            : "",
+        notes: it.notes || "",
+      };
+    });
+    setActualEdits(seed);
+  }, [batch?.items]);
+
+  // After successful PATCH, refresh detail once
+  useEffect(() => {
+    if (updateSuccess && updatedBatch) {
+      dispatch(getCookBatchDetail(batchId));
+      dispatch({ type: COOKBATCH_ACTUALS_UPDATE_RESET });
+    }
+  }, [updateSuccess, updatedBatch, dispatch, batchId]);
+
+  const isFinal = (batch?.status || "").toLowerCase() === "final";
+  const items = batch?.items || [];
+
+  // Build PATCH payload using grams (backend expects actual_g)
+  const patchItemsPayload = useMemo(() => {
+    const out = [];
+
+    items.forEach((it) => {
+      const edit = actualEdits[it.id];
+      if (!edit) return;
+
+      const rawKg = (edit.actual_kg || "").trim();
+      if (rawKg === "") return;
+
+      const kg = Number(rawKg);
+      if (!Number.isFinite(kg) || kg < 0) return;
+
+      // convert kg -> g
+      const actual_g = Math.round(kg * 1000);
+
+      out.push({
+        id: it.id,
+        actual_g,
+        notes: edit.notes || "",
+      });
+    });
+
+    return out;
+  }, [items, actualEdits]);
+
+  // When finalizing: fill blanks using final_kg (reduce user workload)
+  const finalizeItemsPayload = useMemo(() => {
+    const out = [];
+
+    items.forEach((it) => {
+      const edit = actualEdits[it.id];
+      const rawKg = (edit?.actual_kg || "").trim();
+
+      let actual_g;
+
+      // If user typed actual_kg, use it
+      if (
+        rawKg !== "" &&
+        Number.isFinite(Number(rawKg)) &&
+        Number(rawKg) >= 0
+      ) {
+        actual_g = Math.round(Number(rawKg) * 1000);
+      } else {
+        // Otherwise assume final was used
+        // Prefer final_g if your API returns it, else compute from final_kg
+        if (it.final_g !== null && it.final_g !== undefined) {
+          actual_g = Number(it.final_g);
+        } else if (it.final_kg !== null && it.final_kg !== undefined) {
+          actual_g = Math.round(Number(it.final_kg) * 1000);
+        } else {
+          // last fallback (shouldn't happen)
+          actual_g = 0;
+        }
+      }
+
+      out.push({
+        id: it.id,
+        actual_g,
+        notes: edit?.notes || "",
+      });
+    });
+
+    return out;
+  }, [items, actualEdits]);
+
+  const onChangeActualKg = (itemId, value) => {
+    setActualEdits((prev) => ({
+      ...prev,
+      [itemId]: {
+        ...(prev[itemId] || {}),
+        actual_kg: value,
+      },
+    }));
+  };
+
+  const onChangeNotes = (itemId, value) => {
+    setActualEdits((prev) => ({
+      ...prev,
+      [itemId]: {
+        ...(prev[itemId] || {}),
+        notes: value,
+      },
+    }));
+  };
+
+  const submitActuals = (finalize = false) => {
+    if (!batchId) return;
+
+    if (isFinal) {
+      alert("This batch is already final.");
+      return;
+    }
+
+    if (!finalize && patchItemsPayload.length === 0) {
+      alert("No actual values to submit yet.");
+      return;
+    }
+
+    const itemsToSend = finalize ? finalizeItemsPayload : patchItemsPayload;
+
+    dispatch(
+      updateCookBatchActuals(batchId, {
+        items: itemsToSend,
+        finalize,
+      })
+    );
+  };
+
+  return (
+    <div style={{ padding: 16 }}>
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          gap: 10,
+          flexWrap: "wrap",
+        }}
+      >
+        <button type="button" onClick={() => navigate("/cooking/batches")}>
+          ← Back to List
+        </button>
+
+        <button
+          type="button"
+          onClick={() => navigate("/cooking/batches/create")}
+        >
+          + New Batch
+        </button>
+
+        <h2 style={{ margin: 0 }}>
+          Batch #{batchId} {batch?.recipe_name ? `— ${batch.recipe_name}` : ""}
+        </h2>
+
+        {batch?.status && (
+          <span style={{ marginLeft: "auto" }}>
+            <StatusPill status={batch.status} />
+          </span>
+        )}
+      </div>
+
+      {loading && <p>Loading batch...</p>}
+      {error && <p style={{ color: "crimson" }}>{error}</p>}
+
+      {!loading && !error && batch && (
+        <>
+          {/* Batch summary */}
+          <div style={summaryBox}>
+            <div>
+              <b>People:</b> {batch.n_people}
+            </div>
+            <div>
+              <b>Protein:</b> {batch.protein_type || "-"}
+            </div>
+            <div>
+              <b>Created:</b> {formatDateTime(batch.created_at)}
+            </div>
+            {batch.notes ? (
+              <div style={{ marginTop: 6 }}>
+                <b>Notes:</b> {batch.notes}
+              </div>
+            ) : null}
+          </div>
+
+          {/* Update status */}
+          {updating && <p>Saving...</p>}
+          {updateError && <p style={{ color: "crimson" }}>{updateError}</p>}
+
+          {/* Actions */}
+          <div
+            style={{
+              display: "flex",
+              gap: 10,
+              flexWrap: "wrap",
+              marginBottom: 12,
+            }}
+          >
+            <button
+              type="button"
+              onClick={() => dispatch(getCookBatchDetail(batchId))}
+            >
+              Refresh
+            </button>
+
+            <button
+              type="button"
+              disabled={isFinal || updating}
+              onClick={() => submitActuals(false)}
+            >
+              Save Actuals
+            </button>
+
+            <button
+              type="button"
+              disabled={isFinal || updating}
+              onClick={() => {
+                const ok = window.confirm(
+                  "Finalize this batch? You won’t be able to edit actuals after."
+                );
+                if (ok) submitActuals(true);
+              }}
+            >
+              Finalize Batch
+            </button>
+          </div>
+
+          {isFinal && (
+            <p style={{ opacity: 0.8 }}>
+              This batch is <b>final</b>. Actual values are locked.
+            </p>
+          )}
+
+          {/* Items table */}
+          <div style={{ overflowX: "auto" }}>
+            <table
+              style={{
+                width: "100%",
+                borderCollapse: "collapse",
+                minWidth: 1050,
+              }}
+            >
+              <thead>
+                <tr>
+                  <th style={th}>Ingredient</th>
+                  <th style={th}>Final (kg)</th>
+                  <th style={th}>Pred (kg)</th>
+                  <th style={th}>Clamped?</th>
+                  <th style={th}>Actual (kg)</th>
+                  <th style={th}>Actual (g)</th>
+                  <th style={th}>Notes</th>
+                </tr>
+              </thead>
+
+              <tbody>
+                {items.map((it) => {
+                  const edit = actualEdits[it.id] || {
+                    actual_kg: "",
+                    notes: "",
+                  };
+
+                  const rawKg = (edit.actual_kg || "").trim();
+                  const actualG =
+                    rawKg !== "" && Number.isFinite(Number(rawKg))
+                      ? String(Math.round(Number(rawKg) * 1000))
+                      : "";
+
+                  return (
+                    <tr key={it.id}>
+                      <td style={td}>
+                        <div style={{ fontWeight: 600 }}>{it.ingredient}</div>
+                        <div style={{ fontSize: 12, opacity: 0.75 }}>
+                          {it.group}
+                        </div>
+                      </td>
+
+                      <td style={td}>{formatNum(it.final_kg, 3)}</td>
+                      <td style={td}>{formatNum(it.pred_kg, 3)}</td>
+
+                      <td style={td}>
+                        {it.was_clamped ? (
+                          <span style={{ color: "#b45309" }}>Yes</span>
+                        ) : (
+                          <span style={{ color: "#065f46" }}>No</span>
+                        )}
+                      </td>
+
+                      {/* Editable kg */}
+                      <td style={td}>
+                        <input
+                          type="number"
+                          min="0"
+                          step="0.001"
+                          value={edit.actual_kg}
+                          disabled={isFinal || updating}
+                          onChange={(e) =>
+                            onChangeActualKg(it.id, e.target.value)
+                          }
+                          style={input}
+                          placeholder="e.g. 12.500"
+                        />
+                      </td>
+
+                      {/* Read-only grams */}
+                      <td style={td}>
+                        <input
+                          type="text"
+                          value={actualG}
+                          disabled
+                          style={{ ...input, background: "#f7f7f7" }}
+                          placeholder="-"
+                        />
+                      </td>
+
+                      <td style={td}>
+                        <input
+                          type="text"
+                          value={edit.notes}
+                          disabled={isFinal || updating}
+                          onChange={(e) => onChangeNotes(it.id, e.target.value)}
+                          style={input}
+                          placeholder="optional"
+                        />
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+
+          <div style={{ marginTop: 10, fontSize: 12, opacity: 0.75 }}>
+            Note: You enter <b>kg</b>. “Save Actuals” sends only typed rows.
+            “Finalize Batch” fills blanks using <b>Final (kg)</b>.
+          </div>
+        </>
+      )}
+    </div>
+  );
+};
+
+const summaryBox = {
+  marginTop: 12,
+  marginBottom: 12,
+  padding: 12,
+  border: "1px solid #eee",
+  borderRadius: 10,
+};
+
+const th = {
+  textAlign: "left",
+  borderBottom: "1px solid #ddd",
+  padding: "10px 8px",
+  whiteSpace: "nowrap",
+};
+
+const td = {
+  borderBottom: "1px solid #f0f0f0",
+  padding: "10px 8px",
+  whiteSpace: "nowrap",
+  verticalAlign: "top",
+};
+
+const input = {
+  width: "100%",
+  padding: "8px 10px",
+  borderRadius: 8,
+  border: "1px solid #ccc",
+  outline: "none",
+};
+
+function formatDateTime(value) {
+  if (!value) return "-";
+  const d = new Date(value);
+  if (Number.isNaN(d.getTime())) return value;
+  return d.toLocaleString();
+}
+
+function formatNum(value, decimals = 3) {
+  if (value === null || value === undefined) return "-";
+  const n = Number(value);
+  if (!Number.isFinite(n)) return String(value);
+  return n.toFixed(decimals);
+}
+
+const StatusPill = ({ status }) => {
+  const s = (status || "").toLowerCase();
+
+  const bg = s === "final" ? "#e8f7ee" : s === "draft" ? "#eef2ff" : "#f6f6f6";
+
+  const border =
+    s === "final"
+      ? "1px solid #a7e2bf"
+      : s === "draft"
+      ? "1px solid #c7d2fe"
+      : "1px solid #ddd";
+
+  const color = s === "final" ? "#0f7a3d" : s === "draft" ? "#3730a3" : "#333";
+
+  return (
+    <span
+      style={{
+        display: "inline-block",
+        padding: "3px 10px",
+        borderRadius: 999,
+        fontSize: 12,
+        background: bg,
+        border,
+        color,
+      }}
+    >
+      {status}
+    </span>
+  );
 };
 
 export default CookBatchDetailScreen;

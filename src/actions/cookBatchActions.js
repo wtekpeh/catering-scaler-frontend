@@ -117,13 +117,16 @@ export const getCookBatchDetail = (id) => async (dispatch) => {
 };
 
 // 4) PATCH ACTUALS / FINALIZE: PATCH /api/cooking/batches/:id/actuals/
-// payload shape suggestion:
+// payload shape (matches backend):
 // {
-//   items: [{ ingredient: "Rice", actual_g: 2000, notes: "..." }, ...]
+//   items: [{ id: 123, actual_g: 2000, notes: "..." }, ...],
 //   finalize: true|false
 // }
 //
-// If your backend expects item IDs instead of ingredient names, switch to {id, actual_g,...}
+// Notes:
+// - "id" is CookBatchItem.id (must belong to the batch)
+// - actual_kg is computed server-side from actual_g
+
 export const updateCookBatchActuals =
   (id, { items = [], finalize = false } = {}) =>
   async (dispatch) => {
