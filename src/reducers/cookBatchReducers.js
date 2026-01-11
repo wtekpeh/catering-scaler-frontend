@@ -22,6 +22,13 @@ import {
   COOKBATCH_ACTUALS_UPDATE_SUCCESS,
   COOKBATCH_ACTUALS_UPDATE_FAIL,
   COOKBATCH_ACTUALS_UPDATE_RESET,
+
+  //
+  //
+  RECIPE_LIST_REQUEST,
+  RECIPE_LIST_SUCCESS,
+  RECIPE_LIST_FAIL,
+  RECIPE_LIST_RESET,
 } from "../constants/cookBatchConstants";
 
 // 1) LIST: GET /api/cooking/batches/
@@ -131,6 +138,29 @@ export const cookBatchActualsUpdateReducer = (
 
     case COOKBATCH_ACTUALS_UPDATE_RESET:
       return { loading: false, success: false, updatedBatch: null };
+
+    default:
+      return state;
+  }
+};
+
+// 5) RECIPE LIST: GET /api/recipes/
+export const recipeListReducer = (
+  state = { loading: false, recipes: [] },
+  action
+) => {
+  switch (action.type) {
+    case RECIPE_LIST_REQUEST:
+      return { ...state, loading: true, error: null };
+
+    case RECIPE_LIST_SUCCESS:
+      return { loading: false, recipes: action.payload, error: null };
+
+    case RECIPE_LIST_FAIL:
+      return { loading: false, recipes: [], error: action.payload };
+
+    case RECIPE_LIST_RESET:
+      return { loading: false, recipes: [] };
 
     default:
       return state;

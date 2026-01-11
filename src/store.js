@@ -12,6 +12,7 @@ import {
   cookBatchCreateReducer,
   cookBatchDetailReducer,
   cookBatchActualsUpdateReducer,
+  recipeListReducer,
 } from "./reducers/cookBatchReducers";
 
 const reducer = combineReducers({
@@ -19,6 +20,7 @@ const reducer = combineReducers({
   cookBatchCreate: cookBatchCreateReducer,
   cookBatchDetail: cookBatchDetailReducer,
   cookBatchActualsUpdate: cookBatchActualsUpdateReducer,
+  recipeList: recipeListReducer,
 });
 
 const composeEnhancer =

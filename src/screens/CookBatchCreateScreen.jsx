@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
-import { createCookBatch } from "../actions/cookBatchActions";
+import { createCookBatch, listRecipes } from "../actions/cookBatchActions";
 import { COOKBATCH_CREATE_RESET } from "../constants/cookBatchConstants";
 
 const PROTEIN_CHOICES = ["BONES IN BEEF", "FISH", "FRESH CHICKEN"];
@@ -23,12 +23,19 @@ const CookBatchCreateScreen = () => {
   const cookBatchCreate = useSelector((state) => state.cookBatchCreate);
   const { loading, error, success, batch } = cookBatchCreate;
 
+  const recipeList = useSelector((state) => state.recipeList);
+  const { loading: recipesLoading, error: recipesError, recipes } = recipeList;
+
   useEffect(() => {
     if (success && batch?.id) {
       navigate(`/cooking/batches/${batch.id}`);
       dispatch({ type: COOKBATCH_CREATE_RESET });
     }
   }, [success, batch, navigate, dispatch]);
+
+  useEffect(() => {
+    dispatch(listRecipes());
+  }, [dispatch]);
 
   const totalProteinCount = useMemo(() => {
     return proteinRows.reduce((sum, r) => {
@@ -198,16 +205,28 @@ const CookBatchCreateScreen = () => {
       {error && <p style={{ color: "crimson" }}>{error}</p>}
 
       <form onSubmit={submitHandler} style={{ marginTop: 14 }}>
-        {/* recipe_id */}
+        {/* recipe */}
         <div style={fieldWrap}>
-          <label style={label}>Recipe ID</label>
-          <input
-            type="number"
-            value={recipeId}
-            onChange={(e) => setRecipeId(e.target.value)}
-            placeholder="e.g. 1"
-            style={input}
-          />
+          <label style={label}>Recipe</label>
+
+          {recipesLoading ? (
+            <div style={hint}>Loading recipes...</div>
+          ) : recipesError ? (
+            <div style={{ ...hint, color: "crimson" }}>{recipesError}</div>
+          ) : (
+            <select
+              value={recipeId}
+              onChange={(e) => setRecipeId(e.target.value)}
+              style={input}
+            >
+              <option value="">-- Select recipe --</option>
+              {(recipes || []).map((r) => (
+                <option key={r.id} value={r.id}>
+                  {r.name}
+                </option>
+              ))}
+            </select>
+          )}
         </div>
 
         {/* n_people */}
