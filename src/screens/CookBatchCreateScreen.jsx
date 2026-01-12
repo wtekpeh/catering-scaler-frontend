@@ -5,7 +5,14 @@ import { useNavigate } from "react-router-dom";
 import { createCookBatch, listRecipes } from "../actions/cookBatchActions";
 import { COOKBATCH_CREATE_RESET } from "../constants/cookBatchConstants";
 
-const PROTEIN_CHOICES = ["BONES IN BEEF", "FISH", "FRESH CHICKEN"];
+const PROTEIN_CHOICES = [
+  "BONES IN BEEF",
+  "FISH",
+  "FRESH CHICKEN",
+  "GRILLED TILAPIA",
+  "FRIED FISH",
+  "SARDINE AND EGG",
+];
 
 const CookBatchCreateScreen = () => {
   const dispatch = useDispatch();
