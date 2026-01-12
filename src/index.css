@@ -1,0 +1,10 @@
+/* src/index.css */
+
+/* 1) Design system + base layout/typography */
+@import "./styles/app.css";
+
+/* 2) Tables (including mobile horizontal scroll rules) */
+@import "./styles/tables.css";
+
+/* 3) Forms (inputs, buttons, spacing) */
+@import "./styles/forms.css";

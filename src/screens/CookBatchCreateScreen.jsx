@@ -194,235 +194,225 @@ const CookBatchCreateScreen = () => {
   };
 
   return (
-    <div style={{ padding: 16, maxWidth: 760 }}>
-      <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-        <button type="button" onClick={() => navigate("/cooking/batches")}>
-          ← Back to List
-        </button>
-        <h2 style={{ margin: 0 }}>Create Cook Batch</h2>
-      </div>
+    <div className="page">
+      <div className="container container-sm">
+        <div className="page-header">
+          <h2 className="page-title">Create Cook Batch</h2>
 
-      <p style={{ marginTop: 8, opacity: 0.8 }}>
-        Protein can be split. If you select <b>one</b> protein, it automatically
-        uses the full number of people. If you select <b>multiple</b>, their
-        counts must sum to the total.
-      </p>
-
-      {loading && <p>Creating batch...</p>}
-      {error && <p style={{ color: "crimson" }}>{error}</p>}
-
-      <form onSubmit={submitHandler} style={{ marginTop: 14 }}>
-        {/* recipe */}
-        <div style={fieldWrap}>
-          <label style={label}>Recipe</label>
-
-          {recipesLoading ? (
-            <div style={hint}>Loading recipes...</div>
-          ) : recipesError ? (
-            <div style={{ ...hint, color: "crimson" }}>{recipesError}</div>
-          ) : (
-            <select
-              value={recipeId}
-              onChange={(e) => setRecipeId(e.target.value)}
-              style={input}
+          <div className="actions">
+            <button
+              type="button"
+              className="btn ghost"
+              onClick={() => navigate("/cooking/batches")}
             >
-              <option value="">-- Select recipe --</option>
-              {(recipes || []).map((r) => (
-                <option key={r.id} value={r.id}>
-                  {r.name}
-                </option>
-              ))}
-            </select>
-          )}
-        </div>
-
-        {/* n_people */}
-        <div style={fieldWrap}>
-          <label style={label}>Number of People</label>
-          <input
-            type="number"
-            min="1"
-            value={nPeople}
-            onChange={(e) => setNPeople(e.target.value)}
-            style={input}
-          />
-        </div>
-
-        {/* protein split */}
-        <div style={fieldWrap}>
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "space-between",
-              gap: 10,
-            }}
-          >
-            <label style={{ ...label, marginBottom: 0 }}>
-              Protein split (optional)
-            </label>
-            <button type="button" onClick={addProteinRow} disabled={loading}>
-              + Add Protein
+              ← Back to List
             </button>
           </div>
+        </div>
 
-          {proteinRows.length === 0 ? (
-            <div style={hint}>
-              No protein selected (optional). Click “Add Protein” if needed.
+        <p className="lead">
+          Protein can be split. If you select <b>one</b> protein, it
+          automatically uses the full number of people. If you select{" "}
+          <b>multiple</b>, their counts must sum to the total.
+        </p>
+
+        {loading && <p>Creating batch...</p>}
+        {error && <p className="text-danger">{error}</p>}
+
+        <div className="card pad stack-14">
+          <form onSubmit={submitHandler}>
+            {/* recipe */}
+            <div className="field">
+              <label className="label">Recipe</label>
+              <select
+                className="select"
+                value={recipeId}
+                onChange={(e) => setRecipeId(e.target.value)}
+              >
+                <option value="">-- Select a recipe --</option>
+                {recipes.map((r) => (
+                  <option key={r.id} value={r.id}>
+                    {r.name}
+                  </option>
+                ))}
+              </select>
             </div>
-          ) : (
-            <>
-              <div style={{ marginTop: 10, display: "grid", gap: 10 }}>
-                {proteinRows.map((row, idx) => {
-                  const selectedCount = proteinRows.filter(
-                    (r) => (r.protein || "").trim() !== ""
-                  ).length;
-                  const isMulti = selectedCount > 1;
-                  const disableCount = !isMulti && canAutoFillSingleProtein; // single selected -> auto full N
 
-                  return (
-                    <div
-                      key={idx}
-                      style={{
-                        display: "grid",
-                        gridTemplateColumns: "1fr 160px 90px",
-                        gap: 10,
-                        alignItems: "center",
-                      }}
-                    >
-                      <select
-                        value={row.protein}
-                        onChange={(e) =>
-                          updateProteinRow(idx, { protein: e.target.value })
-                        }
-                        style={input}
-                      >
-                        <option value="">-- Select protein --</option>
-                        {PROTEIN_CHOICES.map((p) => (
-                          <option key={p} value={p}>
-                            {p}
-                          </option>
-                        ))}
-                      </select>
+            {/* n_people */}
+            <div className="field">
+              <label className="label">Number of People</label>
+              <input
+                className="input"
+                type="number"
+                min="1"
+                value={nPeople}
+                onChange={(e) => setNPeople(e.target.value)}
+                placeholder="e.g. 50"
+              />
+            </div>
 
-                      <input
-                        type="number"
-                        min="1"
-                        step="1"
-                        value={row.count}
-                        onChange={(e) =>
-                          updateProteinRow(idx, { count: e.target.value })
-                        }
-                        style={input}
-                        disabled={disableCount}
-                        placeholder={
-                          disableCount ? `auto = ${nPeople}` : "e.g. 50"
-                        }
-                        title={
-                          disableCount
-                            ? "Single protein auto-fills to total people"
-                            : "Enter people count for this protein"
-                        }
-                      />
+            {/* protein split */}
+            <div className="card pad stack-14">
+              <div className="actions actions-tight">
+                <label className="label label-inline">
+                  Protein split (optional)
+                </label>
 
-                      <button
-                        type="button"
-                        onClick={() => removeProteinRow(idx)}
-                        disabled={loading}
-                      >
-                        Remove
-                      </button>
-                    </div>
-                  );
-                })}
+                <button
+                  type="button"
+                  className="btn"
+                  onClick={addProteinRow}
+                  disabled={loading}
+                >
+                  + Add Protein
+                </button>
               </div>
 
-              {/* summary */}
-              <div style={{ marginTop: 10, fontSize: 12, opacity: 0.8 }}>
-                <div>
-                  Total people: <b>{Number(nPeople) || 0}</b>
-                </div>
+              {proteinRows.length === 0 ? (
+                <p className="helper">
+                  No protein selected (optional). Click “Add Protein” if needed.
+                </p>
+              ) : (
+                <>
+                  <div className="protein-rows">
+                    {proteinRows.map((row, idx) => {
+                      const selectedCount = proteinRows.filter(
+                        (r) => (r.protein || "").trim() !== ""
+                      ).length;
 
-                {(() => {
-                  const selectedCount = proteinRows.filter(
-                    (r) => (r.protein || "").trim() !== ""
-                  ).length;
-                  if (selectedCount === 0) return <div>Protein: none</div>;
-                  if (selectedCount === 1)
-                    return (
-                      <div>
-                        Protein: single selection (auto uses full total)
-                      </div>
-                    );
-                  return (
+                      // Split mode should activate as soon as the user adds another row
+                      const isSplitMode = proteinRows.length >= 2;
+
+                      // Auto mode ONLY when exactly one row exists and it has a selected protein
+                      const isSingleAutoMode =
+                        proteinRows.length === 1 &&
+                        selectedCount === 1 &&
+                        (row.protein || "").trim() !== "";
+
+                      const disableCount = isSingleAutoMode;
+
+                      return (
+                        <div key={idx} className="protein-row">
+                          <select
+                            value={row.protein}
+                            onChange={(e) =>
+                              updateProteinRow(idx, { protein: e.target.value })
+                            }
+                            className="input"
+                          >
+                            <option value="">-- Select protein --</option>
+                            {PROTEIN_CHOICES.map((p) => (
+                              <option key={p} value={p}>
+                                {p}
+                              </option>
+                            ))}
+                          </select>
+
+                          <input
+                            type="number"
+                            min="1"
+                            step="1"
+                            value={row.count}
+                            onChange={(e) =>
+                              updateProteinRow(idx, { count: e.target.value })
+                            }
+                            className="input"
+                            disabled={disableCount}
+                            placeholder={
+                              disableCount
+                                ? `auto = ${nPeople}`
+                                : isSplitMode
+                                ? "e.g. 50"
+                                : "Select proteins first"
+                            }
+                            title={
+                              disableCount
+                                ? "Single protein auto-fills to total people"
+                                : isSplitMode
+                                ? "Enter people count for this protein"
+                                : "Select at least 2 proteins to split counts"
+                            }
+                          />
+
+                          <button
+                            type="button"
+                            className="btn"
+                            onClick={() => removeProteinRow(idx)}
+                            disabled={loading}
+                          >
+                            Remove
+                          </button>
+                        </div>
+                      );
+                    })}
+                  </div>
+
+                  {/* summary */}
+                  <div className="form-summary">
                     <div>
-                      Protein split sum: <b>{totalProteinCount}</b> (must equal
-                      total)
+                      Total people: <b>{Number(nPeople) || 0}</b>
                     </div>
-                  );
-                })()}
-              </div>
-            </>
-          )}
-        </div>
 
-        {/* notes */}
-        <div style={fieldWrap}>
-          <label style={label}>Notes (optional)</label>
-          <textarea
-            value={notes}
-            onChange={(e) => setNotes(e.target.value)}
-            placeholder="Any notes for this cook batch..."
-            rows={4}
-            style={{ ...input, resize: "vertical" }}
-          />
-        </div>
+                    {(() => {
+                      const selectedCount = proteinRows.filter(
+                        (r) => (r.protein || "").trim() !== ""
+                      ).length;
+                      if (selectedCount === 0) return <div>Protein: none</div>;
+                      if (selectedCount === 1)
+                        return (
+                          <div>
+                            Protein: single selection (auto uses full total)
+                          </div>
+                        );
+                      return (
+                        <div>
+                          Protein split sum: <b>{totalProteinCount}</b> (must
+                          equal total)
+                        </div>
+                      );
+                    })()}
+                  </div>
+                </>
+              )}
+            </div>
 
-        <div style={{ display: "flex", gap: 10, marginTop: 14 }}>
-          <button type="submit" disabled={loading}>
-            Create Batch
-          </button>
+            {/* notes */}
+            <div className="field">
+              <label className="label">Notes (optional)</label>
+              <textarea
+                className="textarea"
+                value={notes}
+                onChange={(e) => setNotes(e.target.value)}
+                rows={3}
+                placeholder="Any special notes for this batch..."
+              />
+            </div>
 
-          <button type="button" onClick={clearForm} disabled={loading}>
-            Clear
-          </button>
-        </div>
+            <div className="actions stack-14">
+              <button className="btn primary" type="submit" disabled={loading}>
+                {loading ? "Creating…" : "Create Batch"}
+              </button>
 
-        <div style={{ marginTop: 10, fontSize: 12, opacity: 0.75 }}>
-          Backend note: single-protein mode uses <code>options.protein</code>.
-          Multi-protein mode sends <code>options.proteins</code> and needs
-          backend support.
+              <button
+                className="btn"
+                type="button"
+                onClick={clearForm}
+                disabled={loading}
+              >
+                Clear
+              </button>
+            </div>
+
+            <p className="helper helper-spaced">
+              Backend note: single-protein mode uses{" "}
+              <code>options.protein</code>. Multi-protein mode sends{" "}
+              <code>options.proteins</code> and needs backend support.
+            </p>
+          </form>
         </div>
-      </form>
+      </div>
     </div>
   );
-};
-
-const fieldWrap = {
-  marginBottom: 14,
-  padding: 12,
-  border: "1px solid #eee",
-  borderRadius: 10,
-};
-
-const label = {
-  display: "block",
-  fontWeight: 600,
-  marginBottom: 6,
-};
-
-const input = {
-  width: "100%",
-  padding: "10px 12px",
-  borderRadius: 8,
-  border: "1px solid #ccc",
-  outline: "none",
-};
-
-const hint = {
-  marginTop: 8,
-  fontSize: 12,
-  opacity: 0.75,
 };
 
 export default CookBatchCreateScreen;

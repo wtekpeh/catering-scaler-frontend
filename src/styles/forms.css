@@ -1,0 +1,145 @@
+/* src/styles/forms.css */
+
+.field {
+  margin-bottom: 12px;
+}
+
+.label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 6px;
+  font-size: 13px;
+}
+
+.input,
+.select,
+.textarea {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text);
+  outline: none;
+}
+
+.textarea {
+  resize: vertical;
+}
+
+.input:focus,
+.select:focus,
+.textarea:focus {
+  box-shadow: var(--focus);
+  border-color: rgba(217, 119, 6, 0.55);
+}
+
+.input[disabled],
+.select[disabled],
+.textarea[disabled] {
+  background: var(--surface-2);
+  color: rgba(15, 23, 42, 0.6);
+  cursor: not-allowed;
+}
+
+/* Buttons */
+.btn {
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text);
+  padding: 9px 12px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  font-weight: 600;
+  box-shadow: var(--shadow-sm);
+}
+
+.btn:hover {
+  box-shadow: var(--shadow-md);
+}
+
+.btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+.btn.primary {
+  background: #92400e; /* warm amber-brown */
+  border-color: #92400e;
+  color: #fff;
+}
+
+.btn.primary:hover {
+  background: #7c2d12;
+  border-color: #7c2d12;
+}
+
+.btn.primary:focus {
+  box-shadow: var(--focus);
+}
+
+.btn.ghost {
+  background: transparent;
+}
+
+/* Status badges */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+  border: 1px solid var(--border);
+  background: var(--surface-2);
+  color: var(--text);
+}
+
+.badge.draft {
+  background: #eef2ff;
+  border-color: #c7d2fe;
+  color: #3730a3;
+}
+
+.badge.final {
+  background: #e8f7ee;
+  border-color: #a7e2bf;
+  color: #0f7a3d;
+}
+
+.badge.other {
+  background: #f6f6f6;
+  border-color: #e5e7eb;
+  color: #334155;
+}
+
+/* Protein split rows */
+.protein-rows {
+  margin-top: 10px;
+  display: grid;
+  gap: 10px;
+}
+
+.protein-row {
+  display: grid;
+  grid-template-columns: 1fr 160px 90px;
+  gap: 10px;
+  align-items: center;
+}
+
+/* Fix select/input overflow in grid */
+.protein-row > * {
+  min-width: 0;
+}
+
+@media (max-width: 640px) {
+  .protein-row {
+    grid-template-columns: 1fr;
+  }
+
+  .protein-row .btn {
+    width: 100%;
+    justify-content: center;
+  }
+}

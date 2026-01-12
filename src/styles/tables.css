@@ -1,0 +1,164 @@
+/* src/styles/tables.css */
+
+.table-wrap {
+  width: 100%;
+  overflow-x: auto; /* mobile horizontal scroll */
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--surface);
+  box-shadow: var(--shadow-sm);
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 900px; /* desktop/tablet: full table; mobile: scroll */
+}
+
+.table th,
+.table td {
+  text-align: left;
+  padding: 10px 10px;
+  white-space: nowrap;
+  border-bottom: 1px solid var(--border-2);
+  vertical-align: top;
+}
+
+.table th {
+  font-size: 12px;
+  letter-spacing: 0.2px;
+  color: var(--muted);
+  background: #f7f2ec;
+  border-bottom: 1px solid var(--border);
+}
+
+.table tr:hover td {
+  background: #fbf6f0;
+}
+
+/* Clickable rows (List screen) */
+.row-link {
+  cursor: pointer;
+}
+
+/* Small text inside cells */
+.cell-sub {
+  font-size: 12px;
+  color: var(--muted);
+  margin-top: 2px;
+}
+
+/* ---------- Responsive visibility ---------- */
+.desktop-only {
+  display: block;
+}
+
+.mobile-only {
+  display: none;
+}
+
+@media (max-width: 640px) {
+  .desktop-only {
+    display: none;
+  }
+
+  .mobile-only {
+    display: block;
+  }
+}
+
+/* ---------- Mobile batch cards ---------- */
+.batch-cards {
+  display: grid;
+  gap: 12px;
+}
+
+.batch-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 12px;
+  box-shadow: var(--shadow-sm);
+  cursor: pointer;
+}
+
+.batch-card:hover {
+  box-shadow: var(--shadow-md);
+}
+
+.batch-card__top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+
+.batch-card__title {
+  font-weight: 700;
+}
+
+.batch-card__meta {
+  display: grid;
+  gap: 4px;
+  font-size: 14px;
+}
+
+.batch-card__notes {
+  margin-top: 6px;
+  font-size: 13px;
+  color: var(--muted);
+}
+
+/* ---------- CookBatchDetailScreen polish ---------- */
+.text-danger {
+  color: crimson;
+}
+
+.detail-summary {
+  margin-bottom: 12px;
+}
+
+.detail-summary__notes {
+  margin-top: 6px;
+}
+
+.detail-actions {
+  margin-bottom: 12px;
+}
+
+.table--detail {
+  min-width: 1050px;
+}
+
+.cell-title {
+  font-weight: 600;
+}
+
+/* Optional: clamped Yes/No badges */
+.clamp-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 8px;
+  border-radius: 999px;
+  font-size: 12px;
+  border: 1px solid var(--border);
+  background: #f6f6f6;
+}
+
+.clamp-badge.yes {
+  background: #fff7ed;
+  border-color: #fed7aa;
+  color: #9a3412;
+}
+
+.clamp-badge.no {
+  background: #ecfdf5;
+  border-color: #a7f3d0;
+  color: #065f46;
+}
+
+/* Footer note under table */
+.detail-footnote {
+  margin-top: 10px;
+}

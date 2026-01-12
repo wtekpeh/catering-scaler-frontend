@@ -177,244 +177,204 @@ const CookBatchDetailScreen = () => {
   };
 
   return (
-    <div style={{ padding: 16 }}>
-      <div
-        style={{
-          display: "flex",
-          alignItems: "center",
-          gap: 10,
-          flexWrap: "wrap",
-        }}
-      >
-        <button type="button" onClick={() => navigate("/cooking/batches")}>
-          ← Back to List
-        </button>
+    <div className="page">
+      <div className="container">
+        {/* Header */}
+        <div className="page-header">
+          <div className="actions">
+            <button
+              className="btn ghost"
+              type="button"
+              onClick={() => navigate("/cooking/batches")}
+            >
+              ← Back to List
+            </button>
 
-        <button
-          type="button"
-          onClick={() => navigate("/cooking/batches/create")}
-        >
-          + New Batch
-        </button>
+            <button
+              className="btn ghost"
+              type="button"
+              onClick={() => navigate("/cooking/batches/create")}
+            >
+              + New Batch
+            </button>
+          </div>
 
-        <h2 style={{ margin: 0 }}>
-          Batch #{batchId} {batch?.recipe_name ? `— ${batch.recipe_name}` : ""}
-        </h2>
+          <h2 className="page-title">
+            Batch #{batchId}{" "}
+            {batch?.recipe_name ? `— ${batch.recipe_name}` : ""}
+          </h2>
 
-        {batch?.status && (
-          <span style={{ marginLeft: "auto" }}>
-            <StatusPill status={batch.status} />
-          </span>
+          {batch?.status && <StatusPill status={batch.status} />}
+        </div>
+
+        {loading && <p className="helper">Loading batch...</p>}
+        {error && <p style={{ color: "crimson" }}>{error}</p>}
+
+        {!loading && !error && batch && (
+          <>
+            {/* Batch summary */}
+            <div className="card pad" style={{ marginBottom: 12 }}>
+              <div>
+                <b>People:</b> {batch.n_people}
+              </div>
+              <div>
+                <b>Protein:</b> {batch.protein_type || "-"}
+              </div>
+              <div>
+                <b>Created:</b> {formatDateTime(batch.created_at)}
+              </div>
+              {batch.notes ? (
+                <div style={{ marginTop: 6 }}>
+                  <b>Notes:</b> {batch.notes}
+                </div>
+              ) : null}
+            </div>
+
+            {/* Update status */}
+            {updating && <p className="helper">Saving...</p>}
+            {updateError && <p style={{ color: "crimson" }}>{updateError}</p>}
+
+            {/* Actions */}
+            <div className="actions" style={{ marginBottom: 12 }}>
+              <button
+                className="btn"
+                type="button"
+                onClick={() => dispatch(getCookBatchDetail(batchId))}
+              >
+                Refresh
+              </button>
+
+              <button
+                className="btn primary"
+                type="button"
+                disabled={isFinal || updating}
+                onClick={() => submitActuals(false)}
+              >
+                Save Actuals
+              </button>
+
+              <button
+                className="btn"
+                type="button"
+                disabled={isFinal || updating}
+                onClick={() => {
+                  const ok = window.confirm(
+                    "Finalize this batch? You won’t be able to edit actuals after."
+                  );
+                  if (ok) submitActuals(true);
+                }}
+              >
+                Finalize Batch
+              </button>
+            </div>
+
+            {isFinal && (
+              <p className="helper">
+                This batch is <b>final</b>. Actual values are locked.
+              </p>
+            )}
+
+            {/* Items table */}
+            <div className="table-wrap">
+              <table className="table" style={{ minWidth: 1050 }}>
+                <thead>
+                  <tr>
+                    <th>Ingredient</th>
+                    <th>Final (kg)</th>
+                    <th>Pred (kg)</th>
+                    <th>Clamped?</th>
+                    <th>Actual (kg)</th>
+                    <th>Actual (g)</th>
+                    <th>Notes</th>
+                  </tr>
+                </thead>
+
+                <tbody>
+                  {items.map((it) => {
+                    const edit = actualEdits[it.id] || {
+                      actual_kg: "",
+                      notes: "",
+                    };
+
+                    const rawKg = (edit.actual_kg || "").trim();
+                    const actualG =
+                      rawKg !== "" && Number.isFinite(Number(rawKg))
+                        ? String(Math.round(Number(rawKg) * 1000))
+                        : "";
+
+                    return (
+                      <tr key={it.id}>
+                        <td>
+                          <div style={{ fontWeight: 600 }}>{it.ingredient}</div>
+                          <div className="cell-sub">{it.group}</div>
+                        </td>
+
+                        <td>{formatNum(it.final_kg, 3)}</td>
+                        <td>{formatNum(it.pred_kg, 3)}</td>
+
+                        <td>
+                          {it.was_clamped ? (
+                            <span style={{ color: "#b45309" }}>Yes</span>
+                          ) : (
+                            <span style={{ color: "#065f46" }}>No</span>
+                          )}
+                        </td>
+
+                        {/* Editable kg */}
+                        <td>
+                          <input
+                            className="input"
+                            type="number"
+                            min="0"
+                            step="0.001"
+                            value={edit.actual_kg}
+                            disabled={isFinal || updating}
+                            onChange={(e) =>
+                              onChangeActualKg(it.id, e.target.value)
+                            }
+                            placeholder="e.g. 12.500"
+                          />
+                        </td>
+
+                        {/* Read-only grams */}
+                        <td>
+                          <input
+                            className="input"
+                            type="text"
+                            value={actualG}
+                            disabled
+                            placeholder="-"
+                          />
+                        </td>
+
+                        <td>
+                          <input
+                            className="input"
+                            type="text"
+                            value={edit.notes}
+                            disabled={isFinal || updating}
+                            onChange={(e) =>
+                              onChangeNotes(it.id, e.target.value)
+                            }
+                            placeholder="optional"
+                          />
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+
+            <div style={{ marginTop: 10, fontSize: 12, opacity: 0.75 }}>
+              Note: You enter <b>kg</b>. “Save Actuals” sends only typed rows.
+              “Finalize Batch” fills blanks using <b>Final (kg)</b>.
+            </div>
+          </>
         )}
       </div>
-
-      {loading && <p>Loading batch...</p>}
-      {error && <p style={{ color: "crimson" }}>{error}</p>}
-
-      {!loading && !error && batch && (
-        <>
-          {/* Batch summary */}
-          <div style={summaryBox}>
-            <div>
-              <b>People:</b> {batch.n_people}
-            </div>
-            <div>
-              <b>Protein:</b> {batch.protein_type || "-"}
-            </div>
-            <div>
-              <b>Created:</b> {formatDateTime(batch.created_at)}
-            </div>
-            {batch.notes ? (
-              <div style={{ marginTop: 6 }}>
-                <b>Notes:</b> {batch.notes}
-              </div>
-            ) : null}
-          </div>
-
-          {/* Update status */}
-          {updating && <p>Saving...</p>}
-          {updateError && <p style={{ color: "crimson" }}>{updateError}</p>}
-
-          {/* Actions */}
-          <div
-            style={{
-              display: "flex",
-              gap: 10,
-              flexWrap: "wrap",
-              marginBottom: 12,
-            }}
-          >
-            <button
-              type="button"
-              onClick={() => dispatch(getCookBatchDetail(batchId))}
-            >
-              Refresh
-            </button>
-
-            <button
-              type="button"
-              disabled={isFinal || updating}
-              onClick={() => submitActuals(false)}
-            >
-              Save Actuals
-            </button>
-
-            <button
-              type="button"
-              disabled={isFinal || updating}
-              onClick={() => {
-                const ok = window.confirm(
-                  "Finalize this batch? You won’t be able to edit actuals after."
-                );
-                if (ok) submitActuals(true);
-              }}
-            >
-              Finalize Batch
-            </button>
-          </div>
-
-          {isFinal && (
-            <p style={{ opacity: 0.8 }}>
-              This batch is <b>final</b>. Actual values are locked.
-            </p>
-          )}
-
-          {/* Items table */}
-          <div style={{ overflowX: "auto" }}>
-            <table
-              style={{
-                width: "100%",
-                borderCollapse: "collapse",
-                minWidth: 1050,
-              }}
-            >
-              <thead>
-                <tr>
-                  <th style={th}>Ingredient</th>
-                  <th style={th}>Final (kg)</th>
-                  <th style={th}>Pred (kg)</th>
-                  <th style={th}>Clamped?</th>
-                  <th style={th}>Actual (kg)</th>
-                  <th style={th}>Actual (g)</th>
-                  <th style={th}>Notes</th>
-                </tr>
-              </thead>
-
-              <tbody>
-                {items.map((it) => {
-                  const edit = actualEdits[it.id] || {
-                    actual_kg: "",
-                    notes: "",
-                  };
-
-                  const rawKg = (edit.actual_kg || "").trim();
-                  const actualG =
-                    rawKg !== "" && Number.isFinite(Number(rawKg))
-                      ? String(Math.round(Number(rawKg) * 1000))
-                      : "";
-
-                  return (
-                    <tr key={it.id}>
-                      <td style={td}>
-                        <div style={{ fontWeight: 600 }}>{it.ingredient}</div>
-                        <div style={{ fontSize: 12, opacity: 0.75 }}>
-                          {it.group}
-                        </div>
-                      </td>
-
-                      <td style={td}>{formatNum(it.final_kg, 3)}</td>
-                      <td style={td}>{formatNum(it.pred_kg, 3)}</td>
-
-                      <td style={td}>
-                        {it.was_clamped ? (
-                          <span style={{ color: "#b45309" }}>Yes</span>
-                        ) : (
-                          <span style={{ color: "#065f46" }}>No</span>
-                        )}
-                      </td>
-
-                      {/* Editable kg */}
-                      <td style={td}>
-                        <input
-                          type="number"
-                          min="0"
-                          step="0.001"
-                          value={edit.actual_kg}
-                          disabled={isFinal || updating}
-                          onChange={(e) =>
-                            onChangeActualKg(it.id, e.target.value)
-                          }
-                          style={input}
-                          placeholder="e.g. 12.500"
-                        />
-                      </td>
-
-                      {/* Read-only grams */}
-                      <td style={td}>
-                        <input
-                          type="text"
-                          value={actualG}
-                          disabled
-                          style={{ ...input, background: "#f7f7f7" }}
-                          placeholder="-"
-                        />
-                      </td>
-
-                      <td style={td}>
-                        <input
-                          type="text"
-                          value={edit.notes}
-                          disabled={isFinal || updating}
-                          onChange={(e) => onChangeNotes(it.id, e.target.value)}
-                          style={input}
-                          placeholder="optional"
-                        />
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-          </div>
-
-          <div style={{ marginTop: 10, fontSize: 12, opacity: 0.75 }}>
-            Note: You enter <b>kg</b>. “Save Actuals” sends only typed rows.
-            “Finalize Batch” fills blanks using <b>Final (kg)</b>.
-          </div>
-        </>
-      )}
     </div>
   );
-};
-
-const summaryBox = {
-  marginTop: 12,
-  marginBottom: 12,
-  padding: 12,
-  border: "1px solid #eee",
-  borderRadius: 10,
-};
-
-const th = {
-  textAlign: "left",
-  borderBottom: "1px solid #ddd",
-  padding: "10px 8px",
-  whiteSpace: "nowrap",
-};
-
-const td = {
-  borderBottom: "1px solid #f0f0f0",
-  padding: "10px 8px",
-  whiteSpace: "nowrap",
-  verticalAlign: "top",
-};
-
-const input = {
-  width: "100%",
-  padding: "8px 10px",
-  borderRadius: 8,
-  border: "1px solid #ccc",
-  outline: "none",
 };
 
 function formatDateTime(value) {
@@ -447,15 +407,10 @@ const StatusPill = ({ status }) => {
 
   return (
     <span
-      style={{
-        display: "inline-block",
-        padding: "3px 10px",
-        borderRadius: 999,
-        fontSize: 12,
-        background: bg,
-        border,
-        color,
-      }}
+      className={`badge ${
+        s === "final" ? "final" : s === "draft" ? "draft" : "other"
+      }`}
+      style={{ marginLeft: "auto" }}
     >
       {status}
     </span>
