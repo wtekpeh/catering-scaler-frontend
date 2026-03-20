@@ -8,7 +8,7 @@ import { COOKBATCH_CREATE_RESET } from "../constants/cookBatchConstants";
 const PROTEIN_CHOICES = [
   "BONES IN BEEF",
   "FISH",
-  "FRESH CHICKEN",
+  "FRIED CHICKEN",
   "GRILLED TILAPIA",
   "FRIED FISH",
   "SARDINE AND EGG",
