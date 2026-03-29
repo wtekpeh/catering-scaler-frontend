@@ -2,17 +2,34 @@ import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
-import { listCookBatches } from "../actions/cookBatchActions";
+import {
+  listCookBatches,
+  recalibrateIngredients,
+  getCurrentUser,
+} from "../actions/cookBatchActions";
 
 const CookBatchListScreen = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
+  const userMe = useSelector((state) => state.userMe);
+  const { user } = userMe;
+
+  const canRecalibrate = user?.can_recalibrate;
+
   const cookBatchList = useSelector((state) => state.cookBatchList);
   const { loading, error, batches } = cookBatchList;
 
+  const recalibrateState = useSelector((state) => state.recalibrate);
+  const {
+    loading: recalLoading,
+    success: recalSuccess,
+    error: recalError,
+  } = recalibrateState;
+
   useEffect(() => {
     dispatch(listCookBatches());
+    dispatch(getCurrentUser());
   }, [dispatch]);
 
   return (
@@ -26,6 +43,16 @@ const CookBatchListScreen = () => {
               Refresh
             </button>
 
+            {canRecalibrate && (
+              <button
+                type="button"
+                onClick={() => dispatch(recalibrateIngredients())}
+                disabled={recalLoading}
+              >
+                {recalLoading ? "Recalculating..." : "Recalculate"}
+              </button>
+            )}
+
             <button
               type="button"
               onClick={() => navigate("/cooking/batches/create")}
@@ -34,6 +61,11 @@ const CookBatchListScreen = () => {
             </button>
           </div>
         </div>
+
+        {recalError && <p style={{ color: "crimson" }}>{recalError}</p>}
+        {recalSuccess && !recalError && (
+          <p style={{ color: "green" }}>Recalibration completed.</p>
+        )}
 
         {loading && <p>Loading batches...</p>}
         {error && <p style={{ color: "crimson" }}>{error}</p>}
@@ -88,8 +120,8 @@ const CookBatchListScreen = () => {
                                   (b.status || "").toLowerCase() === "final"
                                     ? "final"
                                     : (b.status || "").toLowerCase() === "draft"
-                                    ? "draft"
-                                    : "other"
+                                      ? "draft"
+                                      : "other"
                                 }`}
                               >
                                 {b.status}
@@ -125,8 +157,8 @@ const CookBatchListScreen = () => {
                               (b.status || "").toLowerCase() === "final"
                                 ? "final"
                                 : (b.status || "").toLowerCase() === "draft"
-                                ? "draft"
-                                : "other"
+                                  ? "draft"
+                                  : "other"
                             }`}
                           >
                             {b.status}

@@ -29,12 +29,23 @@ import {
   RECIPE_LIST_SUCCESS,
   RECIPE_LIST_FAIL,
   RECIPE_LIST_RESET,
+
+  //
+  RECALIBRATE_REQUEST,
+  RECALIBRATE_SUCCESS,
+  RECALIBRATE_FAIL,
+  RECALIBRATE_RESET,
+
+  //
+  USER_ME_REQUEST,
+  USER_ME_SUCCESS,
+  USER_ME_FAIL,
 } from "../constants/cookBatchConstants";
 
 // 1) LIST: GET /api/cooking/batches/
 export const cookBatchListReducer = (
   state = { loading: false, batches: [] },
-  action
+  action,
 ) => {
   switch (action.type) {
     case COOKBATCH_LIST_REQUEST:
@@ -57,7 +68,7 @@ export const cookBatchListReducer = (
 // 2) CREATE: POST /api/cooking/batches/create/
 export const cookBatchCreateReducer = (
   state = { loading: false, success: false, batch: null },
-  action
+  action,
 ) => {
   switch (action.type) {
     case COOKBATCH_CREATE_REQUEST:
@@ -90,7 +101,7 @@ export const cookBatchCreateReducer = (
 // 3) DETAIL: GET /api/cooking/batches/:id/
 export const cookBatchDetailReducer = (
   state = { loading: false, batch: null },
-  action
+  action,
 ) => {
   switch (action.type) {
     case COOKBATCH_DETAIL_REQUEST:
@@ -114,7 +125,7 @@ export const cookBatchDetailReducer = (
 // 4) ACTUALS UPDATE / FINALIZE: PATCH /api/cooking/batches/:id/actuals/
 export const cookBatchActualsUpdateReducer = (
   state = { loading: false, success: false, updatedBatch: null },
-  action
+  action,
 ) => {
   switch (action.type) {
     case COOKBATCH_ACTUALS_UPDATE_REQUEST:
@@ -147,7 +158,7 @@ export const cookBatchActualsUpdateReducer = (
 // 5) RECIPE LIST: GET /api/recipes/
 export const recipeListReducer = (
   state = { loading: false, recipes: [] },
-  action
+  action,
 ) => {
   switch (action.type) {
     case RECIPE_LIST_REQUEST:
@@ -161,6 +172,57 @@ export const recipeListReducer = (
 
     case RECIPE_LIST_RESET:
       return { loading: false, recipes: [] };
+
+    default:
+      return state;
+  }
+};
+
+export const recalibrateReducer = (
+  state = { loading: false, success: false, result: null },
+  action,
+) => {
+  switch (action.type) {
+    case RECALIBRATE_REQUEST:
+      return { ...state, loading: true, error: null, success: false };
+
+    case RECALIBRATE_SUCCESS:
+      return {
+        loading: false,
+        success: true,
+        result: action.payload,
+        error: null,
+      };
+
+    case RECALIBRATE_FAIL:
+      return {
+        loading: false,
+        success: false,
+        result: null,
+        error: action.payload,
+      };
+
+    case RECALIBRATE_RESET:
+      return { loading: false, success: false, result: null };
+
+    default:
+      return state;
+  }
+};
+
+export const userMeReducer = (
+  state = { loading: false, user: null },
+  action,
+) => {
+  switch (action.type) {
+    case USER_ME_REQUEST:
+      return { ...state, loading: true, error: null };
+
+    case USER_ME_SUCCESS:
+      return { loading: false, user: action.payload, error: null };
+
+    case USER_ME_FAIL:
+      return { loading: false, user: null, error: action.payload };
 
     default:
       return state;

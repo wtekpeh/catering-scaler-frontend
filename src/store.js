@@ -13,6 +13,8 @@ import {
   cookBatchDetailReducer,
   cookBatchActualsUpdateReducer,
   recipeListReducer,
+  recalibrateReducer,
+  userMeReducer,
 } from "./reducers/cookBatchReducers";
 
 const reducer = combineReducers({
@@ -21,6 +23,8 @@ const reducer = combineReducers({
   cookBatchDetail: cookBatchDetailReducer,
   cookBatchActualsUpdate: cookBatchActualsUpdateReducer,
   recipeList: recipeListReducer,
+  recalibrate: recalibrateReducer,
+  userMe: userMeReducer,
 });
 
 const composeEnhancer =
@@ -34,7 +38,7 @@ const middleware = [thunk];
 const store = createStore(
   reducer,
   initialState,
-  composeEnhancer(applyMiddleware(...middleware))
+  composeEnhancer(applyMiddleware(...middleware)),
 );
 
 export default store;

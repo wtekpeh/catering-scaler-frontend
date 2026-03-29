@@ -1,5 +1,5 @@
 // src/actions/cookBatchActions.js
-import axios from "axios";
+import axios from "../api/axiosInstance";
 
 import {
   COOKBATCH_LIST_REQUEST,
@@ -25,6 +25,16 @@ import {
   RECIPE_LIST_REQUEST,
   RECIPE_LIST_SUCCESS,
   RECIPE_LIST_FAIL,
+
+  //
+  RECALIBRATE_REQUEST,
+  RECALIBRATE_SUCCESS,
+  RECALIBRATE_FAIL,
+
+  //
+  USER_ME_REQUEST,
+  USER_ME_SUCCESS,
+  USER_ME_FAIL,
 } from "../constants/cookBatchConstants";
 
 // Base API URL from Vite env (.env: VITE_API_BASE_URL=http://127.0.0.1:8000)
@@ -85,7 +95,7 @@ export const createCookBatch =
       const { data } = await axios.post(
         `${API_BASE_URL}/api/cooking/batches/create/`,
         body,
-        { headers: { "Content-Type": "application/json" } }
+        { headers: { "Content-Type": "application/json" } },
       );
 
       dispatch({
@@ -106,7 +116,7 @@ export const getCookBatchDetail = (id) => async (dispatch) => {
     dispatch({ type: COOKBATCH_DETAIL_REQUEST });
 
     const { data } = await axios.get(
-      `${API_BASE_URL}/api/cooking/batches/${id}/`
+      `${API_BASE_URL}/api/cooking/batches/${id}/`,
     );
 
     dispatch({
@@ -143,7 +153,7 @@ export const updateCookBatchActuals =
       const { data } = await axios.patch(
         `${API_BASE_URL}/api/cooking/batches/${id}/actuals/`,
         body,
-        { headers: { "Content-Type": "application/json" } }
+        { headers: { "Content-Type": "application/json" } },
       );
 
       dispatch({
@@ -173,6 +183,50 @@ export const listRecipes = () => async (dispatch) => {
   } catch (error) {
     dispatch({
       type: RECIPE_LIST_FAIL,
+      payload: getErrorMessage(error),
+    });
+  }
+};
+
+//
+export const recalibrateIngredients =
+  ({ tau_days = 14 } = {}) =>
+  async (dispatch) => {
+    try {
+      dispatch({ type: RECALIBRATE_REQUEST });
+
+      const { data } = await axios.post(
+        `${API_BASE_URL}/api/cooking/recalibrate/`,
+        { tau_days },
+        { headers: { "Content-Type": "application/json" } },
+      );
+
+      dispatch({
+        type: RECALIBRATE_SUCCESS,
+        payload: data,
+      });
+    } catch (error) {
+      dispatch({
+        type: RECALIBRATE_FAIL,
+        payload: getErrorMessage(error),
+      });
+    }
+  };
+
+//
+export const getCurrentUser = () => async (dispatch) => {
+  try {
+    dispatch({ type: USER_ME_REQUEST });
+
+    const { data } = await axios.get(`${API_BASE_URL}/api/accounts/me/`);
+
+    dispatch({
+      type: USER_ME_SUCCESS,
+      payload: data,
+    });
+  } catch (error) {
+    dispatch({
+      type: USER_ME_FAIL,
       payload: getErrorMessage(error),
     });
   }
