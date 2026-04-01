@@ -35,6 +35,26 @@ import {
   USER_ME_REQUEST,
   USER_ME_SUCCESS,
   USER_ME_FAIL,
+
+  //
+  ACCOUNT_ME_REQUEST,
+  ACCOUNT_ME_SUCCESS,
+  ACCOUNT_ME_FAIL,
+
+  //
+  USER_LIST_REQUEST,
+  USER_LIST_SUCCESS,
+  USER_LIST_FAIL,
+
+  //
+  USER_CREATE_REQUEST,
+  USER_CREATE_SUCCESS,
+  USER_CREATE_FAIL,
+
+  //
+  USER_ROLE_UPDATE_REQUEST,
+  USER_ROLE_UPDATE_SUCCESS,
+  USER_ROLE_UPDATE_FAIL,
 } from "../constants/cookBatchConstants";
 
 // Base API URL from Vite env (.env: VITE_API_BASE_URL=http://127.0.0.1:8000)
@@ -227,6 +247,92 @@ export const getCurrentUser = () => async (dispatch) => {
   } catch (error) {
     dispatch({
       type: USER_ME_FAIL,
+      payload: getErrorMessage(error),
+    });
+  }
+};
+
+//Admin Ui Management
+
+export const getAccountMe = () => async (dispatch) => {
+  try {
+    dispatch({ type: ACCOUNT_ME_REQUEST });
+
+    const { data } = await axios.get(`${API_BASE_URL}/api/accounts/me/`);
+
+    dispatch({
+      type: ACCOUNT_ME_SUCCESS,
+      payload: data,
+    });
+  } catch (error) {
+    dispatch({
+      type: ACCOUNT_ME_FAIL,
+      payload: getErrorMessage(error),
+    });
+  }
+};
+
+export const listUsers = () => async (dispatch) => {
+  try {
+    dispatch({ type: USER_LIST_REQUEST });
+
+    const { data } = await axios.get(`${API_BASE_URL}/api/accounts/users/`);
+
+    dispatch({
+      type: USER_LIST_SUCCESS,
+      payload: data,
+    });
+  } catch (error) {
+    dispatch({
+      type: USER_LIST_FAIL,
+      payload: getErrorMessage(error),
+    });
+  }
+};
+
+export const createUser = (userData) => async (dispatch) => {
+  try {
+    dispatch({ type: USER_CREATE_REQUEST });
+
+    const { data } = await axios.post(
+      `${API_BASE_URL}/api/accounts/users/create/`,
+      userData,
+      {
+        headers: { "Content-Type": "application/json" },
+      },
+    );
+
+    dispatch({
+      type: USER_CREATE_SUCCESS,
+      payload: data,
+    });
+  } catch (error) {
+    dispatch({
+      type: USER_CREATE_FAIL,
+      payload: getErrorMessage(error),
+    });
+  }
+};
+
+export const updateUserRoles = (id, roleData) => async (dispatch) => {
+  try {
+    dispatch({ type: USER_ROLE_UPDATE_REQUEST });
+
+    const { data } = await axios.put(
+      `${API_BASE_URL}/api/accounts/users/${id}/roles/`,
+      roleData,
+      {
+        headers: { "Content-Type": "application/json" },
+      },
+    );
+
+    dispatch({
+      type: USER_ROLE_UPDATE_SUCCESS,
+      payload: data,
+    });
+  } catch (error) {
+    dispatch({
+      type: USER_ROLE_UPDATE_FAIL,
       payload: getErrorMessage(error),
     });
   }

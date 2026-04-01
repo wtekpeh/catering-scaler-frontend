@@ -15,6 +15,10 @@ import {
   recipeListReducer,
   recalibrateReducer,
   userMeReducer,
+  accountMeReducer,
+  userListReducer,
+  userCreateReducer,
+  userRoleUpdateReducer,
 } from "./reducers/cookBatchReducers";
 
 const reducer = combineReducers({
@@ -25,6 +29,10 @@ const reducer = combineReducers({
   recipeList: recipeListReducer,
   recalibrate: recalibrateReducer,
   userMe: userMeReducer,
+  accountMe: accountMeReducer,
+  userList: userListReducer,
+  userCreate: userCreateReducer,
+  userRoleUpdate: userRoleUpdateReducer,
 });
 
 const composeEnhancer =

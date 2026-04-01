@@ -12,6 +12,8 @@ import CookBatchListScreen from "./screens/CookBatchListScreen";
 import CookBatchCreateScreen from "./screens/CookBatchCreateScreen";
 import CookBatchDetailScreen from "./screens/CookBatchDetailScreen";
 
+import AdminUserScreen from "./screens/AdminUserScreen";
+
 function AppLayout() {
   return (
     <div className="app-shell">
@@ -32,6 +34,10 @@ function AppLayout() {
             path="/cooking/batches/:id"
             element={<CookBatchDetailScreen />}
           />
+
+          {/* Admin Ui */}
+          <Route path="/admin/users" element={<AdminUserScreen />} />
+
           <Route
             path="*"
             element={

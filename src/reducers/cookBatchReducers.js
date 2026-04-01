@@ -40,6 +40,30 @@ import {
   USER_ME_REQUEST,
   USER_ME_SUCCESS,
   USER_ME_FAIL,
+
+  //
+  ACCOUNT_ME_REQUEST,
+  ACCOUNT_ME_SUCCESS,
+  ACCOUNT_ME_FAIL,
+  ACCOUNT_ME_RESET,
+
+  //
+  USER_LIST_REQUEST,
+  USER_LIST_SUCCESS,
+  USER_LIST_FAIL,
+  USER_LIST_RESET,
+
+  //
+  USER_CREATE_REQUEST,
+  USER_CREATE_SUCCESS,
+  USER_CREATE_FAIL,
+  USER_CREATE_RESET,
+
+  //
+  USER_ROLE_UPDATE_REQUEST,
+  USER_ROLE_UPDATE_SUCCESS,
+  USER_ROLE_UPDATE_FAIL,
+  USER_ROLE_UPDATE_RESET,
 } from "../constants/cookBatchConstants";
 
 // 1) LIST: GET /api/cooking/batches/
@@ -223,6 +247,114 @@ export const userMeReducer = (
 
     case USER_ME_FAIL:
       return { loading: false, user: null, error: action.payload };
+
+    default:
+      return state;
+  }
+};
+
+export const accountMeReducer = (
+  state = { loading: false, user: null },
+  action,
+) => {
+  switch (action.type) {
+    case ACCOUNT_ME_REQUEST:
+      return { ...state, loading: true, error: null };
+
+    case ACCOUNT_ME_SUCCESS:
+      return { loading: false, user: action.payload, error: null };
+
+    case ACCOUNT_ME_FAIL:
+      return { loading: false, user: null, error: action.payload };
+
+    case ACCOUNT_ME_RESET:
+      return { loading: false, user: null };
+
+    default:
+      return state;
+  }
+};
+
+export const userListReducer = (
+  state = { loading: false, users: [] },
+  action,
+) => {
+  switch (action.type) {
+    case USER_LIST_REQUEST:
+      return { ...state, loading: true, error: null };
+
+    case USER_LIST_SUCCESS:
+      return { loading: false, users: action.payload, error: null };
+
+    case USER_LIST_FAIL:
+      return { loading: false, users: [], error: action.payload };
+
+    case USER_LIST_RESET:
+      return { loading: false, users: [] };
+
+    default:
+      return state;
+  }
+};
+
+export const userCreateReducer = (
+  state = { loading: false, success: false, user: null },
+  action,
+) => {
+  switch (action.type) {
+    case USER_CREATE_REQUEST:
+      return { ...state, loading: true, error: null, success: false };
+
+    case USER_CREATE_SUCCESS:
+      return {
+        loading: false,
+        success: true,
+        user: action.payload,
+        error: null,
+      };
+
+    case USER_CREATE_FAIL:
+      return {
+        loading: false,
+        success: false,
+        user: null,
+        error: action.payload,
+      };
+
+    case USER_CREATE_RESET:
+      return { loading: false, success: false, user: null };
+
+    default:
+      return state;
+  }
+};
+
+export const userRoleUpdateReducer = (
+  state = { loading: false, success: false, user: null },
+  action,
+) => {
+  switch (action.type) {
+    case USER_ROLE_UPDATE_REQUEST:
+      return { ...state, loading: true, error: null, success: false };
+
+    case USER_ROLE_UPDATE_SUCCESS:
+      return {
+        loading: false,
+        success: true,
+        user: action.payload,
+        error: null,
+      };
+
+    case USER_ROLE_UPDATE_FAIL:
+      return {
+        loading: false,
+        success: false,
+        user: null,
+        error: action.payload,
+      };
+
+    case USER_ROLE_UPDATE_RESET:
+      return { loading: false, success: false, user: null };
 
     default:
       return state;
