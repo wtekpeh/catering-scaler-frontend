@@ -2,7 +2,11 @@ import { useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
-import { createCookBatch, listRecipes } from "../actions/cookBatchActions";
+import {
+  createCookBatch,
+  listRecipes,
+  getCurrentUser,
+} from "../actions/cookBatchActions";
 import { COOKBATCH_CREATE_RESET } from "../constants/cookBatchConstants";
 
 const PROTEIN_CHOICES = [
@@ -33,6 +37,11 @@ const CookBatchCreateScreen = () => {
   const recipeList = useSelector((state) => state.recipeList);
   const { loading: recipesLoading, error: recipesError, recipes } = recipeList;
 
+  const userMe = useSelector((state) => state.userMe);
+  const { user: currentUser } = userMe;
+
+  const canCreateBatch = currentUser?.can_create_batch_any;
+
   useEffect(() => {
     if (success && batch?.id) {
       navigate(`/cooking/batches/${batch.id}`);
@@ -42,7 +51,14 @@ const CookBatchCreateScreen = () => {
 
   useEffect(() => {
     dispatch(listRecipes());
+    dispatch(getCurrentUser());
   }, [dispatch]);
+
+  useEffect(() => {
+    if (currentUser && canCreateBatch === false) {
+      navigate("/cooking/batches");
+    }
+  }, [currentUser, canCreateBatch, navigate]);
 
   const totalProteinCount = useMemo(() => {
     return proteinRows.reduce((sum, r) => {
@@ -53,7 +69,7 @@ const CookBatchCreateScreen = () => {
 
   const hasAnyProteinSelected = useMemo(
     () => proteinRows.some((r) => (r.protein || "").trim() !== ""),
-    [proteinRows]
+    [proteinRows],
   );
 
   const canAutoFillSingleProtein = useMemo(() => {
@@ -71,7 +87,7 @@ const CookBatchCreateScreen = () => {
 
   const updateProteinRow = (idx, patch) => {
     setProteinRows((prev) =>
-      prev.map((r, i) => (i === idx ? { ...r, ...patch } : r))
+      prev.map((r, i) => (i === idx ? { ...r, ...patch } : r)),
     );
   };
 
@@ -189,7 +205,7 @@ const CookBatchCreateScreen = () => {
         n_people: N,
         options,
         notes,
-      })
+      }),
     );
   };
 
@@ -277,7 +293,7 @@ const CookBatchCreateScreen = () => {
                   <div className="protein-rows">
                     {proteinRows.map((row, idx) => {
                       const selectedCount = proteinRows.filter(
-                        (r) => (r.protein || "").trim() !== ""
+                        (r) => (r.protein || "").trim() !== "",
                       ).length;
 
                       // Split mode should activate as soon as the user adds another row
@@ -322,15 +338,15 @@ const CookBatchCreateScreen = () => {
                               disableCount
                                 ? `auto = ${nPeople}`
                                 : isSplitMode
-                                ? "e.g. 50"
-                                : "Select proteins first"
+                                  ? "e.g. 50"
+                                  : "Select proteins first"
                             }
                             title={
                               disableCount
                                 ? "Single protein auto-fills to total people"
                                 : isSplitMode
-                                ? "Enter people count for this protein"
-                                : "Select at least 2 proteins to split counts"
+                                  ? "Enter people count for this protein"
+                                  : "Select at least 2 proteins to split counts"
                             }
                           />
 
@@ -355,7 +371,7 @@ const CookBatchCreateScreen = () => {
 
                     {(() => {
                       const selectedCount = proteinRows.filter(
-                        (r) => (r.protein || "").trim() !== ""
+                        (r) => (r.protein || "").trim() !== "",
                       ).length;
                       if (selectedCount === 0) return <div>Protein: none</div>;
                       if (selectedCount === 1)

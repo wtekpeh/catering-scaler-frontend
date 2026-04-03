@@ -1,0 +1,190 @@
+.account-page {
+  padding-top: 2rem;
+  padding-bottom: 2rem;
+}
+
+.account-page-title {
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+  color: #14213d;
+}
+
+.account-card {
+  background: #ffffff;
+  border: 1px solid #e9ecef;
+  border-radius: 18px;
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.06);
+}
+
+.account-card .card-body {
+  padding: 1.25rem 1.25rem;
+}
+
+.account-table {
+  margin-bottom: 0;
+}
+
+.account-table thead th {
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: #667085;
+  background: #f8fafc;
+  border-bottom: 1px solid #e9ecef;
+  white-space: nowrap;
+}
+
+.account-table tbody td {
+  vertical-align: middle;
+  border-color: #eef2f7;
+}
+
+.account-user-name {
+  font-weight: 600;
+  color: #14213d;
+}
+
+.account-role-list {
+  margin: 0;
+  padding-left: 1rem;
+}
+
+.account-role-list li {
+  margin-bottom: 0.2rem;
+}
+
+.account-action-btn {
+  border-radius: 10px;
+  font-weight: 600;
+  padding: 0.35rem 0.85rem;
+}
+
+.account-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.28);
+  backdrop-filter: blur(2px);
+  z-index: 1050;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+
+.account-modal {
+  width: 100%;
+  max-width: 760px;
+  background: #ffffff;
+  border-radius: 22px;
+  box-shadow: 0 20px 50px rgba(15, 23, 42, 0.22);
+  overflow: hidden;
+}
+
+.account-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 1.25rem 1.5rem 1rem;
+  border-bottom: 1px solid #edf2f7;
+}
+
+.account-modal-title {
+  margin: 0;
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #14213d;
+}
+
+.account-modal-subtitle {
+  margin-top: 0.3rem;
+  font-size: 0.92rem;
+  color: #667085;
+}
+
+.account-modal-body {
+  padding: 1.5rem;
+}
+
+.account-modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  padding: 1rem 1.5rem 1.25rem;
+  border-top: 1px solid #edf2f7;
+  background: #fcfcfd;
+}
+
+.account-section-title {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #344054;
+  margin-bottom: 0.65rem;
+}
+
+.account-readonly-box {
+  background: #f8fafc;
+  border: 1px solid #e5e7eb;
+}
+
+.account-branch-box {
+  border: 1px solid #e5e7eb;
+  background: #f8fafc;
+  border-radius: 14px;
+  padding: 0.9rem 1rem;
+}
+
+.account-empty-text {
+  color: #667085;
+  font-size: 0.95rem;
+}
+
+@media (max-width: 768px) {
+  .account-page-title {
+    font-size: 1.55rem;
+  }
+
+  .account-card .card-body {
+    padding: 1rem;
+  }
+
+  .account-modal {
+    max-width: 100%;
+    border-radius: 18px;
+  }
+
+  .account-modal-header,
+  .account-modal-body,
+  .account-modal-footer {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+
+  .account-modal-footer {
+    flex-direction: column;
+  }
+
+  .account-modal-footer .btn {
+    width: 100%;
+  }
+}
+
+.account-table th:last-child,
+.account-table td:last-child {
+  width: 120px;
+  min-width: 120px;
+  text-align: center;
+}
+
+.account-table td:last-child {
+  padding-right: 1rem;
+}
+
+.account-action-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 72px;
+  border-radius: 10px;
+  font-weight: 600;
+  padding: 0.4rem 0.95rem;
+}

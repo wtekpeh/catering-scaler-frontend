@@ -17,8 +17,8 @@ import {
   userMeReducer,
   accountMeReducer,
   userListReducer,
-  userCreateReducer,
   userRoleUpdateReducer,
+  branchListReducer,
 } from "./reducers/cookBatchReducers";
 
 const reducer = combineReducers({
@@ -31,8 +31,8 @@ const reducer = combineReducers({
   userMe: userMeReducer,
   accountMe: accountMeReducer,
   userList: userListReducer,
-  userCreate: userCreateReducer,
   userRoleUpdate: userRoleUpdateReducer,
+  branchList: branchListReducer,
 });
 
 const composeEnhancer =

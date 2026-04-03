@@ -54,16 +54,16 @@ import {
   USER_LIST_RESET,
 
   //
-  USER_CREATE_REQUEST,
-  USER_CREATE_SUCCESS,
-  USER_CREATE_FAIL,
-  USER_CREATE_RESET,
-
-  //
   USER_ROLE_UPDATE_REQUEST,
   USER_ROLE_UPDATE_SUCCESS,
   USER_ROLE_UPDATE_FAIL,
   USER_ROLE_UPDATE_RESET,
+
+  //
+  BRANCH_LIST_REQUEST,
+  BRANCH_LIST_SUCCESS,
+  BRANCH_LIST_FAIL,
+  BRANCH_LIST_RESET,
 } from "../constants/cookBatchConstants";
 
 // 1) LIST: GET /api/cooking/batches/
@@ -297,38 +297,6 @@ export const userListReducer = (
   }
 };
 
-export const userCreateReducer = (
-  state = { loading: false, success: false, user: null },
-  action,
-) => {
-  switch (action.type) {
-    case USER_CREATE_REQUEST:
-      return { ...state, loading: true, error: null, success: false };
-
-    case USER_CREATE_SUCCESS:
-      return {
-        loading: false,
-        success: true,
-        user: action.payload,
-        error: null,
-      };
-
-    case USER_CREATE_FAIL:
-      return {
-        loading: false,
-        success: false,
-        user: null,
-        error: action.payload,
-      };
-
-    case USER_CREATE_RESET:
-      return { loading: false, success: false, user: null };
-
-    default:
-      return state;
-  }
-};
-
 export const userRoleUpdateReducer = (
   state = { loading: false, success: false, user: null },
   action,
@@ -355,6 +323,28 @@ export const userRoleUpdateReducer = (
 
     case USER_ROLE_UPDATE_RESET:
       return { loading: false, success: false, user: null };
+
+    default:
+      return state;
+  }
+};
+
+export const branchListReducer = (
+  state = { loading: false, branches: [] },
+  action,
+) => {
+  switch (action.type) {
+    case BRANCH_LIST_REQUEST:
+      return { ...state, loading: true, error: null };
+
+    case BRANCH_LIST_SUCCESS:
+      return { loading: false, branches: action.payload, error: null };
+
+    case BRANCH_LIST_FAIL:
+      return { loading: false, branches: [], error: action.payload };
+
+    case BRANCH_LIST_RESET:
+      return { loading: false, branches: [] };
 
     default:
       return state;

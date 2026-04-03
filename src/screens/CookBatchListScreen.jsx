@@ -16,6 +16,7 @@ const CookBatchListScreen = () => {
   const { user } = userMe;
 
   const canRecalibrate = user?.can_recalibrate;
+  const canCreateBatch = user?.can_create_batch_any;
 
   const cookBatchList = useSelector((state) => state.cookBatchList);
   const { loading, error, batches } = cookBatchList;
@@ -53,12 +54,14 @@ const CookBatchListScreen = () => {
               </button>
             )}
 
-            <button
-              type="button"
-              onClick={() => navigate("/cooking/batches/create")}
-            >
-              + Create Batch
-            </button>
+            {canCreateBatch && (
+              <button
+                type="button"
+                onClick={() => navigate("/cooking/batches/create")}
+              >
+                + Create Batch
+              </button>
+            )}
           </div>
         </div>
 
@@ -77,12 +80,14 @@ const CookBatchListScreen = () => {
                 <p style={{ marginTop: 0 }}>
                   No batches yet. Create your first prediction run.
                 </p>
-                <button
-                  type="button"
-                  onClick={() => navigate("/cooking/batches/create")}
-                >
-                  Create Batch
-                </button>
+                {canCreateBatch && (
+                  <button
+                    type="button"
+                    onClick={() => navigate("/cooking/batches/create")}
+                  >
+                    Create Batch
+                  </button>
+                )}
               </div>
             ) : (
               <>

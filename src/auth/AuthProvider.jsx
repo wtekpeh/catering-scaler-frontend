@@ -1,5 +1,7 @@
 import { createContext, useContext, useEffect, useMemo, useState } from "react";
 import keycloak from "./keycloak";
+import { useDispatch } from "react-redux";
+import { getAccountMe } from "../actions/cookBatchActions";
 
 const AuthContext = createContext({
   keycloak,
@@ -12,6 +14,7 @@ const AuthContext = createContext({
 let keycloakInitPromise = null;
 
 export default function AuthProvider({ children }) {
+  const dispatch = useDispatch();
   const [ready, setReady] = useState(false);
   const [authenticated, setAuthenticated] = useState(false);
   const [roles, setRoles] = useState([]);
@@ -34,6 +37,8 @@ export default function AuthProvider({ children }) {
         if (auth) {
           const realmRoles = keycloak.tokenParsed?.realm_access?.roles || [];
           setRoles(realmRoles);
+
+          dispatch(getAccountMe());
         } else {
           setRoles([]);
         }
@@ -47,7 +52,7 @@ export default function AuthProvider({ children }) {
       .catch((err) => {
         console.error("Keycloak init error", err);
       });
-  }, []);
+  }, [dispatch]);
 
   const value = useMemo(() => {
     const hasRole = (roleName) => roles.includes(roleName);

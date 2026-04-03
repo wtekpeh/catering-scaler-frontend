@@ -47,14 +47,14 @@ import {
   USER_LIST_FAIL,
 
   //
-  USER_CREATE_REQUEST,
-  USER_CREATE_SUCCESS,
-  USER_CREATE_FAIL,
-
-  //
   USER_ROLE_UPDATE_REQUEST,
   USER_ROLE_UPDATE_SUCCESS,
   USER_ROLE_UPDATE_FAIL,
+
+  //
+  BRANCH_LIST_REQUEST,
+  BRANCH_LIST_SUCCESS,
+  BRANCH_LIST_FAIL,
 } from "../constants/cookBatchConstants";
 
 // Base API URL from Vite env (.env: VITE_API_BASE_URL=http://127.0.0.1:8000)
@@ -290,30 +290,6 @@ export const listUsers = () => async (dispatch) => {
   }
 };
 
-export const createUser = (userData) => async (dispatch) => {
-  try {
-    dispatch({ type: USER_CREATE_REQUEST });
-
-    const { data } = await axios.post(
-      `${API_BASE_URL}/api/accounts/users/create/`,
-      userData,
-      {
-        headers: { "Content-Type": "application/json" },
-      },
-    );
-
-    dispatch({
-      type: USER_CREATE_SUCCESS,
-      payload: data,
-    });
-  } catch (error) {
-    dispatch({
-      type: USER_CREATE_FAIL,
-      payload: getErrorMessage(error),
-    });
-  }
-};
-
 export const updateUserRoles = (id, roleData) => async (dispatch) => {
   try {
     dispatch({ type: USER_ROLE_UPDATE_REQUEST });
@@ -333,6 +309,24 @@ export const updateUserRoles = (id, roleData) => async (dispatch) => {
   } catch (error) {
     dispatch({
       type: USER_ROLE_UPDATE_FAIL,
+      payload: getErrorMessage(error),
+    });
+  }
+};
+
+export const listBranches = () => async (dispatch) => {
+  try {
+    dispatch({ type: BRANCH_LIST_REQUEST });
+
+    const { data } = await axios.get(`${API_BASE_URL}/api/accounts/branches/`);
+
+    dispatch({
+      type: BRANCH_LIST_SUCCESS,
+      payload: data,
+    });
+  } catch (error) {
+    dispatch({
+      type: BRANCH_LIST_FAIL,
       payload: getErrorMessage(error),
     });
   }
