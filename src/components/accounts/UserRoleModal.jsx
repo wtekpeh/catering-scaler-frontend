@@ -26,7 +26,7 @@ const UserRoleModal = ({ show, user, onClose, onSave, loading, error }) => {
   }, [dispatch, show]);
 
   useEffect(() => {
-    if (user) {
+    if (show && user) {
       setGlobalRole(user.global_role || "none");
       setIsActive(Boolean(user.is_active));
       setFormError("");
@@ -38,7 +38,14 @@ const UserRoleModal = ({ show, user, onClose, onSave, loading, error }) => {
         })),
       );
     }
-  }, [user]);
+
+    if (!show) {
+      setFormError("");
+      setBranchRoles([]);
+      setGlobalRole("none");
+      setIsActive(true);
+    }
+  }, [show, user]);
 
   if (!show || !user) return null;
 
@@ -103,52 +110,60 @@ const UserRoleModal = ({ show, user, onClose, onSave, loading, error }) => {
             )}
             {error && <div className="alert alert-danger mb-3">{error}</div>}
 
-            <div className="row g-3 mb-4">
-              <div className="col-md-6">
-                <label className="form-label fw-semibold">Full Name</label>
-                <input
-                  type="text"
-                  className="form-control account-readonly-box"
-                  value={user.full_name || ""}
-                  disabled
-                />
-              </div>
-
-              <div className="col-md-6">
-                <label className="form-label fw-semibold">Email</label>
-                <input
-                  type="text"
-                  className="form-control account-readonly-box"
-                  value={user.email || ""}
-                  disabled
-                />
-              </div>
-
-              <div className="col-md-6">
-                <label className="form-label fw-semibold">Global Role</label>
-                <select
-                  className="form-select"
-                  value={globalRole}
-                  onChange={(e) => setGlobalRole(e.target.value)}
-                >
-                  <option value="none">None</option>
-                  <option value="boss">Boss</option>
-                  <option value="managing_director">Managing Director</option>
-                </select>
-              </div>
-
-              <div className="col-md-6 d-flex align-items-end">
-                <div className="form-check mb-2">
+            <div className="account-form-section">
+              <div className="account-form-grid">
+                <div className="account-field">
+                  <label className="form-label fw-semibold">Full Name</label>
                   <input
-                    className="form-check-input"
-                    type="checkbox"
-                    id="edit_is_active"
-                    checked={isActive}
-                    onChange={(e) => setIsActive(e.target.checked)}
+                    type="text"
+                    className="form-control account-readonly-box"
+                    value={user.full_name || ""}
+                    disabled
                   />
-                  <label className="form-check-label" htmlFor="edit_is_active">
-                    Active User
-                  </label>
+                </div>
+
+                <div className="account-field">
+                  <label className="form-label fw-semibold">Email</label>
+                  <input
+                    type="text"
+                    className="form-control account-readonly-box"
+                    value={user.email || ""}
+                    disabled
+                  />
+                </div>
+
+                <div className="account-field">
+                  <label className="form-label fw-semibold">Global Role</label>
+                  <select
+                    className="form-select"
+                    value={globalRole}
+                    onChange={(e) => setGlobalRole(e.target.value)}
+                  >
+                    <option value="none">None</option>
+                    <option value="boss">Boss</option>
+                    <option value="managing_director">Managing Director</option>
+                  </select>
+                </div>
+
+                <div className="account-field account-field--checkbox">
+                  <label className="form-label fw-semibold">User Status</label>
+                  <div className="account-checkbox-box">
+                    <div className="form-check m-0">
+                      <input
+                        className="form-check-input"
+                        type="checkbox"
+                        id="edit_is_active"
+                        checked={isActive}
+                        onChange={(e) => setIsActive(e.target.checked)}
+                      />
+                      <label
+                        className="form-check-label"
+                        htmlFor="edit_is_active"
+                      >
+                        Active User
+                      </label>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -158,11 +173,13 @@ const UserRoleModal = ({ show, user, onClose, onSave, loading, error }) => {
             ) : errorBranches ? (
               <div className="alert alert-danger">{errorBranches}</div>
             ) : (
-              <BranchRoleEditor
-                branchRoles={branchRoles}
-                branches={branches || []}
-                onChange={setBranchRoles}
-              />
+              <div className="account-role-section">
+                <BranchRoleEditor
+                  branchRoles={branchRoles}
+                  branches={branches || []}
+                  onChange={setBranchRoles}
+                />
+              </div>
             )}
           </div>
 

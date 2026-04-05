@@ -19,8 +19,11 @@ const CookBatchDetailScreen = () => {
   const cookBatchDetail = useSelector((state) => state.cookBatchDetail);
   const { loading, error, batch } = cookBatchDetail;
 
+  const userMe = useSelector((state) => state.userMe);
+  const { user } = userMe;
+
   const cookBatchActualsUpdate = useSelector(
-    (state) => state.cookBatchActualsUpdate
+    (state) => state.cookBatchActualsUpdate,
   );
   const {
     loading: updating,
@@ -64,6 +67,9 @@ const CookBatchDetailScreen = () => {
   }, [updateSuccess, updatedBatch, dispatch, batchId]);
 
   const isFinal = (batch?.status || "").toLowerCase() === "final";
+  const canCreateBatch = user?.can_create_batch_any;
+  const canUpdateBatch = user?.can_update_batch;
+
   const items = batch?.items || [];
 
   // Build PATCH payload using grams (backend expects actual_g)
@@ -156,6 +162,11 @@ const CookBatchDetailScreen = () => {
   const submitActuals = (finalize = false) => {
     if (!batchId) return;
 
+    if (!canUpdateBatch) {
+      alert("You do not have permission to update this batch.");
+      return;
+    }
+
     if (isFinal) {
       alert("This batch is already final.");
       return;
@@ -172,7 +183,7 @@ const CookBatchDetailScreen = () => {
       updateCookBatchActuals(batchId, {
         items: itemsToSend,
         finalize,
-      })
+      }),
     );
   };
 
@@ -181,7 +192,7 @@ const CookBatchDetailScreen = () => {
       <div className="container">
         {/* Header */}
         <div className="page-header">
-          <div className="actions">
+          <div className="actions detail-header-actions">
             <button
               className="btn ghost"
               type="button"
@@ -190,13 +201,15 @@ const CookBatchDetailScreen = () => {
               ← Back to List
             </button>
 
-            <button
-              className="btn ghost"
-              type="button"
-              onClick={() => navigate("/cooking/batches/create")}
-            >
-              + New Batch
-            </button>
+            {canCreateBatch && (
+              <button
+                className="btn ghost"
+                type="button"
+                onClick={() => navigate("/cooking/batches/create")}
+              >
+                + New Batch
+              </button>
+            )}
           </div>
 
           <h2 className="page-title">
@@ -235,7 +248,7 @@ const CookBatchDetailScreen = () => {
             {updateError && <p style={{ color: "crimson" }}>{updateError}</p>}
 
             {/* Actions */}
-            <div className="actions" style={{ marginBottom: 12 }}>
+            <div className="actions detail-actions">
               <button
                 className="btn"
                 type="button"
@@ -244,28 +257,32 @@ const CookBatchDetailScreen = () => {
                 Refresh
               </button>
 
-              <button
-                className="btn primary"
-                type="button"
-                disabled={isFinal || updating}
-                onClick={() => submitActuals(false)}
-              >
-                Save Actuals
-              </button>
+              {canUpdateBatch && (
+                <>
+                  <button
+                    className="btn primary"
+                    type="button"
+                    disabled={isFinal || updating}
+                    onClick={() => submitActuals(false)}
+                  >
+                    Save Actuals
+                  </button>
 
-              <button
-                className="btn"
-                type="button"
-                disabled={isFinal || updating}
-                onClick={() => {
-                  const ok = window.confirm(
-                    "Finalize this batch? You won’t be able to edit actuals after."
-                  );
-                  if (ok) submitActuals(true);
-                }}
-              >
-                Finalize Batch
-              </button>
+                  <button
+                    className="btn"
+                    type="button"
+                    disabled={isFinal || updating}
+                    onClick={() => {
+                      const ok = window.confirm(
+                        "Finalize this batch? You won’t be able to edit actuals after.",
+                      );
+                      if (ok) submitActuals(true);
+                    }}
+                  >
+                    Finalize Batch
+                  </button>
+                </>
+              )}
             </div>
 
             {isFinal && (
@@ -274,96 +291,181 @@ const CookBatchDetailScreen = () => {
               </p>
             )}
 
-            {/* Items table */}
-            <div className="table-wrap">
-              <table className="table" style={{ minWidth: 1050 }}>
-                <thead>
-                  <tr>
-                    <th>Ingredient</th>
-                    <th>Final (kg)</th>
-                    <th>Pred (kg)</th>
-                    <th>Clamped?</th>
-                    <th>Actual (kg)</th>
-                    <th>Actual (g)</th>
-                    <th>Notes</th>
-                  </tr>
-                </thead>
+            {!isFinal && !canUpdateBatch && (
+              <p className="helper">You have view-only access to this batch.</p>
+            )}
 
-                <tbody>
-                  {items.map((it) => {
-                    const edit = actualEdits[it.id] || {
-                      actual_kg: "",
-                      notes: "",
-                    };
+            {/* DESKTOP TABLE */}
+            <div className="desktop-only">
+              <div className="table-wrap">
+                <table className="table table--detail">
+                  <thead>
+                    <tr>
+                      <th>Ingredient</th>
+                      <th>Final (kg)</th>
+                      <th>Pred (kg)</th>
+                      <th>Clamped?</th>
+                      <th>Actual (kg)</th>
+                      <th>Actual (g)</th>
+                      <th>Notes</th>
+                    </tr>
+                  </thead>
 
-                    const rawKg = (edit.actual_kg || "").trim();
-                    const actualG =
-                      rawKg !== "" && Number.isFinite(Number(rawKg))
-                        ? String(Math.round(Number(rawKg) * 1000))
-                        : "";
+                  <tbody>
+                    {items.map((it) => {
+                      const edit = actualEdits[it.id] || {
+                        actual_kg: "",
+                        notes: "",
+                      };
 
-                    return (
-                      <tr key={it.id}>
-                        <td>
-                          <div style={{ fontWeight: 600 }}>{it.ingredient}</div>
-                          <div className="cell-sub">{it.group}</div>
-                        </td>
+                      const rawKg = (edit.actual_kg || "").trim();
+                      const actualG =
+                        rawKg !== "" && Number.isFinite(Number(rawKg))
+                          ? String(Math.round(Number(rawKg) * 1000))
+                          : "";
 
-                        <td>{formatNum(it.final_kg, 3)}</td>
-                        <td>{formatNum(it.pred_kg, 3)}</td>
+                      return (
+                        <tr key={it.id}>
+                          <td>
+                            <div className="cell-title">{it.ingredient}</div>
+                            <div className="cell-sub">{it.group}</div>
+                          </td>
 
-                        <td>
-                          {it.was_clamped ? (
-                            <span style={{ color: "#b45309" }}>Yes</span>
-                          ) : (
-                            <span style={{ color: "#065f46" }}>No</span>
-                          )}
-                        </td>
+                          <td>{formatNum(it.final_kg, 3)}</td>
+                          <td>{formatNum(it.pred_kg, 3)}</td>
 
-                        {/* Editable kg */}
-                        <td>
+                          <td>
+                            {it.was_clamped ? (
+                              <span className="clamp-badge yes">Yes</span>
+                            ) : (
+                              <span className="clamp-badge no">No</span>
+                            )}
+                          </td>
+
+                          <td>
+                            <input
+                              className="input"
+                              type="number"
+                              min="0"
+                              step="0.001"
+                              value={edit.actual_kg}
+                              disabled={!canUpdateBatch || isFinal || updating}
+                              onChange={(e) =>
+                                onChangeActualKg(it.id, e.target.value)
+                              }
+                            />
+                          </td>
+
+                          <td>
+                            <input
+                              className="input"
+                              type="text"
+                              value={actualG}
+                              disabled
+                            />
+                          </td>
+
+                          <td>
+                            <input
+                              className="input"
+                              type="text"
+                              value={edit.notes}
+                              disabled={!canUpdateBatch || isFinal || updating}
+                              onChange={(e) =>
+                                onChangeNotes(it.id, e.target.value)
+                              }
+                            />
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            {/* MOBILE CARDS */}
+            <div className="mobile-only">
+              <div className="batch-cards">
+                {items.map((it) => {
+                  const edit = actualEdits[it.id] || {
+                    actual_kg: "",
+                    notes: "",
+                  };
+
+                  const rawKg = (edit.actual_kg || "").trim();
+                  const actualG =
+                    rawKg !== "" && Number.isFinite(Number(rawKg))
+                      ? String(Math.round(Number(rawKg) * 1000))
+                      : "";
+
+                  return (
+                    <div key={it.id} className="batch-card">
+                      <div className="batch-card__top">
+                        <div className="batch-card__title">{it.ingredient}</div>
+
+                        {it.was_clamped ? (
+                          <span className="clamp-badge yes">Clamped</span>
+                        ) : (
+                          <span className="clamp-badge no">OK</span>
+                        )}
+                      </div>
+
+                      <div className="batch-card__meta">
+                        <div>
+                          <b>Group:</b> {it.group}
+                        </div>
+                        <div>
+                          <b>Final:</b> {formatNum(it.final_kg, 3)} kg
+                        </div>
+                        <div>
+                          <b>Pred:</b> {formatNum(it.pred_kg, 3)} kg
+                        </div>
+                      </div>
+
+                      <div className="stack-14">
+                        <div>
+                          <label className="label">Actual (kg)</label>
                           <input
                             className="input"
                             type="number"
                             min="0"
                             step="0.001"
                             value={edit.actual_kg}
-                            disabled={isFinal || updating}
+                            disabled={!canUpdateBatch || isFinal || updating}
                             onChange={(e) =>
                               onChangeActualKg(it.id, e.target.value)
                             }
-                            placeholder="e.g. 12.500"
                           />
-                        </td>
+                        </div>
 
-                        {/* Read-only grams */}
-                        <td>
+                        <div>
+                          <label className="label">Actual (g)</label>
                           <input
                             className="input"
                             type="text"
                             value={actualG}
                             disabled
-                            placeholder="-"
                           />
-                        </td>
+                        </div>
 
-                        <td>
+                        <div>
+                          <label className="label">Notes</label>
                           <input
                             className="input"
                             type="text"
                             value={edit.notes}
-                            disabled={isFinal || updating}
+                            disabled={!canUpdateBatch || isFinal || updating}
                             onChange={(e) =>
                               onChangeNotes(it.id, e.target.value)
                             }
-                            placeholder="optional"
                           />
-                        </td>
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
             </div>
 
             <div style={{ marginTop: 10, fontSize: 12, opacity: 0.75 }}>
@@ -400,8 +502,8 @@ const StatusPill = ({ status }) => {
     s === "final"
       ? "1px solid #a7e2bf"
       : s === "draft"
-      ? "1px solid #c7d2fe"
-      : "1px solid #ddd";
+        ? "1px solid #c7d2fe"
+        : "1px solid #ddd";
 
   const color = s === "final" ? "#0f7a3d" : s === "draft" ? "#3730a3" : "#333";
 

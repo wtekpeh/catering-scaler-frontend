@@ -9,7 +9,7 @@ const UserTableRow = ({ user, onEdit }) => {
       <td>{user.is_active ? "Yes" : "No"}</td>
       <td>
         {user.branch_roles && user.branch_roles.length > 0 ? (
-          <ul className="account-role-list">
+          <ul className="account-role-list" style={{ marginBottom: 0 }}>
             {user.branch_roles.map((branchRole) => (
               <li key={branchRole.id}>
                 {branchRole.branch_name} — {branchRole.role}
@@ -24,9 +24,10 @@ const UserTableRow = ({ user, onEdit }) => {
         <button
           type="button"
           className="btn btn-sm btn-outline-primary account-action-btn"
+          style={{ minWidth: 90 }}
           onClick={() => onEdit(user)}
         >
-          Edit
+          Edit Roles
         </button>
       </td>
     </tr>

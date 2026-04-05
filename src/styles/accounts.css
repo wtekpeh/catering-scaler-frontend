@@ -1,6 +1,8 @@
 .account-page {
   padding-top: 2rem;
   padding-bottom: 2rem;
+  max-width: 1280px;
+  margin: 0 auto;
 }
 
 .account-page-title {
@@ -19,10 +21,12 @@
 
 .account-card .card-body {
   padding: 1.25rem 1.25rem;
+  overflow-x: auto;
 }
 
 .account-table {
   margin-bottom: 0;
+  width: 100%;
 }
 
 .account-table thead th {
@@ -66,9 +70,10 @@
   backdrop-filter: blur(2px);
   z-index: 1050;
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: center;
   padding: 1rem;
+  overflow-y: auto;
 }
 
 .account-modal {
@@ -77,7 +82,8 @@
   background: #ffffff;
   border-radius: 22px;
   box-shadow: 0 20px 50px rgba(15, 23, 42, 0.22);
-  overflow: hidden;
+  overflow: visible;
+  margin: auto 0;
 }
 
 .account-modal-header {
@@ -147,9 +153,15 @@
     padding: 1rem;
   }
 
+  .account-modal-overlay {
+    align-items: flex-start;
+    padding: 0.5rem;
+  }
+
   .account-modal {
     max-width: 100%;
     border-radius: 18px;
+    margin: 0;
   }
 
   .account-modal-header,
@@ -188,3 +200,224 @@
   font-weight: 600;
   padding: 0.4rem 0.95rem;
 }
+
+/* ===============================
+   Responsive Visibility Helpers
+================================= */
+.desktop-only {
+  display: block;
+}
+
+.mobile-only {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .desktop-only {
+    display: none;
+  }
+
+  .mobile-only {
+    display: block;
+  }
+}
+
+
+/* ===============================
+   Mobile User Cards
+================================= */
+.user-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+.user-card {
+  border: 1px solid #e5e7eb;
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 0.9rem 1rem;
+  box-shadow: 0 6px 18px rgba(15, 23, 42, 0.05);
+}
+
+.user-card__top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.45rem;
+}
+
+.user-card__name {
+  font-weight: 700;
+  color: #14213d;
+  font-size: 0.98rem;
+}
+
+.user-card__role {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #667085;
+  text-transform: capitalize;
+}
+
+.user-card__meta {
+  font-size: 0.9rem;
+  color: #344054;
+  margin-bottom: 0.5rem;
+}
+
+.user-card__meta div {
+  margin-bottom: 0.2rem;
+}
+
+.user-card__branches {
+  font-size: 0.88rem;
+  margin-bottom: 0.6rem;
+}
+
+.user-card__branches ul {
+  padding-left: 1rem;
+  margin: 0.2rem 0 0;
+}
+
+.user-card__branches li {
+  margin-bottom: 0.2rem;
+}
+
+.user-card__actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.user-card__actions button {
+  width: 100%;
+  border-radius: 10px;
+  font-weight: 600;
+  padding: 0.45rem 0.9rem;
+}
+
+.table-responsive {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.account-card {
+  overflow: hidden;
+}
+
+/* ===============================
+   Branch Role Editor
+================================= */
+
+.branch-role-row {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.branch-role-fields {
+  display: grid;
+  grid-template-columns: 1fr 1fr 120px;
+  gap: 0.75rem;
+  align-items: end;
+}
+
+.branch-role-field {
+  display: flex;
+  flex-direction: column;
+}
+
+.branch-role-active {
+  justify-content: flex-end;
+}
+
+.branch-role-remove {
+  display: flex;
+  justify-content: flex-end;
+}
+
+/* MOBILE */
+@media (max-width: 768px) {
+  .branch-role-fields {
+    grid-template-columns: 1fr;
+  }
+
+  .branch-role-remove {
+    justify-content: stretch;
+  }
+
+  .branch-role-remove button {
+    width: 100%;
+  }
+}
+
+/* ===============================
+   User Role Modal Form Layout
+================================= */
+
+.account-form-section {
+  background: #f8fafc;
+  border: 1px solid #e5e7eb;
+  border-radius: 16px;
+  padding: 1rem;
+  margin-bottom: 1rem;
+}
+
+.account-form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  align-items: end;
+}
+
+.account-field {
+  display: flex;
+  flex-direction: column;
+}
+
+.account-field .form-label {
+  margin-bottom: 0.45rem;
+  color: #344054;
+}
+
+.account-field--checkbox {
+  align-self: stretch;
+}
+
+.account-checkbox-box {
+  min-height: 42px;
+  display: flex;
+  align-items: center;
+  padding: 0.65rem 0.85rem;
+  border: 1px solid #d0d5dd;
+  border-radius: 12px;
+  background: #ffffff;
+}
+
+.account-role-section {
+  margin-top: 0.5rem;
+}
+
+.account-readonly-box,
+.account-modal .form-select,
+.account-modal .form-control {
+  border-radius: 12px;
+}
+
+.account-readonly-box {
+  background: #f9fafb;
+  color: #475467;
+}
+
+/* MOBILE */
+@media (max-width: 768px) {
+  .account-form-grid {
+    grid-template-columns: 1fr;
+    gap: 0.85rem;
+  }
+
+  .account-form-section {
+    padding: 0.9rem;
+  }
+}
+

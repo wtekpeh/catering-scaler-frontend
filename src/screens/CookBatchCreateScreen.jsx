@@ -164,6 +164,11 @@ const CookBatchCreateScreen = () => {
   const submitHandler = (e) => {
     e.preventDefault();
 
+    if (!canCreateBatch) {
+      alert("You do not have permission to create a batch.");
+      return;
+    }
+
     if (!recipeId) {
       alert("Please enter/select a recipe_id.");
       return;
@@ -234,6 +239,11 @@ const CookBatchCreateScreen = () => {
 
         {loading && <p>Creating batch...</p>}
         {error && <p className="text-danger">{error}</p>}
+        {currentUser && !canCreateBatch && (
+          <p className="helper">
+            You do not have permission to create batches.
+          </p>
+        )}
 
         <div className="card pad stack-14">
           <form onSubmit={submitHandler}>
@@ -405,7 +415,11 @@ const CookBatchCreateScreen = () => {
             </div>
 
             <div className="actions stack-14">
-              <button className="btn primary" type="submit" disabled={loading}>
+              <button
+                className="btn primary"
+                type="submit"
+                disabled={loading || !canCreateBatch}
+              >
                 {loading ? "Creating…" : "Create Batch"}
               </button>
 
@@ -413,7 +427,7 @@ const CookBatchCreateScreen = () => {
                 className="btn"
                 type="button"
                 onClick={clearForm}
-                disabled={loading}
+                disabled={loading || !canCreateBatch}
               >
                 Clear
               </button>

@@ -127,6 +127,13 @@
   margin-bottom: 12px;
 }
 
+.detail-header-actions {
+  margin-bottom: 0;
+}
+.detail-header-actions {
+  margin-bottom: 0;
+}
+
 .table--detail {
   min-width: 1050px;
 }
@@ -161,4 +168,20 @@
 /* Footer note under table */
 .detail-footnote {
   margin-top: 10px;
+}
+
+
+@media (max-width: 640px) {
+  .detail-header-actions,
+  .detail-actions {
+    display: grid;
+    grid-template-columns: 1fr;
+    width: 100%;
+  }
+
+  .detail-header-actions .btn,
+  .detail-actions .btn {
+    width: 100%;
+    justify-content: center;
+  }
 }
