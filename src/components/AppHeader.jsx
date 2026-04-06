@@ -15,6 +15,11 @@ function AppHeader() {
     currentUser?.global_role === "boss" ||
     currentUser?.global_role === "managing_director";
 
+  const isBranchManager =
+    currentUser?.branch_roles?.some(
+      (role) => role.role === "branch_manager" && role.is_active,
+    ) || false;
+
   return (
     <header className="app-header">
       <div className="app-header__inner">
@@ -41,6 +46,16 @@ function AppHeader() {
               onClick={() => navigate("/admin/users")}
             >
               Admin
+            </button>
+          )}
+
+          {!isAdminUser && isBranchManager && (
+            <button
+              type="button"
+              className="app-header__logout"
+              onClick={() => navigate("/branch/staff")}
+            >
+              Staff
             </button>
           )}
 

@@ -37,6 +37,7 @@ function AppLayout() {
 
           {/* Admin Ui */}
           <Route path="/admin/users" element={<AdminUserScreen />} />
+          <Route path="/branch/staff" element={<AdminUserScreen />} />
 
           <Route
             path="*"

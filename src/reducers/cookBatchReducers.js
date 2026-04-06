@@ -64,6 +64,24 @@ import {
   BRANCH_LIST_SUCCESS,
   BRANCH_LIST_FAIL,
   BRANCH_LIST_RESET,
+
+  //
+  BRANCH_MANAGER_STAFF_LIST_REQUEST,
+  BRANCH_MANAGER_STAFF_LIST_SUCCESS,
+  BRANCH_MANAGER_STAFF_LIST_FAIL,
+  BRANCH_MANAGER_STAFF_LIST_RESET,
+
+  //
+  BRANCH_MANAGER_ASSIGNMENT_DELETE_REQUEST,
+  BRANCH_MANAGER_ASSIGNMENT_DELETE_SUCCESS,
+  BRANCH_MANAGER_ASSIGNMENT_DELETE_FAIL,
+  BRANCH_MANAGER_ASSIGNMENT_DELETE_RESET,
+
+  //
+  BRANCH_MANAGER_BRANCH_LIST_REQUEST,
+  BRANCH_MANAGER_BRANCH_LIST_SUCCESS,
+  BRANCH_MANAGER_BRANCH_LIST_FAIL,
+  BRANCH_MANAGER_BRANCH_LIST_RESET,
 } from "../constants/cookBatchConstants";
 
 // 1) LIST: GET /api/cooking/batches/
@@ -344,6 +362,72 @@ export const branchListReducer = (
       return { loading: false, branches: [], error: action.payload };
 
     case BRANCH_LIST_RESET:
+      return { loading: false, branches: [] };
+
+    default:
+      return state;
+  }
+};
+
+export const branchManagerStaffListReducer = (
+  state = { loading: false, staff: [] },
+  action,
+) => {
+  switch (action.type) {
+    case BRANCH_MANAGER_STAFF_LIST_REQUEST:
+      return { ...state, loading: true, error: null };
+
+    case BRANCH_MANAGER_STAFF_LIST_SUCCESS:
+      return { loading: false, staff: action.payload, error: null };
+
+    case BRANCH_MANAGER_STAFF_LIST_FAIL:
+      return { loading: false, staff: [], error: action.payload };
+
+    case BRANCH_MANAGER_STAFF_LIST_RESET:
+      return { loading: false, staff: [] };
+
+    default:
+      return state;
+  }
+};
+
+export const branchManagerAssignmentDeleteReducer = (
+  state = { loading: false, success: false },
+  action,
+) => {
+  switch (action.type) {
+    case BRANCH_MANAGER_ASSIGNMENT_DELETE_REQUEST:
+      return { ...state, loading: true, error: null, success: false };
+
+    case BRANCH_MANAGER_ASSIGNMENT_DELETE_SUCCESS:
+      return { loading: false, success: true, error: null };
+
+    case BRANCH_MANAGER_ASSIGNMENT_DELETE_FAIL:
+      return { loading: false, success: false, error: action.payload };
+
+    case BRANCH_MANAGER_ASSIGNMENT_DELETE_RESET:
+      return { loading: false, success: false };
+
+    default:
+      return state;
+  }
+};
+
+export const branchManagerBranchListReducer = (
+  state = { loading: false, branches: [] },
+  action,
+) => {
+  switch (action.type) {
+    case BRANCH_MANAGER_BRANCH_LIST_REQUEST:
+      return { ...state, loading: true, error: null };
+
+    case BRANCH_MANAGER_BRANCH_LIST_SUCCESS:
+      return { loading: false, branches: action.payload, error: null };
+
+    case BRANCH_MANAGER_BRANCH_LIST_FAIL:
+      return { loading: false, branches: [], error: action.payload };
+
+    case BRANCH_MANAGER_BRANCH_LIST_RESET:
       return { loading: false, branches: [] };
 
     default:

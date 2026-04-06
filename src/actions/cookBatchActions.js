@@ -55,6 +55,21 @@ import {
   BRANCH_LIST_REQUEST,
   BRANCH_LIST_SUCCESS,
   BRANCH_LIST_FAIL,
+
+  //
+  BRANCH_MANAGER_STAFF_LIST_REQUEST,
+  BRANCH_MANAGER_STAFF_LIST_SUCCESS,
+  BRANCH_MANAGER_STAFF_LIST_FAIL,
+
+  //
+  BRANCH_MANAGER_ASSIGNMENT_DELETE_REQUEST,
+  BRANCH_MANAGER_ASSIGNMENT_DELETE_SUCCESS,
+  BRANCH_MANAGER_ASSIGNMENT_DELETE_FAIL,
+
+  //
+  BRANCH_MANAGER_BRANCH_LIST_REQUEST,
+  BRANCH_MANAGER_BRANCH_LIST_SUCCESS,
+  BRANCH_MANAGER_BRANCH_LIST_FAIL,
 } from "../constants/cookBatchConstants";
 
 // Base API URL from Vite env (.env: VITE_API_BASE_URL=http://127.0.0.1:8000)
@@ -327,6 +342,79 @@ export const listBranches = () => async (dispatch) => {
   } catch (error) {
     dispatch({
       type: BRANCH_LIST_FAIL,
+      payload: getErrorMessage(error),
+    });
+  }
+};
+
+export const listBranchManagerStaff =
+  ({ search = "", branch = "", role = "" } = {}) =>
+  async (dispatch) => {
+    try {
+      dispatch({ type: BRANCH_MANAGER_STAFF_LIST_REQUEST });
+
+      let url = `${API_BASE_URL}/api/accounts/branch-manager/staff/`;
+
+      const params = new URLSearchParams();
+
+      if (search) params.append("search", search);
+      if (branch) params.append("branch", branch);
+      if (role) params.append("role", role);
+
+      const queryString = params.toString();
+      if (queryString) {
+        url += `?${queryString}`;
+      }
+
+      const { data } = await axios.get(url);
+
+      dispatch({
+        type: BRANCH_MANAGER_STAFF_LIST_SUCCESS,
+        payload: data,
+      });
+    } catch (error) {
+      dispatch({
+        type: BRANCH_MANAGER_STAFF_LIST_FAIL,
+        payload: getErrorMessage(error),
+      });
+    }
+  };
+
+export const deleteBranchManagerAssignment =
+  (assignmentId) => async (dispatch) => {
+    try {
+      dispatch({ type: BRANCH_MANAGER_ASSIGNMENT_DELETE_REQUEST });
+
+      await axios.delete(
+        `${API_BASE_URL}/api/accounts/branch-manager/branch-roles/${assignmentId}/delete/`,
+      );
+
+      dispatch({
+        type: BRANCH_MANAGER_ASSIGNMENT_DELETE_SUCCESS,
+      });
+    } catch (error) {
+      dispatch({
+        type: BRANCH_MANAGER_ASSIGNMENT_DELETE_FAIL,
+        payload: getErrorMessage(error),
+      });
+    }
+  };
+
+export const listBranchManagerBranches = () => async (dispatch) => {
+  try {
+    dispatch({ type: BRANCH_MANAGER_BRANCH_LIST_REQUEST });
+
+    const { data } = await axios.get(
+      `${API_BASE_URL}/api/accounts/branch-manager/branches/`,
+    );
+
+    dispatch({
+      type: BRANCH_MANAGER_BRANCH_LIST_SUCCESS,
+      payload: data,
+    });
+  } catch (error) {
+    dispatch({
+      type: BRANCH_MANAGER_BRANCH_LIST_FAIL,
       payload: getErrorMessage(error),
     });
   }
