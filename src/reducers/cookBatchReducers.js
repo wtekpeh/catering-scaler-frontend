@@ -82,6 +82,24 @@ import {
   BRANCH_MANAGER_BRANCH_LIST_SUCCESS,
   BRANCH_MANAGER_BRANCH_LIST_FAIL,
   BRANCH_MANAGER_BRANCH_LIST_RESET,
+
+  //
+  BRANCH_MANAGER_ASSIGNMENT_UPDATE_REQUEST,
+  BRANCH_MANAGER_ASSIGNMENT_UPDATE_SUCCESS,
+  BRANCH_MANAGER_ASSIGNMENT_UPDATE_FAIL,
+  BRANCH_MANAGER_ASSIGNMENT_UPDATE_RESET,
+
+  //
+  BRANCH_MANAGER_USER_SEARCH_REQUEST,
+  BRANCH_MANAGER_USER_SEARCH_SUCCESS,
+  BRANCH_MANAGER_USER_SEARCH_FAIL,
+  BRANCH_MANAGER_USER_SEARCH_RESET,
+
+  //
+  BRANCH_MANAGER_ASSIGNMENT_CREATE_REQUEST,
+  BRANCH_MANAGER_ASSIGNMENT_CREATE_SUCCESS,
+  BRANCH_MANAGER_ASSIGNMENT_CREATE_FAIL,
+  BRANCH_MANAGER_ASSIGNMENT_CREATE_RESET,
 } from "../constants/cookBatchConstants";
 
 // 1) LIST: GET /api/cooking/batches/
@@ -294,7 +312,13 @@ export const accountMeReducer = (
 };
 
 export const userListReducer = (
-  state = { loading: false, users: [] },
+  state = {
+    loading: false,
+    users: [],
+    count: 0,
+    next: null,
+    previous: null,
+  },
   action,
 ) => {
   switch (action.type) {
@@ -302,13 +326,33 @@ export const userListReducer = (
       return { ...state, loading: true, error: null };
 
     case USER_LIST_SUCCESS:
-      return { loading: false, users: action.payload, error: null };
+      return {
+        loading: false,
+        users: action.payload.results || [],
+        count: action.payload.count || 0,
+        next: action.payload.next || null,
+        previous: action.payload.previous || null,
+        error: null,
+      };
 
     case USER_LIST_FAIL:
-      return { loading: false, users: [], error: action.payload };
+      return {
+        loading: false,
+        users: [],
+        count: 0,
+        next: null,
+        previous: null,
+        error: action.payload,
+      };
 
     case USER_LIST_RESET:
-      return { loading: false, users: [] };
+      return {
+        loading: false,
+        users: [],
+        count: 0,
+        next: null,
+        previous: null,
+      };
 
     default:
       return state;
@@ -370,7 +414,13 @@ export const branchListReducer = (
 };
 
 export const branchManagerStaffListReducer = (
-  state = { loading: false, staff: [] },
+  state = {
+    loading: false,
+    staff: [],
+    count: 0,
+    next: null,
+    previous: null,
+  },
   action,
 ) => {
   switch (action.type) {
@@ -378,13 +428,33 @@ export const branchManagerStaffListReducer = (
       return { ...state, loading: true, error: null };
 
     case BRANCH_MANAGER_STAFF_LIST_SUCCESS:
-      return { loading: false, staff: action.payload, error: null };
+      return {
+        loading: false,
+        staff: action.payload.results || [],
+        count: action.payload.count || 0,
+        next: action.payload.next || null,
+        previous: action.payload.previous || null,
+        error: null,
+      };
 
     case BRANCH_MANAGER_STAFF_LIST_FAIL:
-      return { loading: false, staff: [], error: action.payload };
+      return {
+        loading: false,
+        staff: [],
+        count: 0,
+        next: null,
+        previous: null,
+        error: action.payload,
+      };
 
     case BRANCH_MANAGER_STAFF_LIST_RESET:
-      return { loading: false, staff: [] };
+      return {
+        loading: false,
+        staff: [],
+        count: 0,
+        next: null,
+        previous: null,
+      };
 
     default:
       return state;
@@ -429,6 +499,92 @@ export const branchManagerBranchListReducer = (
 
     case BRANCH_MANAGER_BRANCH_LIST_RESET:
       return { loading: false, branches: [] };
+
+    default:
+      return state;
+  }
+};
+
+export const branchManagerAssignmentUpdateReducer = (
+  state = { loading: false, success: false, assignment: null },
+  action,
+) => {
+  switch (action.type) {
+    case BRANCH_MANAGER_ASSIGNMENT_UPDATE_REQUEST:
+      return { ...state, loading: true, error: null, success: false };
+
+    case BRANCH_MANAGER_ASSIGNMENT_UPDATE_SUCCESS:
+      return {
+        loading: false,
+        success: true,
+        assignment: action.payload,
+        error: null,
+      };
+
+    case BRANCH_MANAGER_ASSIGNMENT_UPDATE_FAIL:
+      return {
+        loading: false,
+        success: false,
+        assignment: null,
+        error: action.payload,
+      };
+
+    case BRANCH_MANAGER_ASSIGNMENT_UPDATE_RESET:
+      return { loading: false, success: false, assignment: null };
+
+    default:
+      return state;
+  }
+};
+
+export const branchManagerUserSearchReducer = (
+  state = { loading: false, users: [] },
+  action,
+) => {
+  switch (action.type) {
+    case BRANCH_MANAGER_USER_SEARCH_REQUEST:
+      return { ...state, loading: true, error: null };
+
+    case BRANCH_MANAGER_USER_SEARCH_SUCCESS:
+      return { loading: false, users: action.payload, error: null };
+
+    case BRANCH_MANAGER_USER_SEARCH_FAIL:
+      return { loading: false, users: [], error: action.payload };
+
+    case BRANCH_MANAGER_USER_SEARCH_RESET:
+      return { loading: false, users: [] };
+
+    default:
+      return state;
+  }
+};
+
+export const branchManagerAssignmentCreateReducer = (
+  state = { loading: false, success: false, assignment: null },
+  action,
+) => {
+  switch (action.type) {
+    case BRANCH_MANAGER_ASSIGNMENT_CREATE_REQUEST:
+      return { ...state, loading: true, error: null, success: false };
+
+    case BRANCH_MANAGER_ASSIGNMENT_CREATE_SUCCESS:
+      return {
+        loading: false,
+        success: true,
+        assignment: action.payload,
+        error: null,
+      };
+
+    case BRANCH_MANAGER_ASSIGNMENT_CREATE_FAIL:
+      return {
+        loading: false,
+        success: false,
+        assignment: null,
+        error: action.payload,
+      };
+
+    case BRANCH_MANAGER_ASSIGNMENT_CREATE_RESET:
+      return { loading: false, success: false, assignment: null };
 
     default:
       return state;

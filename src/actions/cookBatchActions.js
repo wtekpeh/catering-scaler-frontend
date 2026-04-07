@@ -70,6 +70,21 @@ import {
   BRANCH_MANAGER_BRANCH_LIST_REQUEST,
   BRANCH_MANAGER_BRANCH_LIST_SUCCESS,
   BRANCH_MANAGER_BRANCH_LIST_FAIL,
+
+  //
+  BRANCH_MANAGER_ASSIGNMENT_UPDATE_REQUEST,
+  BRANCH_MANAGER_ASSIGNMENT_UPDATE_SUCCESS,
+  BRANCH_MANAGER_ASSIGNMENT_UPDATE_FAIL,
+
+  //
+  BRANCH_MANAGER_USER_SEARCH_REQUEST,
+  BRANCH_MANAGER_USER_SEARCH_SUCCESS,
+  BRANCH_MANAGER_USER_SEARCH_FAIL,
+
+  //
+  BRANCH_MANAGER_ASSIGNMENT_CREATE_REQUEST,
+  BRANCH_MANAGER_ASSIGNMENT_CREATE_SUCCESS,
+  BRANCH_MANAGER_ASSIGNMENT_CREATE_FAIL,
 } from "../constants/cookBatchConstants";
 
 // Base API URL from Vite env (.env: VITE_API_BASE_URL=http://127.0.0.1:8000)
@@ -287,23 +302,39 @@ export const getAccountMe = () => async (dispatch) => {
   }
 };
 
-export const listUsers = () => async (dispatch) => {
-  try {
-    dispatch({ type: USER_LIST_REQUEST });
+export const listUsers =
+  ({ search = "", role = "", branch = "", page = 1 } = {}) =>
+  async (dispatch) => {
+    try {
+      dispatch({ type: USER_LIST_REQUEST });
 
-    const { data } = await axios.get(`${API_BASE_URL}/api/accounts/users/`);
+      let url = `${API_BASE_URL}/api/accounts/users/`;
 
-    dispatch({
-      type: USER_LIST_SUCCESS,
-      payload: data,
-    });
-  } catch (error) {
-    dispatch({
-      type: USER_LIST_FAIL,
-      payload: getErrorMessage(error),
-    });
-  }
-};
+      const params = new URLSearchParams();
+
+      if (search) params.append("search", search);
+      if (role) params.append("role", role);
+      if (branch) params.append("branch", branch);
+      params.append("page", page);
+
+      const queryString = params.toString();
+      if (queryString) {
+        url += `?${queryString}`;
+      }
+
+      const { data } = await axios.get(url);
+
+      dispatch({
+        type: USER_LIST_SUCCESS,
+        payload: data,
+      });
+    } catch (error) {
+      dispatch({
+        type: USER_LIST_FAIL,
+        payload: getErrorMessage(error),
+      });
+    }
+  };
 
 export const updateUserRoles = (id, roleData) => async (dispatch) => {
   try {
@@ -348,7 +379,7 @@ export const listBranches = () => async (dispatch) => {
 };
 
 export const listBranchManagerStaff =
-  ({ search = "", branch = "", role = "" } = {}) =>
+  ({ search = "", branch = "", role = "", page = 1 } = {}) =>
   async (dispatch) => {
     try {
       dispatch({ type: BRANCH_MANAGER_STAFF_LIST_REQUEST });
@@ -360,6 +391,7 @@ export const listBranchManagerStaff =
       if (search) params.append("search", search);
       if (branch) params.append("branch", branch);
       if (role) params.append("role", role);
+      params.append("page", page);
 
       const queryString = params.toString();
       if (queryString) {
@@ -415,6 +447,88 @@ export const listBranchManagerBranches = () => async (dispatch) => {
   } catch (error) {
     dispatch({
       type: BRANCH_MANAGER_BRANCH_LIST_FAIL,
+      payload: getErrorMessage(error),
+    });
+  }
+};
+
+export const updateBranchManagerAssignment =
+  (assignmentId, payload) => async (dispatch) => {
+    try {
+      dispatch({ type: BRANCH_MANAGER_ASSIGNMENT_UPDATE_REQUEST });
+
+      const { data } = await axios.put(
+        `${API_BASE_URL}/api/accounts/branch-manager/branch-roles/${assignmentId}/`,
+        payload,
+        {
+          headers: { "Content-Type": "application/json" },
+        },
+      );
+
+      dispatch({
+        type: BRANCH_MANAGER_ASSIGNMENT_UPDATE_SUCCESS,
+        payload: data,
+      });
+    } catch (error) {
+      dispatch({
+        type: BRANCH_MANAGER_ASSIGNMENT_UPDATE_FAIL,
+        payload: getErrorMessage(error),
+      });
+    }
+  };
+
+export const searchBranchManagerUsers =
+  (search = "") =>
+  async (dispatch) => {
+    try {
+      dispatch({ type: BRANCH_MANAGER_USER_SEARCH_REQUEST });
+
+      let url = `${API_BASE_URL}/api/accounts/branch-manager/user-search/`;
+
+      const params = new URLSearchParams();
+
+      if (search) {
+        params.append("search", search);
+      }
+
+      const queryString = params.toString();
+      if (queryString) {
+        url += `?${queryString}`;
+      }
+
+      const { data } = await axios.get(url);
+
+      dispatch({
+        type: BRANCH_MANAGER_USER_SEARCH_SUCCESS,
+        payload: data,
+      });
+    } catch (error) {
+      dispatch({
+        type: BRANCH_MANAGER_USER_SEARCH_FAIL,
+        payload: getErrorMessage(error),
+      });
+    }
+  };
+
+export const createBranchManagerAssignment = (payload) => async (dispatch) => {
+  try {
+    dispatch({ type: BRANCH_MANAGER_ASSIGNMENT_CREATE_REQUEST });
+
+    const { data } = await axios.post(
+      `${API_BASE_URL}/api/accounts/branch-manager/branch-roles/`,
+      payload,
+      {
+        headers: { "Content-Type": "application/json" },
+      },
+    );
+
+    dispatch({
+      type: BRANCH_MANAGER_ASSIGNMENT_CREATE_SUCCESS,
+      payload: data,
+    });
+  } catch (error) {
+    dispatch({
+      type: BRANCH_MANAGER_ASSIGNMENT_CREATE_FAIL,
       payload: getErrorMessage(error),
     });
   }

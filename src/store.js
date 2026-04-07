@@ -22,6 +22,9 @@ import {
   branchManagerStaffListReducer,
   branchManagerAssignmentDeleteReducer,
   branchManagerBranchListReducer,
+  branchManagerAssignmentUpdateReducer,
+  branchManagerUserSearchReducer,
+  branchManagerAssignmentCreateReducer,
 } from "./reducers/cookBatchReducers";
 
 const reducer = combineReducers({
@@ -39,6 +42,9 @@ const reducer = combineReducers({
   branchManagerStaffList: branchManagerStaffListReducer,
   branchManagerAssignmentDelete: branchManagerAssignmentDeleteReducer,
   branchManagerBranchList: branchManagerBranchListReducer,
+  branchManagerAssignmentUpdate: branchManagerAssignmentUpdateReducer,
+  branchManagerUserSearch: branchManagerUserSearchReducer,
+  branchManagerAssignmentCreate: branchManagerAssignmentCreateReducer,
 });
 
 const composeEnhancer =
