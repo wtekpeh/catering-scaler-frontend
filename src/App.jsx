@@ -14,6 +14,9 @@ import CookBatchDetailScreen from "./screens/CookBatchDetailScreen";
 
 import AdminUserScreen from "./screens/AdminUserScreen";
 
+//Dashboards
+import ExecutiveDashboardScreen from "./screens/ExecutiveDashboardScreen";
+
 function AppLayout() {
   return (
     <div className="app-shell">
@@ -38,6 +41,8 @@ function AppLayout() {
           {/* Admin Ui */}
           <Route path="/admin/users" element={<AdminUserScreen />} />
           <Route path="/branch/staff" element={<AdminUserScreen />} />
+
+          <Route path="/dashboard" element={<ExecutiveDashboardScreen />} />
 
           <Route
             path="*"
