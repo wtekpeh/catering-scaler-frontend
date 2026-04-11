@@ -1,113 +1,117 @@
-const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+import axios from "axios";
 
-export const getExecutiveSummary = async () => {
-  await wait(300);
+const API_BASE = "http://localhost:8081";
+
+export const getExecutiveSummary = async (filters = {}) => {
+  const params = {};
+
+  if (filters.branchId) {
+    params.branch_id = filters.branchId;
+  }
+
+  const { data } = await axios.get(`${API_BASE}/reports/executive-summary`, {
+    params,
+  });
 
   return {
     summary: {
-      totalUsers: 128,
-      activeUsers: 94,
-      totalBranches: 8,
-      totalBatches: 1460,
-      batchesThisWeek: 64,
-      batchesThisMonth: 238,
+      totalUsers: data.kpis.total_users,
+      activeUsers: data.kpis.total_active_users,
+      totalBranches: data.kpis.total_branches,
+      totalBatches: data.kpis.total_batches,
+      batchesThisWeek: data.kpis.batches_this_week,
+      batchesThisMonth: data.kpis.batches_this_month,
     },
     highlights: {
-      mostActiveBranch: "Accra Central",
-      largestBranch: "Tema Branch",
-      peakBatchDay: "Wednesday",
-      mostUsedRecipe: "Jollof Rice",
-      averageBatchesPerBranch: 29,
+      mostActiveBranch: data.highlights.most_active_branch?.branch_name ?? null,
+      largestBranch: data.highlights.largest_branch?.branch_name ?? null,
+      peakBatchDay: data.highlights.peak_batch_day?.day_name ?? null,
+      mostUsedRecipe: data.highlights.most_used_recipe?.recipe_name ?? null,
+      averageBatchesPerBranch:
+        data.highlights.average_batches_per_branch?.value ?? 0,
     },
   };
 };
 
-export const getBatchTrends = async () => {
-  await wait(300);
+export const getBatchTrends = async (filters = {}) => {
+  const params = {};
+
+  if (filters.branchId) {
+    params.branch_id = filters.branchId;
+  }
+
+  const { data } = await axios.get(`${API_BASE}/reports/batch-trends`, {
+    params,
+  });
 
   return {
-    batchTrends: [
-      { label: "Mon", count: 12 },
-      { label: "Tue", count: 18 },
-      { label: "Wed", count: 24 },
-      { label: "Thu", count: 16 },
-      { label: "Fri", count: 22 },
-      { label: "Sat", count: 14 },
-      { label: "Sun", count: 10 },
-    ],
+    batchTrends: data.series,
   };
 };
 
-export const getStaffSummary = async () => {
-  await wait(300);
+export const getStaffSummary = async (filters = {}) => {
+  const params = {};
+
+  if (filters.branchId) {
+    params.branch_id = filters.branchId;
+  }
+
+  const [userGrowthResponse, roleDistributionResponse] = await Promise.all([
+    axios.get(`${API_BASE}/reports/user-growth`, { params }),
+    axios.get(`${API_BASE}/reports/role-distribution`, { params }),
+  ]);
 
   return {
-    userTrends: [
-      { label: "Mon", count: 2 },
-      { label: "Tue", count: 3 },
-      { label: "Wed", count: 1 },
-      { label: "Thu", count: 4 },
-      { label: "Fri", count: 2 },
-      { label: "Sat", count: 1 },
-      { label: "Sun", count: 3 },
-    ],
+    userTrends: userGrowthResponse.data.series,
     roleSummary: {
-      globalRoles: [
-        { role: "Boss", count: 1 },
-        { role: "Managing Director", count: 2 },
-      ],
-      branchRoles: [
-        { role: "Branch Manager", count: 8 },
-        { role: "Chef", count: 54 },
-      ],
-      activeVsInactive: [
-        { status: "Active", count: 94 },
-        { status: "Inactive", count: 34 },
-      ],
+      globalRoles: [],
+      branchRoles: roleDistributionResponse.data.items.map((item) => ({
+        role: item.role,
+        count: item.count,
+      })),
+      activeVsInactive: [],
     },
   };
 };
 
-export const getBranchSummary = async () => {
-  await wait(300);
+export const getBranchSummary = async (filters = {}) => {
+  const params = {};
+
+  if (filters.branchId) {
+    params.branch_id = filters.branchId;
+  }
+
+  const { data } = await axios.get(`${API_BASE}/reports/branch-summary`, {
+    params,
+  });
 
   return {
-    branchSummary: [
-      { branchName: "Accra Central", staffCount: 18, batchCount: 44 },
-      { branchName: "Tema Branch", staffCount: 22, batchCount: 39 },
-      { branchName: "Kumasi Branch", staffCount: 15, batchCount: 31 },
-      { branchName: "Takoradi Branch", staffCount: 12, batchCount: 20 },
-      { branchName: "Cape Coast", staffCount: 10, batchCount: 14 },
-    ],
+    branchSummary: data.items.map((item) => ({
+      branchName: item.branch_name,
+      staffCount: item.staff_count,
+      batchCount: item.total_batches,
+    })),
   };
 };
 
-export const getRecentBatches = async () => {
-  await wait(300);
+export const getRecentBatches = async (filters = {}) => {
+  const params = {};
+
+  if (filters.branchId) {
+    params.branch_id = filters.branchId;
+  }
+
+  const { data } = await axios.get(`${API_BASE}/reports/recent-batches`, {
+    params,
+  });
 
   return {
-    recentBatches: [
-      {
-        id: 1,
-        recipeName: "Jollof Rice",
-        branchName: "Accra Central",
-        createdBy: "Kwame Mensah",
-        createdAt: "2026-04-08 09:10",
-      },
-      {
-        id: 2,
-        recipeName: "Fried Rice",
-        branchName: "Tema Branch",
-        createdBy: "Akosua Owusu",
-        createdAt: "2026-04-08 10:00",
-      },
-      {
-        id: 3,
-        recipeName: "Waakye",
-        branchName: "Kumasi Branch",
-        createdBy: "Yaw Boateng",
-        createdAt: "2026-04-08 11:20",
-      },
-    ],
+    recentBatches: data.items.map((item) => ({
+      id: item.batch_id,
+      recipeName: item.recipe_name,
+      branchName: item.branch_name,
+      createdBy: item.created_by,
+      createdAt: item.created_at,
+    })),
   };
 };
