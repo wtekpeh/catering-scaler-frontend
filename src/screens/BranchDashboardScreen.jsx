@@ -1,0 +1,141 @@
+import { useEffect } from "react";
+import "../styles/dashboard.css";
+
+import {
+  getBranchDashboardSummary,
+  getBranchBatchTrends,
+  getBranchRoleDistribution,
+  getBranchRecentBatches,
+} from "../api/branchDashboardApi";
+
+import { useBranchDashboardStore } from "../stores/dashboard/useBranchDashboardStore";
+
+import DashboardLoadingBlock from "../components/dashboard/DashboardLoadingBlock";
+import DashboardErrorBlock from "../components/dashboard/DashboardErrorBlock";
+
+// We will reuse KPI grid (important)
+import ExecutiveKpiGrid from "../components/dashboard/ExecutiveKpiGrid";
+import ExecutiveBatchTrendChart from "../components/dashboard/ExecutiveBatchTrendChart";
+import ExecutiveRoleDistribution from "../components/dashboard/ExecutiveRoleDistribution";
+import ExecutiveRecentBatchesTable from "../components/dashboard/ExecutiveRecentBatchesTable";
+
+const BranchDashboardScreen = () => {
+  const {
+    summary,
+    batchTrends,
+    roleSummary,
+    recentBatches,
+    loading,
+    error,
+    setLoading,
+    setError,
+    setSummary,
+    setBatchTrends,
+    setRoleSummary,
+    setRecentBatches,
+  } = useBranchDashboardStore();
+
+  useEffect(() => {
+    const loadDashboard = async () => {
+      try {
+        setLoading(true);
+
+        const [
+          summaryResponse,
+          batchTrendsResponse,
+          roleDistributionResponse,
+          recentBatchesResponse,
+        ] = await Promise.all([
+          getBranchDashboardSummary(),
+          getBranchBatchTrends(),
+          getBranchRoleDistribution(),
+          getBranchRecentBatches(),
+        ]);
+
+        setSummary({
+          totalUsers: summaryResponse.kpis.total_staff,
+          activeUsers: summaryResponse.kpis.total_staff,
+          totalBranches: 1,
+          totalBatches: summaryResponse.kpis.total_batches,
+          batchesThisWeek: summaryResponse.kpis.batches_this_week,
+          batchesThisMonth: summaryResponse.kpis.batches_this_month,
+        });
+
+        setBatchTrends(batchTrendsResponse.series || []);
+
+        setRoleSummary({
+          branchRoles: roleDistributionResponse.branchRoles || [],
+        });
+
+        setRecentBatches(
+          (recentBatchesResponse.items || []).map((item) => ({
+            id: item.batch_id,
+            recipeName: item.recipe_name,
+            branchName: item.branch_name,
+            createdBy: item.created_by,
+            createdAt: item.created_at,
+          })),
+        );
+      } catch (err) {
+        setError(
+          err?.response?.data?.detail ||
+            err?.message ||
+            "Failed to load branch dashboard.",
+        );
+      }
+    };
+
+    loadDashboard();
+  }, [
+    setLoading,
+    setError,
+    setSummary,
+    setBatchTrends,
+    setRoleSummary,
+    setRecentBatches,
+  ]);
+
+  return (
+    <div className="dashboard-screen">
+      <div className="dashboard-screen__header">
+        <h1 className="dashboard-screen__title">Branch Dashboard</h1>
+        <p className="dashboard-screen__subtitle">
+          Overview of your branch performance.
+        </p>
+      </div>
+
+      {loading && (
+        <DashboardLoadingBlock message="Loading branch dashboard..." />
+      )}
+
+      {error && <DashboardErrorBlock message={error} />}
+
+      {!loading && !error && (
+        <>
+          <ExecutiveKpiGrid
+            summary={summary}
+            labels={{
+              totalUsers: "Total Staff",
+              activeUsers: "Active Staff",
+              totalBranches: "Assigned Branches",
+              totalBatches: "Total Batches",
+              batchesThisWeek: "Batches This Week",
+              batchesThisMonth: "Batches This Month",
+            }}
+          />
+
+          <div className="dashboard-two-column-grid">
+            <ExecutiveBatchTrendChart data={batchTrends} />
+            <ExecutiveRoleDistribution data={roleSummary} />
+          </div>
+
+          <div className="dashboard-two-column-grid">
+            <ExecutiveRecentBatchesTable data={recentBatches} />
+          </div>
+        </>
+      )}
+    </div>
+  );
+};
+
+export default BranchDashboardScreen;

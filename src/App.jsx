@@ -17,6 +17,9 @@ import AdminUserScreen from "./screens/AdminUserScreen";
 //Dashboards
 import ExecutiveDashboardScreen from "./screens/ExecutiveDashboardScreen";
 
+//Branch Managers
+import BranchDashboardScreen from "./screens/BranchDashboardScreen";
+
 function AppLayout() {
   return (
     <div className="app-shell">
@@ -43,6 +46,7 @@ function AppLayout() {
           <Route path="/branch/staff" element={<AdminUserScreen />} />
 
           <Route path="/dashboard" element={<ExecutiveDashboardScreen />} />
+          <Route path="/branch-dashboard" element={<BranchDashboardScreen />} />
 
           <Route
             path="*"

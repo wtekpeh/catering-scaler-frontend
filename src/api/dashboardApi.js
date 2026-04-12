@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios from "./axiosInstance";
 
 const API_BASE = "http://localhost:8081";
 

@@ -1,33 +1,42 @@
 import DashboardStatCard from "./DashboardStatCard";
 
-const ExecutiveKpiGrid = ({ summary }) => {
+const defaultLabels = {
+  totalUsers: "Total Users",
+  activeUsers: "Active Users",
+  totalBranches: "Total Branches",
+  totalBatches: "Total Batches",
+  batchesThisWeek: "Batches This Week",
+  batchesThisMonth: "Batches This Month",
+};
+
+const ExecutiveKpiGrid = ({ summary, labels = defaultLabels }) => {
   if (!summary) {
     return null;
   }
 
   const items = [
     {
-      title: "Total Users",
+      title: labels.totalUsers,
       value: summary.totalUsers ?? 0,
     },
     {
-      title: "Active Users",
+      title: labels.activeUsers,
       value: summary.activeUsers ?? 0,
     },
     {
-      title: "Total Branches",
+      title: labels.totalBranches,
       value: summary.totalBranches ?? 0,
     },
     {
-      title: "Total Batches",
+      title: labels.totalBatches,
       value: summary.totalBatches ?? 0,
     },
     {
-      title: "Batches This Week",
+      title: labels.batchesThisWeek,
       value: summary.batchesThisWeek ?? 0,
     },
     {
-      title: "Batches This Month",
+      title: labels.batchesThisMonth,
       value: summary.batchesThisMonth ?? 0,
     },
   ];
