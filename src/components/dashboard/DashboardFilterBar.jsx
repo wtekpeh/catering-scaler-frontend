@@ -8,6 +8,7 @@ const DashboardFilterBar = () => {
     endDate,
     branchId,
     groupBy,
+    branches,
     setDateRange,
     setBranchId,
     setGroupBy,
@@ -94,10 +95,11 @@ const DashboardFilterBar = () => {
             className="dashboard-filter-bar__input"
           >
             <option value="">All Branches</option>
-            <option value="1">Accra Central</option>
-            <option value="2">Tema Branch</option>
-            <option value="3">Kumasi Branch</option>
-            <option value="4">Takoradi Branch</option>
+            {branches.map((branch) => (
+              <option key={branch.id} value={branch.id}>
+                {branch.name}
+              </option>
+            ))}
           </select>
         </div>
 

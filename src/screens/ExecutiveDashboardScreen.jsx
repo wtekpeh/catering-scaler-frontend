@@ -6,6 +6,7 @@ import {
   getStaffSummary,
   getBranchSummary,
   getRecentBatches,
+  getBranches,
 } from "../api/dashboardApi";
 import ExecutiveKpiGrid from "../components/dashboard/ExecutiveKpiGrid";
 import { useDashboardFilterStore } from "../stores/dashboard/useDashboardFilterStore";
@@ -21,7 +22,8 @@ import DashboardLoadingBlock from "../components/dashboard/DashboardLoadingBlock
 import DashboardErrorBlock from "../components/dashboard/DashboardErrorBlock";
 
 const ExecutiveDashboardScreen = () => {
-  const { startDate, endDate, branchId, groupBy } = useDashboardFilterStore();
+  const { startDate, endDate, branchId, groupBy, setBranches } =
+    useDashboardFilterStore();
 
   const {
     summary,
@@ -56,13 +58,17 @@ const ExecutiveDashboardScreen = () => {
           staffSummaryResponse,
           branchSummaryResponse,
           recentBatchesResponse,
+          branchesResponse,
         ] = await Promise.all([
           getExecutiveSummary(filters),
           getBatchTrends(filters),
           getStaffSummary(filters),
           getBranchSummary(filters),
           getRecentBatches(filters),
+          getBranches(),
         ]);
+
+        setBranches(branchesResponse.branches || []);
 
         setExecutiveDashboardData({
           summary: executiveSummaryResponse.summary,
@@ -91,6 +97,7 @@ const ExecutiveDashboardScreen = () => {
     setLoading,
     setError,
     setExecutiveDashboardData,
+    setBranches,
   ]);
 
   return (

@@ -20,6 +20,7 @@ export const useDashboardFilterStore = create((set) => ({
   endDate: defaultDates.endDate,
   branchId: "",
   groupBy: "day",
+  branches: [],
 
   setDateRange: ({ startDate, endDate }) =>
     set(() => ({
@@ -35,6 +36,11 @@ export const useDashboardFilterStore = create((set) => ({
   setGroupBy: (groupBy) =>
     set(() => ({
       groupBy,
+    })),
+
+  setBranches: (branches) =>
+    set(() => ({
+      branches,
     })),
 
   resetFilters: () =>
