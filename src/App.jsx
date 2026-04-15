@@ -1,3 +1,5 @@
+import { useEffect } from "react";
+
 import {
   BrowserRouter as Router,
   Routes,
@@ -20,7 +22,40 @@ import ExecutiveDashboardScreen from "./screens/ExecutiveDashboardScreen";
 //Branch Managers
 import BranchDashboardScreen from "./screens/BranchDashboardScreen";
 
+//Notifications
+
+import useNotificationSocket from "./hooks/useNotificationSocket";
+import { getNotifications, getUnreadCount } from "./api/notificationApi";
+import { useNotificationStore } from "./stores/dashboard/useNotificationStore";
+
 function AppLayout() {
+  const setNotifications = useNotificationStore((s) => s.setNotifications);
+  const setUnreadCount = useNotificationStore((s) => s.setUnreadCount);
+  const setLoading = useNotificationStore((s) => s.setLoading);
+  const setError = useNotificationStore((s) => s.setError);
+
+  useNotificationSocket();
+
+  useEffect(() => {
+    const loadNotifications = async () => {
+      try {
+        setLoading(true);
+
+        const [listRes, countRes] = await Promise.all([
+          getNotifications(),
+          getUnreadCount(),
+        ]);
+
+        setNotifications(listRes.items);
+        setUnreadCount(countRes.unreadCount);
+      } catch (err) {
+        setError(err.message || "failed to load notifications");
+      }
+    };
+
+    loadNotifications();
+  }, [setNotifications, setUnreadCount, setLoading, setError]);
+
   return (
     <div className="app-shell">
       <AppHeader />

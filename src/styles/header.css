@@ -77,3 +77,141 @@
     font-size: 0.88rem;
   }
 }
+
+/* ============================= */
+/* Notifications */
+/* ============================= */
+
+.app-header__notifications {
+  position: relative;
+  margin-right: 0.75rem;
+}
+
+.app-header__notification-button {
+  position: relative;
+  border: 1px solid #d1d5db;
+  background: #ffffff;
+  border-radius: 0.5rem;
+  padding: 0.45rem 0.65rem;
+  cursor: pointer;
+  transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+
+.app-header__notification-button:hover {
+  background: #f9fafb;
+  border-color: #9ca3af;
+}
+
+.app-header__notification-icon {
+  font-size: 1.2rem;
+}
+
+.app-header__notification-badge {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  background: #ef4444;
+  color: #ffffff;
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 999px;
+  min-width: 18px;
+  text-align: center;
+}
+
+/* Dropdown */
+
+.app-header__notification-dropdown {
+  position: absolute;
+  right: 0;
+  top: 110%;
+  width: 320px;
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.6rem;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.08);
+  z-index: 1000;
+  overflow: hidden;
+}
+
+.app-header__notification-dropdown-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.65rem 0.85rem;
+  border-bottom: 1px solid #e5e7eb;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.app-header__notification-count {
+  font-size: 0.8rem;
+  color: #6b7280;
+}
+
+/* List */
+
+.app-header__notification-list {
+  max-height: 320px;
+  overflow-y: auto;
+}
+
+/* Item */
+
+.app-header__notification-item {
+  width: 100%;
+  text-align: left;
+  border: none;
+  background: #ffffff;
+  padding: 0.6rem 0.85rem;
+  cursor: pointer;
+  border-bottom: 1px solid #f3f4f6;
+  transition: background-color 0.15s ease;
+}
+
+.app-header__notification-item:hover {
+  background: #f9fafb;
+}
+
+/* unread highlight */
+.app-header__notification-item--unread {
+  background: #f0fdf4;
+}
+
+/* read state */
+.app-header__notification-item--read {
+  background: #ffffff;
+}
+
+.app-header__notification-message {
+  font-size: 0.88rem;
+  font-weight: 500;
+  color: #111827;
+  margin-bottom: 0.2rem;
+}
+
+.app-header__notification-meta {
+  font-size: 0.75rem;
+  color: #6b7280;
+  display: flex;
+  justify-content: space-between;
+}
+
+/* Empty */
+
+.app-header__notification-empty {
+  padding: 1rem;
+  text-align: center;
+  font-size: 0.85rem;
+  color: #6b7280;
+}
+
+/* Mobile */
+
+@media (max-width: 640px) {
+  .app-header__notification-dropdown {
+    width: 92vw;
+    right: -10px;
+  }
+}
