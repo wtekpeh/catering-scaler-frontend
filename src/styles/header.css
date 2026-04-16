@@ -215,3 +215,134 @@
     right: -10px;
   }
 }
+
+.app-header__notification-footer {
+  border-top: 1px solid #e5e7eb;
+  padding: 0.55rem 0.75rem;
+  background: #ffffff;
+}
+
+.app-header__notification-view-all {
+  width: 100%;
+  border: 1px solid #d1d5db;
+  background: #ffffff;
+  color: #111827;
+  border-radius: 0.45rem;
+  padding: 0.55rem 0.75rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.app-header__notification-view-all:hover {
+  background: #f9fafb;
+}
+
+.notification-page-list {
+  display: block;
+}
+
+.notification-page-item {
+  display: block;
+  width: 100%;
+  margin-bottom: 0.75rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+  padding: 0.9rem 1rem;
+  text-align: left;
+  background: #ffffff;
+  cursor: pointer;
+  transition: background-color 0.15s ease, border-color 0.15s ease;
+}
+
+.notification-page-item__message {
+  white-space: normal;
+  line-height: 1.4;
+}
+
+.notification-page-item:hover {
+  background: #f9fafb;
+  border-color: #d1d5db;
+}
+
+.notification-page-item--unread {
+  background: #f0fdf4;
+}
+
+.notification-page-item--read {
+  background: #ffffff;
+}
+
+.notification-page-item__message {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #111827;
+  margin-bottom: 0.35rem;
+}
+
+.notification-page-item__meta {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  font-size: 0.8rem;
+  color: #6b7280;
+}
+
+.notification-page-mark-all {
+  border: 1px solid #d1d5db;
+  background: #ffffff;
+  color: #111827;
+  border-radius: 0.5rem;
+  padding: 0.6rem 0.9rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.15s ease, border-color 0.15s ease;
+}
+
+.notification-page-mark-all:hover:enabled {
+  background: #f9fafb;
+  border-color: #9ca3af;
+}
+
+.notification-page-mark-all:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.app-header__notification-dropdown-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.65rem 0.85rem;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.app-header__notification-dropdown-title {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.app-header__notification-mark-all {
+  border: 1px solid #d1d5db;
+  background: #ffffff;
+  color: #111827;
+  border-radius: 0.45rem;
+  padding: 0.4rem 0.65rem;
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.app-header__notification-mark-all:hover:enabled {
+  background: #f9fafb;
+  border-color: #9ca3af;
+}
+
+.app-header__notification-mark-all:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}

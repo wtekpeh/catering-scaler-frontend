@@ -5,13 +5,17 @@ import { useSelector } from "react-redux";
 import logo from "../assets/newco-logo.png";
 import { keycloak } from "../auth/AuthProvider";
 import { useNotificationStore } from "../stores/dashboard/useNotificationStore";
-import { markNotificationAsRead } from "../api/notificationApi";
+import {
+  markNotificationAsRead,
+  markAllNotificationsAsRead,
+} from "../api/notificationApi";
 import "../styles/header.css";
 
 function AppHeader() {
   const navigate = useNavigate();
   const [isNotificationOpen, setIsNotificationOpen] = useState(false);
   const [markingIds, setMarkingIds] = useState([]);
+  const [markingAll, setMarkingAll] = useState(false);
 
   const userMe = useSelector((state) => state.userMe);
   const { user: currentUser } = userMe;
@@ -20,6 +24,10 @@ function AppHeader() {
   const unreadCount = useNotificationStore((state) => state.unreadCount);
   const markAsReadLocal = useNotificationStore(
     (state) => state.markAsReadLocal,
+  );
+
+  const markAllAsReadLocal = useNotificationStore(
+    (state) => state.markAllAsReadLocal,
   );
 
   const isAdminUser =
@@ -62,6 +70,18 @@ function AppHeader() {
       if (notification.id) {
         setMarkingIds((prev) => prev.filter((id) => id !== notification.id));
       }
+    }
+  };
+
+  const handleMarkAllAsRead = async () => {
+    try {
+      setMarkingAll(true);
+      await markAllNotificationsAsRead();
+      markAllAsReadLocal();
+    } catch (error) {
+      console.error("Failed to mark all notifications as read", error);
+    } finally {
+      setMarkingAll(false);
     }
   };
 
@@ -132,15 +152,26 @@ function AppHeader() {
             {isNotificationOpen && (
               <div className="app-header__notification-dropdown">
                 <div className="app-header__notification-dropdown-header">
-                  <span>Notifications</span>
-                  <span className="app-header__notification-count">
-                    {unreadCount} unread
-                  </span>
+                  <div className="app-header__notification-dropdown-title">
+                    <span>Notifications</span>
+                    <span className="app-header__notification-count">
+                      {unreadCount} unread
+                    </span>
+                  </div>
+
+                  <button
+                    type="button"
+                    className="app-header__notification-mark-all"
+                    onClick={handleMarkAllAsRead}
+                    disabled={markingAll || unreadCount === 0}
+                  >
+                    {markingAll ? "Marking..." : "Mark all"}
+                  </button>
                 </div>
 
                 {visibleNotifications.length === 0 ? (
                   <div className="app-header__notification-empty">
-                    No notifications yet
+                    No unread notifications
                   </div>
                 ) : (
                   <div className="app-header__notification-list">
@@ -174,6 +205,19 @@ function AppHeader() {
                     })}
                   </div>
                 )}
+
+                <div className="app-header__notification-footer">
+                  <button
+                    type="button"
+                    className="app-header__notification-view-all"
+                    onClick={() => {
+                      setIsNotificationOpen(false);
+                      navigate("/notifications");
+                    }}
+                  >
+                    View all notifications
+                  </button>
+                </div>
               </div>
             )}
           </div>

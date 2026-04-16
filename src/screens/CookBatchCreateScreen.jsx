@@ -1,12 +1,14 @@
 import { useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import axios from "../api/axiosInstance";
 
 import {
   createCookBatch,
   listRecipes,
   getCurrentUser,
 } from "../actions/cookBatchActions";
+
 import { COOKBATCH_CREATE_RESET } from "../constants/cookBatchConstants";
 
 const PROTEIN_CHOICES = [
@@ -30,6 +32,9 @@ const CookBatchCreateScreen = () => {
   const [proteinRows, setProteinRows] = useState([]);
   const [notes, setNotes] = useState("");
 
+  const [branches, setBranches] = useState([]);
+  const [branchId, setBranchId] = useState("");
+
   // ---- Redux state ----
   const cookBatchCreate = useSelector((state) => state.cookBatchCreate);
   const { loading, error, success, batch } = cookBatchCreate;
@@ -41,6 +46,18 @@ const CookBatchCreateScreen = () => {
   const { user: currentUser } = userMe;
 
   const canCreateBatch = currentUser?.can_create_batch_any;
+
+  const managedBranchRoles =
+    currentUser?.branch_roles?.filter(
+      (role) => role.role === "branch_manager" && role.is_active,
+    ) || [];
+
+  const isExecutiveUser =
+    currentUser?.global_role === "boss" ||
+    currentUser?.global_role === "managing_director";
+
+  const shouldLockBranchToUser =
+    !isExecutiveUser && managedBranchRoles.length === 1;
 
   useEffect(() => {
     if (success && batch?.id) {
@@ -60,6 +77,31 @@ const CookBatchCreateScreen = () => {
     }
   }, [currentUser, canCreateBatch, navigate]);
 
+  useEffect(() => {
+    if (!currentUser) return;
+
+    const roles =
+      currentUser.branch_roles?.filter(
+        (r) => r.role === "branch_manager" && r.is_active,
+      ) || [];
+
+    const isExecutive =
+      currentUser.global_role === "boss" ||
+      currentUser.global_role === "managing_director";
+
+    // ONLY handle branch manager auto-lock here
+    if (!isExecutive && roles.length === 1) {
+      const branchId = roles[0].branch_id;
+      const branchName = roles[0].branch_name;
+
+      setBranches([{ id: branchId, name: branchName }]);
+
+      setBranchId((prev) =>
+        prev === String(branchId) ? prev : String(branchId),
+      );
+    }
+  }, [currentUser]);
+
   const totalProteinCount = useMemo(() => {
     return proteinRows.reduce((sum, r) => {
       const n = Number((r.count || "").trim());
@@ -71,11 +113,6 @@ const CookBatchCreateScreen = () => {
     () => proteinRows.some((r) => (r.protein || "").trim() !== ""),
     [proteinRows],
   );
-
-  const canAutoFillSingleProtein = useMemo(() => {
-    const selected = proteinRows.filter((r) => (r.protein || "").trim() !== "");
-    return selected.length === 1;
-  }, [proteinRows]);
 
   const addProteinRow = () => {
     setProteinRows((prev) => [...prev, { protein: "", count: "" }]);
@@ -96,6 +133,12 @@ const CookBatchCreateScreen = () => {
     setNPeople(10);
     setProteinRows([]);
     setNotes("");
+
+    if (shouldLockBranchToUser) {
+      setBranchId(String(managedBranchRoles[0]?.branch_id || ""));
+    } else {
+      setBranchId("");
+    }
   };
 
   const validateProteins = () => {
@@ -174,6 +217,11 @@ const CookBatchCreateScreen = () => {
       return;
     }
 
+    if (!branchId) {
+      alert("Please select a branch.");
+      return;
+    }
+
     const N = Number(nPeople);
     if (!N || N <= 0) {
       alert("Please enter a valid number of people.");
@@ -207,6 +255,7 @@ const CookBatchCreateScreen = () => {
     dispatch(
       createCookBatch({
         recipe_id: Number(recipeId),
+        branch_id: Number(branchId),
         n_people: N,
         options,
         notes,
@@ -247,6 +296,29 @@ const CookBatchCreateScreen = () => {
 
         <div className="card pad stack-14">
           <form onSubmit={submitHandler}>
+            <div className="field">
+              <label className="label">Branch</label>
+              <select
+                className="select"
+                value={branchId}
+                onChange={(e) => setBranchId(e.target.value)}
+                disabled={shouldLockBranchToUser}
+              >
+                <option value="">-- Select a branch --</option>
+                {branches.map((branch) => (
+                  <option key={branch.id} value={String(branch.id)}>
+                    {branch.name}
+                  </option>
+                ))}
+              </select>
+
+              {shouldLockBranchToUser && (
+                <p className="helper">
+                  Branch is locked to your assigned branch.
+                </p>
+              )}
+            </div>
+
             {/* recipe */}
             <div className="field">
               <label className="label">Recipe</label>

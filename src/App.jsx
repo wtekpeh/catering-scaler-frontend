@@ -27,6 +27,7 @@ import BranchDashboardScreen from "./screens/BranchDashboardScreen";
 import useNotificationSocket from "./hooks/useNotificationSocket";
 import { getNotifications, getUnreadCount } from "./api/notificationApi";
 import { useNotificationStore } from "./stores/dashboard/useNotificationStore";
+import NotificationsScreen from "./screens/NotificationsScreen";
 
 function AppLayout() {
   const setNotifications = useNotificationStore((s) => s.setNotifications);
@@ -82,6 +83,7 @@ function AppLayout() {
 
           <Route path="/dashboard" element={<ExecutiveDashboardScreen />} />
           <Route path="/branch-dashboard" element={<BranchDashboardScreen />} />
+          <Route path="/notifications" element={<NotificationsScreen />} />
 
           <Route
             path="*"

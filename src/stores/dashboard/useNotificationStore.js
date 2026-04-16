@@ -7,7 +7,7 @@ const initialState = {
   error: null,
 };
 
-export const useNotificationStore = create((set, get) => ({
+export const useNotificationStore = create((set) => ({
   ...initialState,
 
   setLoading: (loading) =>
@@ -51,6 +51,15 @@ export const useNotificationStore = create((set, get) => ({
         unreadCount: Math.max(state.unreadCount - 1, 0),
       };
     }),
+
+  markAllAsReadLocal: () =>
+    set((state) => ({
+      items: state.items.map((item) => ({
+        ...item,
+        is_read: true,
+      })),
+      unreadCount: 0,
+    })),
 
   resetNotifications: () =>
     set(() => ({

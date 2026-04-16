@@ -135,12 +135,12 @@ export const listCookBatches = () => async (dispatch) => {
 // Input: { recipe_id, n_people, options, notes }
 // options example: { protein: "chicken" }  (adjust to match your backend)
 export const createCookBatch =
-  ({ recipe_id, n_people, options = {}, notes = "" }) =>
+  ({ recipe_id, branch_id, n_people, options = {}, notes = "" }) =>
   async (dispatch) => {
     try {
       dispatch({ type: COOKBATCH_CREATE_REQUEST });
 
-      const body = { recipe_id, n_people, options, notes };
+      const body = { recipe_id, branch_id, n_people, options, notes };
 
       const { data } = await axios.post(
         `${API_BASE_URL}/api/cooking/batches/create/`,

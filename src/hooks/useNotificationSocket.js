@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import keycloak from "../auth/keycloak";
 import { useNotificationStore } from "../stores/dashboard/useNotificationStore";
+import notificationSound from "../assets/mixkit-digital-quick-tone-2866.wav";
 
 export default function useNotificationSocket() {
   const prependNotification = useNotificationStore(
@@ -9,6 +10,9 @@ export default function useNotificationSocket() {
 
   useEffect(() => {
     if (!keycloak.token) return;
+
+    const audio = new Audio(notificationSound);
+    audio.preload = "auto";
 
     const ws = new WebSocket(
       `ws://localhost:8081/ws/notifications?token=${keycloak.token}`,
@@ -33,6 +37,11 @@ export default function useNotificationSocket() {
             branch_id: data.branch_id,
             is_read: false,
             created_at: data.created_at,
+          });
+
+          audio.currentTime = 0;
+          audio.play().catch((err) => {
+            console.warn("[notifications] sound play blocked", err);
           });
         }
       } catch (err) {

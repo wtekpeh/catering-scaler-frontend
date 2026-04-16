@@ -23,3 +23,7 @@ export const getUnreadCount = async () => {
 export const markNotificationAsRead = async (id) => {
   await axios.patch(`${API_BASE}/notifications/${id}/read`);
 };
+
+export const markAllNotificationsAsRead = async () => {
+  await axios.patch(`${API_BASE}/notifications/read-all`);
+};
