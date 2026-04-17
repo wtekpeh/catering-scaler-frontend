@@ -68,13 +68,35 @@
     gap: 0.75rem;
   }
 
-  .app-logo img {
-    height: 44px;
+  .app-logo {
+    min-width: 0;
+    flex: 1;
   }
 
-  .app-header__logout {
-    padding: 0.5rem 0.8rem;
-    font-size: 0.88rem;
+  .app-logo img {
+    height: 44px;
+    max-width: 180px;
+  }
+
+  .app-header__nav {
+    display: none;
+  }
+
+  .app-header__actions {
+    display: none;
+  }
+
+  .app-header__menu-toggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .app-header__mobile-panel {
+    display: block;
+    max-width: 1140px;
+    margin: 0 auto;
+    padding: 0 0.85rem 0.85rem;
   }
 }
 
@@ -211,8 +233,13 @@
 
 @media (max-width: 640px) {
   .app-header__notification-dropdown {
-    width: 92vw;
-    right: -10px;
+    position: fixed;
+    top: 84px;
+    left: 12px;
+    right: 12px;
+    width: auto;
+    max-width: none;
+    z-index: 1100;
   }
 }
 
@@ -310,6 +337,10 @@
   cursor: not-allowed;
 }
 
+.app-header__notification-backdrop {
+  display: none;
+}
+
 .app-header__notification-dropdown-header {
   display: flex;
   justify-content: space-between;
@@ -345,4 +376,168 @@
 .app-header__notification-mark-all:disabled {
   opacity: 0.6;
   cursor: not-allowed;
+}
+
+.app-header__nav {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  flex: 1;
+  margin-left: 1rem;
+  min-width: 0;
+}
+
+.app-header__nav-link {
+  border: none;
+  background: transparent;
+  color: #374151;
+  padding: 0.55rem 0.8rem;
+  border-radius: 0.5rem;
+  font-size: 0.92rem;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.app-header__nav-link:hover {
+  background: #f3f4f6;
+  color: #111827;
+}
+
+.app-header__nav-link--active {
+  background: #ecfdf5;
+  color: #065f46;
+}
+
+.app-header__menu-toggle {
+  display: none;
+  border: 1px solid #d1d5db;
+  background: #ffffff;
+  color: #111827;
+  border-radius: 0.5rem;
+  padding: 0.45rem 0.7rem;
+  font-size: 1.1rem;
+  font-weight: 700;
+  cursor: pointer;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.app-header__menu-toggle:hover {
+  background: #f9fafb;
+  border-color: #9ca3af;
+}
+
+.app-header__mobile-panel {
+  display: none;
+}
+
+.app-header__mobile-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.app-header__mobile-link {
+  width: 100%;
+  text-align: left;
+  border: 1px solid #e5e7eb;
+  background: #ffffff;
+  color: #111827;
+  border-radius: 0.65rem;
+  padding: 0.8rem 0.95rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.app-header__mobile-link:hover {
+  background: #f9fafb;
+}
+
+.app-header__mobile-link--active {
+  background: #ecfdf5;
+  color: #065f46;
+  border-color: #a7f3d0;
+}
+
+.app-header__mobile-link--danger {
+  color: #b91c1c;
+}
+
+@media (max-width: 640px) {
+  .app-header__menu-toggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .app-header__mobile-panel {
+    display: block;
+    max-width: 1140px;
+    margin: 0 auto;
+    padding: 0 0.85rem 0.85rem;
+  }
+}
+
+@media (max-width: 640px) {
+  .app-header__nav {
+    display: none !important;
+  }
+
+  .app-header__actions {
+    display: none !important;
+  }
+
+  .app-header__menu-toggle {
+    display: inline-flex !important;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .app-header__mobile-panel {
+    display: block !important;
+    max-width: 1140px;
+    margin: 0 auto;
+    padding: 0 0.85rem 0.85rem;
+  }
+}
+
+.app-header__mobile-controls {
+  display: none;
+  align-items: center;
+  gap: 0.55rem;
+  flex-shrink: 0;
+}
+
+@media (max-width: 640px) {
+  .app-header__mobile-controls {
+    display: flex !important;
+    align-items: center;
+    gap: 0.55rem;
+  }
+
+  .app-header__mobile-controls .app-header__notifications {
+    margin-right: 0;
+  }
+
+  .app-header__mobile-controls .app-header__notification-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 640px) {
+  .app-header__notification-backdrop {
+    display: block;
+    position: fixed;
+    inset: 0;
+    background: rgba(17, 24, 39, 0.18);
+    border: none;
+    padding: 0;
+    margin: 0;
+    z-index: 1090;
+  }
 }

@@ -1,7 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import axios from "../api/axiosInstance";
 
 import {
   createCookBatch,
@@ -40,7 +39,7 @@ const CookBatchCreateScreen = () => {
   const { loading, error, success, batch } = cookBatchCreate;
 
   const recipeList = useSelector((state) => state.recipeList);
-  const { loading: recipesLoading, error: recipesError, recipes } = recipeList;
+  const { recipes } = recipeList;
 
   const userMe = useSelector((state) => state.userMe);
   const { user: currentUser } = userMe;
@@ -59,6 +58,16 @@ const CookBatchCreateScreen = () => {
   const shouldLockBranchToUser =
     !isExecutiveUser && managedBranchRoles.length === 1;
 
+  const lockedBranch = shouldLockBranchToUser ? managedBranchRoles[0] : null;
+
+  const selectedBranchId = lockedBranch
+    ? String(lockedBranch.branch_id)
+    : branchId;
+
+  const availableBranches = lockedBranch
+    ? [{ id: lockedBranch.branch_id, name: lockedBranch.branch_name }]
+    : branches;
+
   useEffect(() => {
     if (success && batch?.id) {
       navigate(`/cooking/batches/${batch.id}`);
@@ -76,31 +85,6 @@ const CookBatchCreateScreen = () => {
       navigate("/cooking/batches");
     }
   }, [currentUser, canCreateBatch, navigate]);
-
-  useEffect(() => {
-    if (!currentUser) return;
-
-    const roles =
-      currentUser.branch_roles?.filter(
-        (r) => r.role === "branch_manager" && r.is_active,
-      ) || [];
-
-    const isExecutive =
-      currentUser.global_role === "boss" ||
-      currentUser.global_role === "managing_director";
-
-    // ONLY handle branch manager auto-lock here
-    if (!isExecutive && roles.length === 1) {
-      const branchId = roles[0].branch_id;
-      const branchName = roles[0].branch_name;
-
-      setBranches([{ id: branchId, name: branchName }]);
-
-      setBranchId((prev) =>
-        prev === String(branchId) ? prev : String(branchId),
-      );
-    }
-  }, [currentUser]);
 
   const totalProteinCount = useMemo(() => {
     return proteinRows.reduce((sum, r) => {
@@ -217,7 +201,7 @@ const CookBatchCreateScreen = () => {
       return;
     }
 
-    if (!branchId) {
+    if (!selectedBranchId) {
       alert("Please select a branch.");
       return;
     }
@@ -255,7 +239,7 @@ const CookBatchCreateScreen = () => {
     dispatch(
       createCookBatch({
         recipe_id: Number(recipeId),
-        branch_id: Number(branchId),
+        branch_id: Number(selectedBranchId),
         n_people: N,
         options,
         notes,
@@ -300,12 +284,12 @@ const CookBatchCreateScreen = () => {
               <label className="label">Branch</label>
               <select
                 className="select"
-                value={branchId}
+                value={selectedBranchId}
                 onChange={(e) => setBranchId(e.target.value)}
                 disabled={shouldLockBranchToUser}
               >
                 <option value="">-- Select a branch --</option>
-                {branches.map((branch) => (
+                {availableBranches.map((branch) => (
                   <option key={branch.id} value={String(branch.id)}>
                     {branch.name}
                   </option>

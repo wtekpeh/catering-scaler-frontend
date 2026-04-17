@@ -14,9 +14,23 @@ export default function useNotificationSocket() {
     const audio = new Audio(notificationSound);
     audio.preload = "auto";
 
-    const ws = new WebSocket(
-      `ws://localhost:8081/ws/notifications?token=${keycloak.token}`,
-    );
+    const wsBaseUrl = import.meta.env.VITE_WS_BASE_URL;
+
+    if (!wsBaseUrl) {
+      console.error("VITE_WS_BASE_URL is not configured");
+      return;
+    }
+
+    let ws;
+
+    try {
+      ws = new WebSocket(
+        `${wsBaseUrl}/ws/notifications?token=${keycloak.token}`,
+      );
+    } catch (err) {
+      console.error("[notifications] failed to create websocket", err);
+      return;
+    }
 
     ws.onopen = () => {
       console.log("[notifications] socket connected");

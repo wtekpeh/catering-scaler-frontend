@@ -1,5 +1,5 @@
-import { useMemo, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useMemo, useState, useEffect } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 
 import logo from "../assets/newco-logo.png";
@@ -10,10 +10,16 @@ import {
   markAllNotificationsAsRead,
 } from "../api/notificationApi";
 import "../styles/header.css";
+import HeaderNav from "./HeaderNav";
+import MobileHeaderMenu from "./MobileHeaderMenu";
+import HeaderNotifications from "./HeaderNotifications";
+import MobileHeaderControls from "./MobileHeaderControls";
 
 function AppHeader() {
   const navigate = useNavigate();
+  const location = useLocation();
   const [isNotificationOpen, setIsNotificationOpen] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [markingIds, setMarkingIds] = useState([]);
   const [markingAll, setMarkingAll] = useState(false);
 
@@ -39,6 +45,25 @@ function AppHeader() {
       (role) => role.role === "branch_manager" && role.is_active,
     ) || false;
 
+  const navItems = [
+    ...(isAdminUser ? [{ label: "Dashboard", path: "/dashboard" }] : []),
+
+    ...(!isAdminUser && isBranchManager
+      ? [{ label: "Branch Dashboard", path: "/branch-dashboard" }]
+      : []),
+
+    { label: "Cooking", path: "/cooking/batches" },
+    { label: "Notifications", path: "/notifications" },
+  ];
+
+  const isActivePath = (path) => {
+    if (path === "/cooking/batches") {
+      return location.pathname.startsWith("/cooking/batches");
+    }
+
+    return location.pathname === path;
+  };
+
   const visibleNotifications = useMemo(
     () => items.filter((item) => !item.is_read).slice(0, 8),
     [items],
@@ -46,6 +71,12 @@ function AppHeader() {
 
   const toggleNotifications = () => {
     setIsNotificationOpen((prev) => !prev);
+  };
+
+  const handleNavigate = (path) => {
+    setIsMobileMenuOpen(false);
+    setIsNotificationOpen(false);
+    navigate(path);
   };
 
   const handleNotificationClick = async (notification) => {
@@ -94,6 +125,11 @@ function AppHeader() {
     return date.toLocaleString();
   };
 
+  useEffect(() => {
+    setIsMobileMenuOpen(false);
+    setIsNotificationOpen(false);
+  }, [location.pathname]);
+
   return (
     <header className="app-header">
       <div className="app-header__inner">
@@ -111,6 +147,35 @@ function AppHeader() {
         >
           <img src={logo} alt="NewCo Catering & Logistics Ltd" />
         </div>
+
+        <HeaderNav
+          navItems={navItems}
+          isActivePath={isActivePath}
+          onNavigate={navigate}
+        />
+
+        <MobileHeaderControls
+          isNotificationOpen={isNotificationOpen}
+          unreadCount={unreadCount}
+          visibleNotifications={visibleNotifications}
+          markingAll={markingAll}
+          markAllAsRead={handleMarkAllAsRead}
+          onToggleNotifications={() => {
+            setIsNotificationOpen((prev) => !prev);
+            setIsMobileMenuOpen(false);
+          }}
+          onNotificationClick={handleNotificationClick}
+          onViewAll={() => {
+            setIsNotificationOpen(false);
+            navigate("/notifications");
+          }}
+          formatNotificationTime={formatNotificationTime}
+          isMobileMenuOpen={isMobileMenuOpen}
+          onToggleMenu={() => {
+            setIsMobileMenuOpen((prev) => !prev);
+            setIsNotificationOpen(false);
+          }}
+        />
 
         <div className="app-header__actions">
           {isAdminUser && (
@@ -133,94 +198,19 @@ function AppHeader() {
             </button>
           )}
 
-          <div className="app-header__notifications">
-            <button
-              type="button"
-              className="app-header__notification-button"
-              onClick={toggleNotifications}
-              aria-label="Open notifications"
-            >
-              <span className="app-header__notification-icon">🔔</span>
-
-              {unreadCount > 0 && (
-                <span className="app-header__notification-badge">
-                  {unreadCount > 99 ? "99+" : unreadCount}
-                </span>
-              )}
-            </button>
-
-            {isNotificationOpen && (
-              <div className="app-header__notification-dropdown">
-                <div className="app-header__notification-dropdown-header">
-                  <div className="app-header__notification-dropdown-title">
-                    <span>Notifications</span>
-                    <span className="app-header__notification-count">
-                      {unreadCount} unread
-                    </span>
-                  </div>
-
-                  <button
-                    type="button"
-                    className="app-header__notification-mark-all"
-                    onClick={handleMarkAllAsRead}
-                    disabled={markingAll || unreadCount === 0}
-                  >
-                    {markingAll ? "Marking..." : "Mark all"}
-                  </button>
-                </div>
-
-                {visibleNotifications.length === 0 ? (
-                  <div className="app-header__notification-empty">
-                    No unread notifications
-                  </div>
-                ) : (
-                  <div className="app-header__notification-list">
-                    {visibleNotifications.map((notification) => {
-                      const isMarking = markingIds.includes(notification.id);
-
-                      return (
-                        <button
-                          key={`${notification.id}-${notification.event_id}`}
-                          type="button"
-                          className={`app-header__notification-item ${
-                            notification.is_read
-                              ? "app-header__notification-item--read"
-                              : "app-header__notification-item--unread"
-                          }`}
-                          onClick={() => handleNotificationClick(notification)}
-                          disabled={isMarking}
-                        >
-                          <div className="app-header__notification-message">
-                            {notification.message}
-                          </div>
-
-                          <div className="app-header__notification-meta">
-                            <span>{notification.action}</span>
-                            <span>
-                              {formatNotificationTime(notification.created_at)}
-                            </span>
-                          </div>
-                        </button>
-                      );
-                    })}
-                  </div>
-                )}
-
-                <div className="app-header__notification-footer">
-                  <button
-                    type="button"
-                    className="app-header__notification-view-all"
-                    onClick={() => {
-                      setIsNotificationOpen(false);
-                      navigate("/notifications");
-                    }}
-                  >
-                    View all notifications
-                  </button>
-                </div>
-              </div>
-            )}
-          </div>
+          <HeaderNotifications
+            isOpen={isNotificationOpen}
+            unreadCount={unreadCount}
+            visibleNotifications={visibleNotifications} // ✅ THIS
+            markAllAsRead={handleMarkAllAsRead}
+            onToggle={toggleNotifications}
+            onNotificationClick={handleNotificationClick}
+            onViewAll={() => {
+              setIsNotificationOpen(false);
+              navigate("/notifications");
+            }}
+            formatNotificationTime={formatNotificationTime}
+          />
 
           <button
             type="button"
@@ -231,6 +221,19 @@ function AppHeader() {
           </button>
         </div>
       </div>
+
+      <MobileHeaderMenu
+        isOpen={isMobileMenuOpen}
+        navItems={navItems}
+        isActivePath={isActivePath}
+        onNavigate={handleNavigate}
+        isAdminUser={isAdminUser}
+        isBranchManager={isBranchManager}
+        onLogout={() => {
+          setIsMobileMenuOpen(false);
+          keycloak.logout();
+        }}
+      />
     </header>
   );
 }

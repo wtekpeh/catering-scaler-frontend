@@ -1,6 +1,6 @@
 import axios from "./axiosInstance";
 
-const API_BASE = "http://localhost:8081";
+const API_BASE = import.meta.env.VITE_GO_API_BASE_URL;
 
 export const getNotifications = async (limit = 20) => {
   const { data } = await axios.get(`${API_BASE}/notifications`, {

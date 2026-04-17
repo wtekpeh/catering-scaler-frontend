@@ -1,6 +1,6 @@
 import axios from "../api/axiosInstance";
 
-const GO_REPORTING_BASE_URL = "http://localhost:8081";
+const GO_REPORTING_BASE_URL = import.meta.env.VITE_GO_API_BASE_URL;
 
 export const getBranchDashboardSummary = async () => {
   const { data } = await axios.get(
