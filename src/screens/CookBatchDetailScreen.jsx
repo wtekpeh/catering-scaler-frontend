@@ -5,9 +5,15 @@ import { useNavigate, useParams } from "react-router-dom";
 import {
   getCookBatchDetail,
   updateCookBatchActuals,
+  postReviewUpdateCookBatch,
 } from "../actions/cookBatchActions";
 
-import { COOKBATCH_ACTUALS_UPDATE_RESET } from "../constants/cookBatchConstants";
+import PostReviewModal from "../components/cooking/PostReviewModal";
+
+import {
+  COOKBATCH_ACTUALS_UPDATE_RESET,
+  COOKBATCH_POST_REVIEW_RESET,
+} from "../constants/cookBatchConstants";
 
 const CookBatchDetailScreen = () => {
   const { id } = useParams();
@@ -32,8 +38,17 @@ const CookBatchDetailScreen = () => {
     updatedBatch,
   } = cookBatchActualsUpdate;
 
+  const cookBatchPostReview = useSelector((state) => state.cookBatchPostReview);
+  const {
+    loading: postReviewLoading,
+    error: postReviewError,
+    success: postReviewSuccess,
+  } = cookBatchPostReview;
+
   // Local edit map: { [itemId]: { actual_kg: string, notes: string } }
   const [actualEdits, setActualEdits] = useState({});
+
+  const [showPostReviewModal, setShowPostReviewModal] = useState(false);
 
   // Load batch detail
   useEffect(() => {
@@ -65,6 +80,14 @@ const CookBatchDetailScreen = () => {
       dispatch({ type: COOKBATCH_ACTUALS_UPDATE_RESET });
     }
   }, [updateSuccess, updatedBatch, dispatch, batchId]);
+
+  useEffect(() => {
+    if (postReviewSuccess) {
+      dispatch(getCookBatchDetail(batchId));
+      dispatch({ type: COOKBATCH_POST_REVIEW_RESET });
+      setShowPostReviewModal(false);
+    }
+  }, [postReviewSuccess, dispatch, batchId]);
 
   const isFinal = (batch?.status || "").toLowerCase() === "final";
   const canCreateBatch = user?.can_create_batch_any;
@@ -187,6 +210,12 @@ const CookBatchDetailScreen = () => {
     );
   };
 
+  const submitPostReview = (payload) => {
+    if (!batchId) return;
+
+    dispatch(postReviewUpdateCookBatch(batchId, payload));
+  };
+
   return (
     <div className="page">
       <div className="container">
@@ -257,12 +286,12 @@ const CookBatchDetailScreen = () => {
                 Refresh
               </button>
 
-              {canUpdateBatch && (
+              {canUpdateBatch && !isFinal && (
                 <>
                   <button
                     className="btn primary"
                     type="button"
-                    disabled={isFinal || updating}
+                    disabled={updating}
                     onClick={() => submitActuals(false)}
                   >
                     Save Actuals
@@ -271,7 +300,7 @@ const CookBatchDetailScreen = () => {
                   <button
                     className="btn"
                     type="button"
-                    disabled={isFinal || updating}
+                    disabled={updating}
                     onClick={() => {
                       const ok = window.confirm(
                         "Finalize this batch? You won’t be able to edit actuals after.",
@@ -282,6 +311,17 @@ const CookBatchDetailScreen = () => {
                     Finalize Batch
                   </button>
                 </>
+              )}
+
+              {isFinal && (
+                <button
+                  className="btn warning"
+                  type="button"
+                  disabled={postReviewLoading}
+                  onClick={() => setShowPostReviewModal(true)}
+                >
+                  Post Review Edit
+                </button>
               )}
             </div>
 
@@ -475,6 +515,20 @@ const CookBatchDetailScreen = () => {
           </>
         )}
       </div>
+
+      <PostReviewModal
+        isOpen={showPostReviewModal}
+        onClose={() => {
+          if (!postReviewLoading) {
+            setShowPostReviewModal(false);
+            dispatch({ type: COOKBATCH_POST_REVIEW_RESET });
+          }
+        }}
+        onSubmit={submitPostReview}
+        batch={batch}
+        loading={postReviewLoading}
+        error={postReviewError}
+      />
     </div>
   );
 };

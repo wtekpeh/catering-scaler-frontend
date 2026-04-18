@@ -53,12 +53,19 @@ function AppHeader() {
       : []),
 
     { label: "Cooking", path: "/cooking/batches" },
+
+    ...(isAdminUser ? [{ label: "Recipes", path: "/recipes" }] : []),
+
     { label: "Notifications", path: "/notifications" },
   ];
 
   const isActivePath = (path) => {
     if (path === "/cooking/batches") {
       return location.pathname.startsWith("/cooking/batches");
+    }
+
+    if (path === "/recipes") {
+      return location.pathname.startsWith("/recipes");
     }
 
     return location.pathname === path;

@@ -6,18 +6,10 @@ import {
   createCookBatch,
   listRecipes,
   getCurrentUser,
+  listProteinChoices,
 } from "../actions/cookBatchActions";
 
 import { COOKBATCH_CREATE_RESET } from "../constants/cookBatchConstants";
-
-const PROTEIN_CHOICES = [
-  "BONES IN BEEF",
-  "FISH",
-  "FRIED CHICKEN",
-  "GRILLED TILAPIA",
-  "FRIED FISH",
-  "SARDINE AND EGG",
-];
 
 const CookBatchCreateScreen = () => {
   const dispatch = useDispatch();
@@ -40,6 +32,13 @@ const CookBatchCreateScreen = () => {
 
   const recipeList = useSelector((state) => state.recipeList);
   const { recipes } = recipeList;
+
+  const proteinChoiceList = useSelector((state) => state.proteinChoiceList);
+  const {
+    loading: loadingProteins,
+    proteinChoices,
+    error: errorProteins,
+  } = proteinChoiceList;
 
   const userMe = useSelector((state) => state.userMe);
   const { user: currentUser } = userMe;
@@ -77,6 +76,7 @@ const CookBatchCreateScreen = () => {
 
   useEffect(() => {
     dispatch(listRecipes());
+    dispatch(listProteinChoices());
     dispatch(getCurrentUser());
   }, [dispatch]);
 
@@ -350,6 +350,9 @@ const CookBatchCreateScreen = () => {
                 </button>
               </div>
 
+              {loadingProteins && <p>Loading protein choices...</p>}
+              {errorProteins && <p className="text-danger">{errorProteins}</p>}
+
               {proteinRows.length === 0 ? (
                 <p className="helper">
                   No protein selected (optional). Click “Add Protein” if needed.
@@ -383,7 +386,7 @@ const CookBatchCreateScreen = () => {
                             className="input"
                           >
                             <option value="">-- Select protein --</option>
-                            {PROTEIN_CHOICES.map((p) => (
+                            {proteinChoices.map((p) => (
                               <option key={p} value={p}>
                                 {p}
                               </option>

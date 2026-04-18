@@ -36,6 +36,14 @@
   background: #fbf6f0;
 }
 
+.table td {
+  font-size: 14px;
+}
+
+.table th {
+  font-weight: 600;
+}
+
 /* Clickable rows (List screen) */
 .row-link {
   cursor: pointer;
@@ -183,5 +191,30 @@
   .detail-actions .btn {
     width: 100%;
     justify-content: center;
+  }
+}
+
+/* Force mobile/desktop visibility correctly even when combined with other classes */
+.mobile-only {
+  display: none !important;
+}
+
+.desktop-only {
+  display: block !important;
+}
+
+@media (max-width: 640px) {
+  .desktop-only {
+    display: none !important;
+  }
+
+  .mobile-only {
+    display: block !important;
+  }
+}
+
+@media (max-width: 640px) {
+  .mobile-only.batch-cards {
+    display: grid !important;
   }
 }

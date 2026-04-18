@@ -234,3 +234,29 @@ a {
 .app-main {
   flex: 1;
 }
+
+/* Section spacing consistency */
+.section {
+  margin-top: 16px;
+}
+
+/* Stronger card feel */
+.card {
+  transition: all 0.15s ease;
+}
+
+.card:hover {
+  box-shadow: var(--shadow-md);
+}
+
+/* Improve page title presence */
+.page-title {
+  font-size: 22px;
+  font-weight: 700;
+}
+
+/* Subtle divider inside cards */
+.card-divider {
+  margin: 14px 0;
+  border-top: 1px solid var(--border-2);
+}

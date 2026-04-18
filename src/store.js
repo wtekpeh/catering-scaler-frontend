@@ -25,6 +25,17 @@ import {
   branchManagerAssignmentUpdateReducer,
   branchManagerUserSearchReducer,
   branchManagerAssignmentCreateReducer,
+  proteinChoiceListReducer,
+  cookBatchPostReviewReducer,
+  recipeDetailReducer,
+  recipeCreateReducer,
+  recipeUpdateReducer,
+  recipeDeleteReducer,
+  recipeIngredientListReducer,
+  recipeIngredientCreateReducer,
+  recipeIngredientUpdateReducer,
+  recipeIngredientDeleteReducer,
+  recipeCsvUploadReducer,
 } from "./reducers/cookBatchReducers";
 
 const reducer = combineReducers({
@@ -45,6 +56,17 @@ const reducer = combineReducers({
   branchManagerAssignmentUpdate: branchManagerAssignmentUpdateReducer,
   branchManagerUserSearch: branchManagerUserSearchReducer,
   branchManagerAssignmentCreate: branchManagerAssignmentCreateReducer,
+  proteinChoiceList: proteinChoiceListReducer,
+  cookBatchPostReview: cookBatchPostReviewReducer,
+  recipeDetail: recipeDetailReducer,
+  recipeCreate: recipeCreateReducer,
+  recipeUpdate: recipeUpdateReducer,
+  recipeDelete: recipeDeleteReducer,
+  recipeIngredientList: recipeIngredientListReducer,
+  recipeIngredientCreate: recipeIngredientCreateReducer,
+  recipeIngredientUpdate: recipeIngredientUpdateReducer,
+  recipeIngredientDelete: recipeIngredientDeleteReducer,
+  recipeCsvUpload: recipeCsvUploadReducer,
 });
 
 const composeEnhancer =

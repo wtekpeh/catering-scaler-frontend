@@ -31,6 +31,18 @@ import {
   RECIPE_LIST_RESET,
 
   //
+  PROTEIN_CHOICE_LIST_REQUEST,
+  PROTEIN_CHOICE_LIST_SUCCESS,
+  PROTEIN_CHOICE_LIST_FAIL,
+  PROTEIN_CHOICE_LIST_RESET,
+
+  //
+  COOKBATCH_POST_REVIEW_REQUEST,
+  COOKBATCH_POST_REVIEW_SUCCESS,
+  COOKBATCH_POST_REVIEW_FAIL,
+  COOKBATCH_POST_REVIEW_RESET,
+
+  //
   RECALIBRATE_REQUEST,
   RECALIBRATE_SUCCESS,
   RECALIBRATE_FAIL,
@@ -100,6 +112,60 @@ import {
   BRANCH_MANAGER_ASSIGNMENT_CREATE_SUCCESS,
   BRANCH_MANAGER_ASSIGNMENT_CREATE_FAIL,
   BRANCH_MANAGER_ASSIGNMENT_CREATE_RESET,
+
+  //
+  RECIPE_DETAIL_REQUEST,
+  RECIPE_DETAIL_SUCCESS,
+  RECIPE_DETAIL_FAIL,
+  RECIPE_DETAIL_RESET,
+
+  //
+  RECIPE_CREATE_REQUEST,
+  RECIPE_CREATE_SUCCESS,
+  RECIPE_CREATE_FAIL,
+  RECIPE_CREATE_RESET,
+
+  //
+  RECIPE_UPDATE_REQUEST,
+  RECIPE_UPDATE_SUCCESS,
+  RECIPE_UPDATE_FAIL,
+  RECIPE_UPDATE_RESET,
+
+  //
+  RECIPE_DELETE_REQUEST,
+  RECIPE_DELETE_SUCCESS,
+  RECIPE_DELETE_FAIL,
+  RECIPE_DELETE_RESET,
+
+  //
+  RECIPE_INGREDIENT_LIST_REQUEST,
+  RECIPE_INGREDIENT_LIST_SUCCESS,
+  RECIPE_INGREDIENT_LIST_FAIL,
+  RECIPE_INGREDIENT_LIST_RESET,
+
+  //
+  RECIPE_INGREDIENT_CREATE_REQUEST,
+  RECIPE_INGREDIENT_CREATE_SUCCESS,
+  RECIPE_INGREDIENT_CREATE_FAIL,
+  RECIPE_INGREDIENT_CREATE_RESET,
+
+  //
+  RECIPE_INGREDIENT_UPDATE_REQUEST,
+  RECIPE_INGREDIENT_UPDATE_SUCCESS,
+  RECIPE_INGREDIENT_UPDATE_FAIL,
+  RECIPE_INGREDIENT_UPDATE_RESET,
+
+  //
+  RECIPE_INGREDIENT_DELETE_REQUEST,
+  RECIPE_INGREDIENT_DELETE_SUCCESS,
+  RECIPE_INGREDIENT_DELETE_FAIL,
+  RECIPE_INGREDIENT_DELETE_RESET,
+
+  //
+  RECIPE_CSV_UPLOAD_REQUEST,
+  RECIPE_CSV_UPLOAD_SUCCESS,
+  RECIPE_CSV_UPLOAD_FAIL,
+  RECIPE_CSV_UPLOAD_RESET,
 } from "../constants/cookBatchConstants";
 
 // 1) LIST: GET /api/cooking/batches/
@@ -152,6 +218,26 @@ export const cookBatchCreateReducer = (
 
     case COOKBATCH_CREATE_RESET:
       return { loading: false, success: false, batch: null };
+
+    default:
+      return state;
+  }
+};
+
+//
+export const cookBatchPostReviewReducer = (state = {}, action) => {
+  switch (action.type) {
+    case COOKBATCH_POST_REVIEW_REQUEST:
+      return { loading: true };
+
+    case COOKBATCH_POST_REVIEW_SUCCESS:
+      return { loading: false, success: true };
+
+    case COOKBATCH_POST_REVIEW_FAIL:
+      return { loading: false, error: action.payload };
+
+    case COOKBATCH_POST_REVIEW_RESET:
+      return {};
 
     default:
       return state;
@@ -232,6 +318,37 @@ export const recipeListReducer = (
 
     case RECIPE_LIST_RESET:
       return { loading: false, recipes: [] };
+
+    default:
+      return state;
+  }
+};
+
+// 6) PROTEIN CHOICES: GET /api/recipes/protein-choices/
+export const proteinChoiceListReducer = (
+  state = { loading: false, proteinChoices: [] },
+  action,
+) => {
+  switch (action.type) {
+    case PROTEIN_CHOICE_LIST_REQUEST:
+      return { ...state, loading: true, error: null };
+
+    case PROTEIN_CHOICE_LIST_SUCCESS:
+      return {
+        loading: false,
+        proteinChoices: action.payload.results || [],
+        error: null,
+      };
+
+    case PROTEIN_CHOICE_LIST_FAIL:
+      return {
+        loading: false,
+        proteinChoices: [],
+        error: action.payload,
+      };
+
+    case PROTEIN_CHOICE_LIST_RESET:
+      return { loading: false, proteinChoices: [] };
 
     default:
       return state;
@@ -585,6 +702,262 @@ export const branchManagerAssignmentCreateReducer = (
 
     case BRANCH_MANAGER_ASSIGNMENT_CREATE_RESET:
       return { loading: false, success: false, assignment: null };
+
+    default:
+      return state;
+  }
+};
+
+export const recipeDetailReducer = (
+  state = { loading: false, recipe: null },
+  action,
+) => {
+  switch (action.type) {
+    case RECIPE_DETAIL_REQUEST:
+      return { ...state, loading: true, error: null };
+
+    case RECIPE_DETAIL_SUCCESS:
+      return { loading: false, recipe: action.payload, error: null };
+
+    case RECIPE_DETAIL_FAIL:
+      return { loading: false, recipe: null, error: action.payload };
+
+    case RECIPE_DETAIL_RESET:
+      return { loading: false, recipe: null };
+
+    default:
+      return state;
+  }
+};
+
+export const recipeCreateReducer = (
+  state = { loading: false, success: false, recipe: null },
+  action,
+) => {
+  switch (action.type) {
+    case RECIPE_CREATE_REQUEST:
+      return { ...state, loading: true, error: null, success: false };
+
+    case RECIPE_CREATE_SUCCESS:
+      return {
+        loading: false,
+        success: true,
+        recipe: action.payload,
+        error: null,
+      };
+
+    case RECIPE_CREATE_FAIL:
+      return {
+        loading: false,
+        success: false,
+        recipe: null,
+        error: action.payload,
+      };
+
+    case RECIPE_CREATE_RESET:
+      return { loading: false, success: false, recipe: null };
+
+    default:
+      return state;
+  }
+};
+
+export const recipeUpdateReducer = (
+  state = { loading: false, success: false, recipe: null },
+  action,
+) => {
+  switch (action.type) {
+    case RECIPE_UPDATE_REQUEST:
+      return { ...state, loading: true, error: null, success: false };
+
+    case RECIPE_UPDATE_SUCCESS:
+      return {
+        loading: false,
+        success: true,
+        recipe: action.payload,
+        error: null,
+      };
+
+    case RECIPE_UPDATE_FAIL:
+      return {
+        loading: false,
+        success: false,
+        recipe: null,
+        error: action.payload,
+      };
+
+    case RECIPE_UPDATE_RESET:
+      return { loading: false, success: false, recipe: null };
+
+    default:
+      return state;
+  }
+};
+
+export const recipeDeleteReducer = (
+  state = { loading: false, success: false },
+  action,
+) => {
+  switch (action.type) {
+    case RECIPE_DELETE_REQUEST:
+      return { ...state, loading: true, error: null, success: false };
+
+    case RECIPE_DELETE_SUCCESS:
+      return { loading: false, success: true, error: null };
+
+    case RECIPE_DELETE_FAIL:
+      return { loading: false, success: false, error: action.payload };
+
+    case RECIPE_DELETE_RESET:
+      return { loading: false, success: false };
+
+    default:
+      return state;
+  }
+};
+
+export const recipeIngredientListReducer = (
+  state = { loading: false, ingredients: [] },
+  action,
+) => {
+  switch (action.type) {
+    case RECIPE_INGREDIENT_LIST_REQUEST:
+      return { ...state, loading: true, error: null };
+
+    case RECIPE_INGREDIENT_LIST_SUCCESS:
+      return {
+        loading: false,
+        ingredients: action.payload,
+        error: null,
+      };
+
+    case RECIPE_INGREDIENT_LIST_FAIL:
+      return {
+        loading: false,
+        ingredients: [],
+        error: action.payload,
+      };
+
+    case RECIPE_INGREDIENT_LIST_RESET:
+      return { loading: false, ingredients: [] };
+
+    default:
+      return state;
+  }
+};
+
+export const recipeIngredientCreateReducer = (
+  state = { loading: false, success: false, ingredient: null },
+  action,
+) => {
+  switch (action.type) {
+    case RECIPE_INGREDIENT_CREATE_REQUEST:
+      return { ...state, loading: true, error: null, success: false };
+
+    case RECIPE_INGREDIENT_CREATE_SUCCESS:
+      return {
+        loading: false,
+        success: true,
+        ingredient: action.payload,
+        error: null,
+      };
+
+    case RECIPE_INGREDIENT_CREATE_FAIL:
+      return {
+        loading: false,
+        success: false,
+        ingredient: null,
+        error: action.payload,
+      };
+
+    case RECIPE_INGREDIENT_CREATE_RESET:
+      return { loading: false, success: false, ingredient: null };
+
+    default:
+      return state;
+  }
+};
+
+export const recipeIngredientUpdateReducer = (
+  state = { loading: false, success: false, ingredient: null },
+  action,
+) => {
+  switch (action.type) {
+    case RECIPE_INGREDIENT_UPDATE_REQUEST:
+      return { ...state, loading: true, error: null, success: false };
+
+    case RECIPE_INGREDIENT_UPDATE_SUCCESS:
+      return {
+        loading: false,
+        success: true,
+        ingredient: action.payload,
+        error: null,
+      };
+
+    case RECIPE_INGREDIENT_UPDATE_FAIL:
+      return {
+        loading: false,
+        success: false,
+        ingredient: null,
+        error: action.payload,
+      };
+
+    case RECIPE_INGREDIENT_UPDATE_RESET:
+      return { loading: false, success: false, ingredient: null };
+
+    default:
+      return state;
+  }
+};
+
+export const recipeIngredientDeleteReducer = (
+  state = { loading: false, success: false },
+  action,
+) => {
+  switch (action.type) {
+    case RECIPE_INGREDIENT_DELETE_REQUEST:
+      return { ...state, loading: true, error: null, success: false };
+
+    case RECIPE_INGREDIENT_DELETE_SUCCESS:
+      return { loading: false, success: true, error: null };
+
+    case RECIPE_INGREDIENT_DELETE_FAIL:
+      return { loading: false, success: false, error: action.payload };
+
+    case RECIPE_INGREDIENT_DELETE_RESET:
+      return { loading: false, success: false };
+
+    default:
+      return state;
+  }
+};
+
+export const recipeCsvUploadReducer = (
+  state = { loading: false, success: false, result: null },
+  action,
+) => {
+  switch (action.type) {
+    case RECIPE_CSV_UPLOAD_REQUEST:
+      return { ...state, loading: true, error: null, success: false };
+
+    case RECIPE_CSV_UPLOAD_SUCCESS:
+      return {
+        loading: false,
+        success: true,
+        result: action.payload,
+        error: null,
+      };
+
+    case RECIPE_CSV_UPLOAD_FAIL:
+      return {
+        loading: false,
+        success: false,
+        result: null,
+        error: action.payload,
+      };
+
+    case RECIPE_CSV_UPLOAD_RESET:
+      return { loading: false, success: false, result: null };
 
     default:
       return state;

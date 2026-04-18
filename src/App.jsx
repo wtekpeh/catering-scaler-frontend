@@ -29,6 +29,12 @@ import { getNotifications, getUnreadCount } from "./api/notificationApi";
 import { useNotificationStore } from "./stores/dashboard/useNotificationStore";
 import NotificationsScreen from "./screens/NotificationsScreen";
 
+//Recipe Management Screen
+import RecipeManagementScreen from "./screens/RecipeManagementScreen";
+import RecipeListScreen from "./screens/RecipeListScreen";
+import RecipeCSVUploadScreen from "./screens/RecipeCSVUploadScreen";
+import RecipeDetailScreen from "./screens/RecipeDetailScreen";
+
 function AppLayout() {
   const setNotifications = useNotificationStore((s) => s.setNotifications);
   const setUnreadCount = useNotificationStore((s) => s.setUnreadCount);
@@ -67,7 +73,13 @@ function AppLayout() {
             path="/"
             element={<Navigate to="/cooking/batches" replace />}
           />
+
           <Route path="/cooking/batches" element={<CookBatchListScreen />} />
+          <Route path="/recipes" element={<RecipeManagementScreen />} />
+          <Route path="/recipes/list" element={<RecipeListScreen />} />
+          <Route path="/recipes/upload" element={<RecipeCSVUploadScreen />} />
+          <Route path="/recipes/:id" element={<RecipeDetailScreen />} />
+
           <Route
             path="/cooking/batches/create"
             element={<CookBatchCreateScreen />}
