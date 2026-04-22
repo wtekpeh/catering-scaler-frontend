@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
@@ -8,9 +8,13 @@ import {
   getCurrentUser,
 } from "../actions/cookBatchActions";
 
+import ConfirmActionModal from "../components/common/ConfirmActionModal";
+
 const CookBatchListScreen = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+
+  const [showRecalibrateConfirm, setShowRecalibrateConfirm] = useState(false);
 
   const userMe = useSelector((state) => state.userMe);
   const { user } = userMe;
@@ -33,6 +37,12 @@ const CookBatchListScreen = () => {
     dispatch(getCurrentUser());
   }, [dispatch]);
 
+  useEffect(() => {
+    if (recalSuccess && !recalLoading) {
+      setShowRecalibrateConfirm(false);
+    }
+  }, [recalSuccess, recalLoading]);
+
   return (
     <div className="page">
       <div className="container">
@@ -47,7 +57,8 @@ const CookBatchListScreen = () => {
             {canRecalibrate && (
               <button
                 type="button"
-                onClick={() => dispatch(recalibrateIngredients())}
+                className="btn warning"
+                onClick={() => setShowRecalibrateConfirm(true)}
                 disabled={recalLoading}
               >
                 {recalLoading ? "Recalculating..." : "Recalculate"}
@@ -200,6 +211,18 @@ const CookBatchListScreen = () => {
           </>
         )}
       </div>
+
+      <ConfirmActionModal
+        isOpen={showRecalibrateConfirm}
+        title="Run Recalibration?"
+        message="This will recalculate ingredient scale factors from historical cooking data. Only continue if you want to refresh the learning model."
+        confirmLabel="Yes, Recalibrate"
+        cancelLabel="Cancel"
+        variant="warning"
+        loading={recalLoading}
+        onClose={() => setShowRecalibrateConfirm(false)}
+        onConfirm={() => dispatch(recalibrateIngredients())}
+      />
     </div>
   );
 };

@@ -9,6 +9,7 @@ import {
 } from "../actions/cookBatchActions";
 
 import PostReviewModal from "../components/cooking/PostReviewModal";
+import ConfirmActionModal from "../components/common/ConfirmActionModal";
 
 import {
   COOKBATCH_ACTUALS_UPDATE_RESET,
@@ -50,6 +51,8 @@ const CookBatchDetailScreen = () => {
 
   const [showPostReviewModal, setShowPostReviewModal] = useState(false);
 
+  const [showPostReviewConfirm, setShowPostReviewConfirm] = useState(false);
+
   // Load batch detail
   useEffect(() => {
     if (!Number.isFinite(batchId)) return;
@@ -86,12 +89,14 @@ const CookBatchDetailScreen = () => {
       dispatch(getCookBatchDetail(batchId));
       dispatch({ type: COOKBATCH_POST_REVIEW_RESET });
       setShowPostReviewModal(false);
+      setShowPostReviewConfirm(false);
     }
   }, [postReviewSuccess, dispatch, batchId]);
 
   const isFinal = (batch?.status || "").toLowerCase() === "final";
   const canCreateBatch = user?.can_create_batch_any;
   const canUpdateBatch = user?.can_update_batch;
+  const canPostReview = Boolean(user?.can_post_review || user?.can_recalibrate);
 
   const items = batch?.items || [];
 
@@ -213,6 +218,11 @@ const CookBatchDetailScreen = () => {
   const submitPostReview = (payload) => {
     if (!batchId) return;
 
+    if (!canPostReview) {
+      window.alert("You do not have permission to perform post-review edits.");
+      return;
+    }
+
     dispatch(postReviewUpdateCookBatch(batchId, payload));
   };
 
@@ -313,12 +323,12 @@ const CookBatchDetailScreen = () => {
                 </>
               )}
 
-              {isFinal && (
+              {isFinal && canPostReview && (
                 <button
                   className="btn warning"
                   type="button"
                   disabled={postReviewLoading}
-                  onClick={() => setShowPostReviewModal(true)}
+                  onClick={() => setShowPostReviewConfirm(true)}
                 >
                   Post Review Edit
                 </button>
@@ -328,6 +338,9 @@ const CookBatchDetailScreen = () => {
             {isFinal && (
               <p className="helper">
                 This batch is <b>final</b>. Actual values are locked.
+                {!canPostReview
+                  ? " Post-review edits are restricted to privileged users."
+                  : ""}
               </p>
             )}
 
@@ -515,6 +528,25 @@ const CookBatchDetailScreen = () => {
           </>
         )}
       </div>
+
+      <ConfirmActionModal
+        isOpen={showPostReviewConfirm}
+        title="Open Post Review Edit?"
+        message="This action is restricted to privileged users and is meant for finalized batch corrections after review. Do you want to continue?"
+        confirmLabel="Yes, Continue"
+        cancelLabel="Cancel"
+        variant="warning"
+        loading={postReviewLoading}
+        onClose={() => {
+          if (!postReviewLoading) {
+            setShowPostReviewConfirm(false);
+          }
+        }}
+        onConfirm={() => {
+          setShowPostReviewConfirm(false);
+          setShowPostReviewModal(true);
+        }}
+      />
 
       <PostReviewModal
         isOpen={showPostReviewModal}

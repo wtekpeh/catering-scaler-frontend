@@ -9,7 +9,10 @@ import {
   listProteinChoices,
 } from "../actions/cookBatchActions";
 
-import { COOKBATCH_CREATE_RESET } from "../constants/cookBatchConstants";
+import {
+  COOKBATCH_CREATE_RESET,
+  PROTEIN_CHOICE_LIST_SUCCESS,
+} from "../constants/cookBatchConstants";
 
 const CookBatchCreateScreen = () => {
   const dispatch = useDispatch();
@@ -76,9 +79,25 @@ const CookBatchCreateScreen = () => {
 
   useEffect(() => {
     dispatch(listRecipes());
-    dispatch(listProteinChoices());
     dispatch(getCurrentUser());
   }, [dispatch]);
+
+  useEffect(() => {
+    if (recipeId) {
+      dispatch(listProteinChoices(recipeId));
+    }
+  }, [dispatch, recipeId]);
+
+  useEffect(() => {
+    setProteinRows([]);
+
+    if (!recipeId) {
+      dispatch({
+        type: PROTEIN_CHOICE_LIST_SUCCESS,
+        payload: { count: 0, results: [] },
+      });
+    }
+  }, [dispatch, recipeId]);
 
   useEffect(() => {
     if (currentUser && canCreateBatch === false) {
@@ -344,7 +363,8 @@ const CookBatchCreateScreen = () => {
                   type="button"
                   className="btn"
                   onClick={addProteinRow}
-                  disabled={loading}
+                  disabled={loading || !recipeId}
+                  title={!recipeId ? "Select a recipe first" : ""}
                 >
                   + Add Protein
                 </button>
@@ -355,7 +375,11 @@ const CookBatchCreateScreen = () => {
 
               {proteinRows.length === 0 ? (
                 <p className="helper">
-                  No protein selected (optional). Click “Add Protein” if needed.
+                  {!recipeId
+                    ? "Select a recipe first before adding protein."
+                    : proteinChoices.length === 0
+                      ? "This recipe has no configured protein choices."
+                      : "No protein selected (optional). Click “Add Protein” if needed."}
                 </p>
               ) : (
                 <>

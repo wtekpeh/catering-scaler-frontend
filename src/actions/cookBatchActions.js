@@ -320,25 +320,31 @@ export const listRecipes = () => async (dispatch) => {
 
 //
 // LIST PROTEIN CHOICES: GET /api/recipes/protein-choices/
-export const listProteinChoices = () => async (dispatch) => {
-  try {
-    dispatch({ type: PROTEIN_CHOICE_LIST_REQUEST });
+export const listProteinChoices =
+  (recipeId = "") =>
+  async (dispatch) => {
+    try {
+      dispatch({ type: PROTEIN_CHOICE_LIST_REQUEST });
 
-    const { data } = await axios.get(
-      `${API_BASE_URL}/api/recipes/protein-choices/`,
-    );
+      let url = `${API_BASE_URL}/api/recipes/protein-choices/`;
 
-    dispatch({
-      type: PROTEIN_CHOICE_LIST_SUCCESS,
-      payload: data,
-    });
-  } catch (error) {
-    dispatch({
-      type: PROTEIN_CHOICE_LIST_FAIL,
-      payload: getErrorMessage(error),
-    });
-  }
-};
+      if (recipeId) {
+        url += `?recipe_id=${recipeId}`;
+      }
+
+      const { data } = await axios.get(url);
+
+      dispatch({
+        type: PROTEIN_CHOICE_LIST_SUCCESS,
+        payload: data,
+      });
+    } catch (error) {
+      dispatch({
+        type: PROTEIN_CHOICE_LIST_FAIL,
+        payload: getErrorMessage(error),
+      });
+    }
+  };
 
 //
 export const recalibrateIngredients =

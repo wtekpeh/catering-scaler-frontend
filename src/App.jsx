@@ -34,6 +34,7 @@ import RecipeManagementScreen from "./screens/RecipeManagementScreen";
 import RecipeListScreen from "./screens/RecipeListScreen";
 import RecipeCSVUploadScreen from "./screens/RecipeCSVUploadScreen";
 import RecipeDetailScreen from "./screens/RecipeDetailScreen";
+import GlobalOnlyRoute from "./components/routes/GlobalOnlyRoute";
 
 function AppLayout() {
   const setNotifications = useNotificationStore((s) => s.setNotifications);
@@ -75,10 +76,41 @@ function AppLayout() {
           />
 
           <Route path="/cooking/batches" element={<CookBatchListScreen />} />
-          <Route path="/recipes" element={<RecipeManagementScreen />} />
-          <Route path="/recipes/list" element={<RecipeListScreen />} />
-          <Route path="/recipes/upload" element={<RecipeCSVUploadScreen />} />
-          <Route path="/recipes/:id" element={<RecipeDetailScreen />} />
+          <Route
+            path="/recipes"
+            element={
+              <GlobalOnlyRoute>
+                <RecipeManagementScreen />
+              </GlobalOnlyRoute>
+            }
+          />
+
+          <Route
+            path="/recipes/list"
+            element={
+              <GlobalOnlyRoute>
+                <RecipeListScreen />
+              </GlobalOnlyRoute>
+            }
+          />
+
+          <Route
+            path="/recipes/upload"
+            element={
+              <GlobalOnlyRoute>
+                <RecipeCSVUploadScreen />
+              </GlobalOnlyRoute>
+            }
+          />
+
+          <Route
+            path="/recipes/:id"
+            element={
+              <GlobalOnlyRoute>
+                <RecipeDetailScreen />
+              </GlobalOnlyRoute>
+            }
+          />
 
           <Route
             path="/cooking/batches/create"
