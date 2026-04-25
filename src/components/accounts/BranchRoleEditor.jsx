@@ -77,8 +77,11 @@ const BranchRoleEditor = ({ branchRoles, branches, onChange }) => {
                         handleFieldChange(index, "role", e.target.value)
                       }
                     >
+                      <option value="">Select role</option>
                       <option value="branch_manager">Branch Manager</option>
                       <option value="chef">Chef</option>
+                      <option value="kitchen_staff">Kitchen Staff</option>
+                      <option value="store">Store</option>
                     </select>
                   </div>
 

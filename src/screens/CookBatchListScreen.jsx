@@ -109,8 +109,10 @@ const CookBatchListScreen = () => {
                       <thead>
                         <tr>
                           <th>ID</th>
-                          <th>Recipe</th>
                           <th>People</th>
+                          <th>Prepared By</th>
+                          <th>Branch</th>
+                          <th>Protein</th>
                           <th>Protein</th>
                           <th>Status</th>
                           <th>Notes</th>
@@ -129,6 +131,8 @@ const CookBatchListScreen = () => {
                             <td>{b.id}</td>
                             <td>{b.recipe_name}</td>
                             <td>{b.n_people}</td>
+                            <td>{b.created_by_name || "-"}</td>
+                            <td>{b.branch_name || "-"}</td>
                             <td>{b.protein_type || "-"}</td>
                             <td>
                               <span
@@ -187,6 +191,12 @@ const CookBatchListScreen = () => {
                           </div>
                           <div>
                             <b>People:</b> {b.n_people}
+                          </div>
+                          <div>
+                            <b>Prepared by:</b> {b.created_by_name || "-"}
+                          </div>
+                          <div>
+                            <b>Branch:</b> {b.branch_name || "-"}
                           </div>
                           <div>
                             <b>Protein:</b> {b.protein_type || "-"}

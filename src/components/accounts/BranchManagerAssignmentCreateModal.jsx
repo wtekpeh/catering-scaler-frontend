@@ -289,6 +289,7 @@ const BranchManagerAssignmentCreateModal = ({ show, onClose, onSuccess }) => {
                     <option value="">Select role</option>
                     <option value="chef">Chef</option>
                     <option value="kitchen_staff">Kitchen Staff</option>
+                    <option value="store">Store</option>
                   </select>
                 </div>
               </div>

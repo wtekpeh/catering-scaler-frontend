@@ -68,7 +68,7 @@ const CookBatchDetailScreen = () => {
       seed[it.id] = {
         actual_kg:
           it.actual_kg !== null && it.actual_kg !== undefined
-            ? String(it.actual_kg)
+            ? Number(it.actual_kg).toFixed(3)
             : "",
         notes: it.notes || "",
       };

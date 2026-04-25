@@ -12,7 +12,7 @@
 .table {
   width: 100%;
   border-collapse: collapse;
-  min-width: 900px; /* desktop/tablet: full table; mobile: scroll */
+  min-width: 1200px;
 }
 
 .table th,
