@@ -6,6 +6,7 @@ import {
   getCookBatchDetail,
   updateCookBatchActuals,
   postReviewUpdateCookBatch,
+  getCurrentUser,
 } from "../actions/cookBatchActions";
 
 import PostReviewModal from "../components/cooking/PostReviewModal";
@@ -53,9 +54,13 @@ const CookBatchDetailScreen = () => {
 
   const [showPostReviewConfirm, setShowPostReviewConfirm] = useState(false);
 
+  const [hideZeroItems, setHideZeroItems] = useState(true);
+
   // Load batch detail
   useEffect(() => {
     if (!Number.isFinite(batchId)) return;
+
+    dispatch(getCurrentUser());
     dispatch(getCookBatchDetail(batchId));
   }, [dispatch, batchId]);
 
@@ -68,7 +73,7 @@ const CookBatchDetailScreen = () => {
       seed[it.id] = {
         actual_kg:
           it.actual_kg !== null && it.actual_kg !== undefined
-            ? Number(it.actual_kg).toFixed(3)
+            ? formatDisplayKg(it.actual_kg, getDisplayConfig(it.ingredient))
             : "",
         notes: it.notes || "",
       };
@@ -94,11 +99,26 @@ const CookBatchDetailScreen = () => {
   }, [postReviewSuccess, dispatch, batchId]);
 
   const isFinal = (batch?.status || "").toLowerCase() === "final";
+  const isGlobalUser = Boolean(user?.can_recalibrate);
+  const isRecipeActualsLocked =
+    Boolean(batch?.recipe_actuals_locked) && !isGlobalUser;
   const canCreateBatch = user?.can_create_batch_any;
   const canUpdateBatch = user?.can_update_batch;
   const canPostReview = Boolean(user?.can_post_review || user?.can_recalibrate);
 
   const items = batch?.items || [];
+
+  const visibleItems = hideZeroItems
+    ? items.filter((it) => !isZeroIngredientRow(it))
+    : items;
+
+  function isZeroIngredientRow(it) {
+    const finalKg = Number(it.final_kg || 0);
+    const predKg = Number(it.pred_kg || 0);
+    const actualKg = Number(it.actual_kg || 0);
+
+    return finalKg === 0 && predKg === 0 && actualKg === 0;
+  }
 
   // Build PATCH payload using grams (backend expects actual_g)
   const patchItemsPayload = useMemo(() => {
@@ -111,11 +131,11 @@ const CookBatchDetailScreen = () => {
       const rawKg = (edit.actual_kg || "").trim();
       if (rawKg === "") return;
 
-      const kg = Number(rawKg);
-      if (!Number.isFinite(kg) || kg < 0) return;
+      const displayValue = Number(rawKg);
+      if (!Number.isFinite(displayValue) || displayValue < 0) return;
 
-      // convert kg -> g
-      const actual_g = Math.round(kg * 1000);
+      const config = getDisplayConfig(it.ingredient);
+      const actual_g = config.displayToActualG(displayValue);
 
       out.push({
         id: it.id,
@@ -143,7 +163,8 @@ const CookBatchDetailScreen = () => {
         Number.isFinite(Number(rawKg)) &&
         Number(rawKg) >= 0
       ) {
-        actual_g = Math.round(Number(rawKg) * 1000);
+        const config = getDisplayConfig(it.ingredient);
+        actual_g = config.displayToActualG(Number(rawKg));
       } else {
         // Otherwise assume final was used
         // Prefer final_g if your API returns it, else compute from final_kg
@@ -296,31 +317,31 @@ const CookBatchDetailScreen = () => {
                 Refresh
               </button>
 
-              {canUpdateBatch && !isFinal && (
-                <>
-                  <button
-                    className="btn primary"
-                    type="button"
-                    disabled={updating}
-                    onClick={() => submitActuals(false)}
-                  >
-                    Save Actuals
-                  </button>
+              {canUpdateBatch && !isFinal && !isRecipeActualsLocked && (
+                <button
+                  className="btn primary"
+                  type="button"
+                  disabled={updating}
+                  onClick={() => submitActuals(false)}
+                >
+                  Save Actuals
+                </button>
+              )}
 
-                  <button
-                    className="btn"
-                    type="button"
-                    disabled={updating}
-                    onClick={() => {
-                      const ok = window.confirm(
-                        "Finalize this batch? You won’t be able to edit actuals after.",
-                      );
-                      if (ok) submitActuals(true);
-                    }}
-                  >
-                    Finalize Batch
-                  </button>
-                </>
+              {canUpdateBatch && !isFinal && (
+                <button
+                  className="btn"
+                  type="button"
+                  disabled={updating}
+                  onClick={() => {
+                    const ok = window.confirm(
+                      "Finalize this batch? You won’t be able to edit actuals after.",
+                    );
+                    if (ok) submitActuals(true);
+                  }}
+                >
+                  Finalize Batch
+                </button>
               )}
 
               {isFinal && canPostReview && (
@@ -348,6 +369,20 @@ const CookBatchDetailScreen = () => {
               <p className="helper">You have view-only access to this batch.</p>
             )}
 
+            <div style={{ marginBottom: 10 }}>
+              <label
+                className="label"
+                style={{ display: "flex", gap: 8, alignItems: "center" }}
+              >
+                <input
+                  type="checkbox"
+                  checked={hideZeroItems}
+                  onChange={(e) => setHideZeroItems(e.target.checked)}
+                />
+                Hide zero ingredients
+              </label>
+            </div>
+
             {/* DESKTOP TABLE */}
             <div className="desktop-only">
               <div className="table-wrap">
@@ -355,26 +390,27 @@ const CookBatchDetailScreen = () => {
                   <thead>
                     <tr>
                       <th>Ingredient</th>
-                      <th>Final (kg)</th>
-                      <th>Pred (kg)</th>
+                      <th>Final</th>
+                      <th>Pred</th>
                       <th>Clamped?</th>
-                      <th>Actual (kg)</th>
+                      <th>Actual</th>
                       <th>Actual (g)</th>
                       <th>Notes</th>
                     </tr>
                   </thead>
 
                   <tbody>
-                    {items.map((it) => {
+                    {visibleItems.map((it) => {
                       const edit = actualEdits[it.id] || {
                         actual_kg: "",
                         notes: "",
                       };
+                      const config = getDisplayConfig(it.ingredient);
 
                       const rawKg = (edit.actual_kg || "").trim();
                       const actualG =
                         rawKg !== "" && Number.isFinite(Number(rawKg))
-                          ? String(Math.round(Number(rawKg) * 1000))
+                          ? String(config.displayToActualG(Number(rawKg)))
                           : "";
 
                       return (
@@ -384,8 +420,12 @@ const CookBatchDetailScreen = () => {
                             <div className="cell-sub">{it.group}</div>
                           </td>
 
-                          <td>{formatNum(it.final_kg, 3)}</td>
-                          <td>{formatNum(it.pred_kg, 3)}</td>
+                          <td>
+                            {formatDisplayKg(it.final_kg, config)} {config.unit}
+                          </td>
+                          <td>
+                            {formatDisplayKg(it.pred_kg, config)} {config.unit}
+                          </td>
 
                           <td>
                             {it.was_clamped ? (
@@ -400,9 +440,14 @@ const CookBatchDetailScreen = () => {
                               className="input"
                               type="number"
                               min="0"
-                              step="0.001"
+                              step={config.inputStep}
                               value={edit.actual_kg}
-                              disabled={!canUpdateBatch || isFinal || updating}
+                              disabled={
+                                !canUpdateBatch ||
+                                isFinal ||
+                                isRecipeActualsLocked ||
+                                updating
+                              }
                               onChange={(e) =>
                                 onChangeActualKg(it.id, e.target.value)
                               }
@@ -423,7 +468,12 @@ const CookBatchDetailScreen = () => {
                               className="input"
                               type="text"
                               value={edit.notes}
-                              disabled={!canUpdateBatch || isFinal || updating}
+                              disabled={
+                                !canUpdateBatch ||
+                                isFinal ||
+                                isRecipeActualsLocked ||
+                                updating
+                              }
                               onChange={(e) =>
                                 onChangeNotes(it.id, e.target.value)
                               }
@@ -440,16 +490,17 @@ const CookBatchDetailScreen = () => {
             {/* MOBILE CARDS */}
             <div className="mobile-only">
               <div className="batch-cards">
-                {items.map((it) => {
+                {visibleItems.map((it) => {
                   const edit = actualEdits[it.id] || {
                     actual_kg: "",
                     notes: "",
                   };
+                  const config = getDisplayConfig(it.ingredient);
 
                   const rawKg = (edit.actual_kg || "").trim();
                   const actualG =
                     rawKg !== "" && Number.isFinite(Number(rawKg))
-                      ? String(Math.round(Number(rawKg) * 1000))
+                      ? String(config.displayToActualG(Number(rawKg)))
                       : "";
 
                   return (
@@ -469,23 +520,30 @@ const CookBatchDetailScreen = () => {
                           <b>Group:</b> {it.group}
                         </div>
                         <div>
-                          <b>Final:</b> {formatNum(it.final_kg, 3)} kg
+                          <b>Final:</b> {formatDisplayKg(it.final_kg, config)}{" "}
+                          {config.unit}
                         </div>
                         <div>
-                          <b>Pred:</b> {formatNum(it.pred_kg, 3)} kg
+                          <b>Pred:</b> {formatDisplayKg(it.pred_kg, config)}{" "}
+                          {config.unit}
                         </div>
                       </div>
 
                       <div className="stack-14">
                         <div>
-                          <label className="label">Actual (kg)</label>
+                          <label className="label">{config.actualLabel}</label>
                           <input
                             className="input"
                             type="number"
                             min="0"
-                            step="0.001"
+                            step={config.inputStep}
                             value={edit.actual_kg}
-                            disabled={!canUpdateBatch || isFinal || updating}
+                            disabled={
+                              !canUpdateBatch ||
+                              isFinal ||
+                              isRecipeActualsLocked ||
+                              updating
+                            }
                             onChange={(e) =>
                               onChangeActualKg(it.id, e.target.value)
                             }
@@ -508,7 +566,12 @@ const CookBatchDetailScreen = () => {
                             className="input"
                             type="text"
                             value={edit.notes}
-                            disabled={!canUpdateBatch || isFinal || updating}
+                            disabled={
+                              !canUpdateBatch ||
+                              isFinal ||
+                              isRecipeActualsLocked ||
+                              updating
+                            }
                             onChange={(e) =>
                               onChangeNotes(it.id, e.target.value)
                             }
@@ -522,8 +585,10 @@ const CookBatchDetailScreen = () => {
             </div>
 
             <div style={{ marginTop: 10, fontSize: 12, opacity: 0.75 }}>
-              Note: You enter <b>kg</b>. “Save Actuals” sends only typed rows.
-              “Finalize Batch” fills blanks using <b>Final (kg)</b>.
+              Note: Oil displays in <b>L</b>, GA Kenkey displays in <b>pcs</b>,
+              and other ingredients display in <b>kg</b>. Backend still receives
+              grams. “Finalize Batch” fills blanks using the final backend
+              quantity.
             </div>
           </>
         )}
@@ -565,18 +630,63 @@ const CookBatchDetailScreen = () => {
   );
 };
 
+function getDisplayConfig(ingredientName = "") {
+  const name = ingredientName.toUpperCase();
+
+  if (name.includes("GA KENKEY")) {
+    return {
+      unit: "pcs",
+      actualLabel: "Actual (pcs)",
+      finalLabel: "Final (pcs)",
+      predLabel: "Pred (pcs)",
+      inputStep: "1",
+      kgToDisplay: (kg) => Number(kg) * 1000,
+      displayToActualG: (value) => Math.round(Number(value)),
+    };
+  }
+
+  if (name.includes("COOKING OIL")) {
+    return {
+      unit: "L",
+      actualLabel: "Actual (L)",
+      finalLabel: "Final (L)",
+      predLabel: "Pred (L)",
+      inputStep: "0.001",
+      kgToDisplay: (kg) => Number(kg),
+      displayToActualG: (value) => Math.round(Number(value) * 1000),
+    };
+  }
+
+  return {
+    unit: "kg",
+    actualLabel: "Actual (kg)",
+    finalLabel: "Final (kg)",
+    predLabel: "Pred (kg)",
+    inputStep: "0.001",
+    kgToDisplay: (kg) => Number(kg),
+    displayToActualG: (value) => Math.round(Number(value) * 1000),
+  };
+}
+
+function formatDisplayKg(value, config, decimals = 3) {
+  if (value === null || value === undefined) return "-";
+  const n = Number(value);
+  if (!Number.isFinite(n)) return "-";
+
+  const converted = config.kgToDisplay(n);
+
+  if (config.unit === "pcs") {
+    return String(Math.round(converted));
+  }
+
+  return converted.toFixed(decimals);
+}
+
 function formatDateTime(value) {
   if (!value) return "-";
   const d = new Date(value);
   if (Number.isNaN(d.getTime())) return value;
   return d.toLocaleString();
-}
-
-function formatNum(value, decimals = 3) {
-  if (value === null || value === undefined) return "-";
-  const n = Number(value);
-  if (!Number.isFinite(n)) return String(value);
-  return n.toFixed(decimals);
 }
 
 const StatusPill = ({ status }) => {

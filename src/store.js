@@ -36,6 +36,9 @@ import {
   recipeIngredientUpdateReducer,
   recipeIngredientDeleteReducer,
   recipeCsvUploadReducer,
+  cookBatchActualsLockReducer,
+  recipeActualsLockReducer,
+  recipeActualsUnlockReducer,
 } from "./reducers/cookBatchReducers";
 
 const reducer = combineReducers({
@@ -67,6 +70,9 @@ const reducer = combineReducers({
   recipeIngredientUpdate: recipeIngredientUpdateReducer,
   recipeIngredientDelete: recipeIngredientDeleteReducer,
   recipeCsvUpload: recipeCsvUploadReducer,
+  cookBatchActualsLock: cookBatchActualsLockReducer,
+  recipeActualsLock: recipeActualsLockReducer,
+  recipeActualsUnlock: recipeActualsUnlockReducer,
 });
 
 const composeEnhancer =

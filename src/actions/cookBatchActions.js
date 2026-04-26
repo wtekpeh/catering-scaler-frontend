@@ -140,6 +140,21 @@ import {
   RECIPE_CSV_UPLOAD_REQUEST,
   RECIPE_CSV_UPLOAD_SUCCESS,
   RECIPE_CSV_UPLOAD_FAIL,
+
+  //
+  COOKBATCH_ACTUALS_LOCK_REQUEST,
+  COOKBATCH_ACTUALS_LOCK_SUCCESS,
+  COOKBATCH_ACTUALS_LOCK_FAIL,
+
+  //
+  RECIPE_ACTUALS_LOCK_REQUEST,
+  RECIPE_ACTUALS_LOCK_SUCCESS,
+  RECIPE_ACTUALS_LOCK_FAIL,
+
+  //
+  RECIPE_ACTUALS_UNLOCK_REQUEST,
+  RECIPE_ACTUALS_UNLOCK_SUCCESS,
+  RECIPE_ACTUALS_UNLOCK_FAIL,
 } from "../constants/cookBatchConstants";
 
 // Base API URL from Vite env (.env: VITE_API_BASE_URL=http://127.0.0.1:8000)
@@ -842,6 +857,74 @@ export const uploadRecipeCsv = (file) => async (dispatch) => {
   } catch (error) {
     dispatch({
       type: RECIPE_CSV_UPLOAD_FAIL,
+      payload: getErrorMessage(error),
+    });
+  }
+};
+
+// LOCK ACTUALS: PATCH /api/cooking/batches/:id/lock-actuals/
+export const lockCookBatchActuals = (id) => async (dispatch) => {
+  try {
+    dispatch({ type: COOKBATCH_ACTUALS_LOCK_REQUEST });
+
+    const { data } = await axios.patch(
+      `${API_BASE_URL}/api/cooking/batches/${id}/lock-actuals/`,
+      {},
+      { headers: { "Content-Type": "application/json" } },
+    );
+
+    dispatch({
+      type: COOKBATCH_ACTUALS_LOCK_SUCCESS,
+      payload: data,
+    });
+  } catch (error) {
+    dispatch({
+      type: COOKBATCH_ACTUALS_LOCK_FAIL,
+      payload: getErrorMessage(error),
+    });
+  }
+};
+
+// LOCK RECIPE ACTUALS: PATCH /api/recipes/:id/lock-actuals/
+export const lockRecipeActuals = (recipeId) => async (dispatch) => {
+  try {
+    dispatch({ type: RECIPE_ACTUALS_LOCK_REQUEST });
+
+    const { data } = await axios.patch(
+      `${API_BASE_URL}/api/recipes/${recipeId}/lock-actuals/`,
+      {},
+      { headers: { "Content-Type": "application/json" } },
+    );
+
+    dispatch({
+      type: RECIPE_ACTUALS_LOCK_SUCCESS,
+      payload: data,
+    });
+  } catch (error) {
+    dispatch({
+      type: RECIPE_ACTUALS_LOCK_FAIL,
+      payload: getErrorMessage(error),
+    });
+  }
+};
+
+export const unlockRecipeActuals = (recipeId) => async (dispatch) => {
+  try {
+    dispatch({ type: RECIPE_ACTUALS_UNLOCK_REQUEST });
+
+    const { data } = await axios.patch(
+      `${API_BASE_URL}/api/recipes/${recipeId}/unlock-actuals/`,
+      {},
+      { headers: { "Content-Type": "application/json" } },
+    );
+
+    dispatch({
+      type: RECIPE_ACTUALS_UNLOCK_SUCCESS,
+      payload: data,
+    });
+  } catch (error) {
+    dispatch({
+      type: RECIPE_ACTUALS_UNLOCK_FAIL,
       payload: getErrorMessage(error),
     });
   }

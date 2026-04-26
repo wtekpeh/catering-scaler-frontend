@@ -166,6 +166,24 @@ import {
   RECIPE_CSV_UPLOAD_SUCCESS,
   RECIPE_CSV_UPLOAD_FAIL,
   RECIPE_CSV_UPLOAD_RESET,
+
+  //
+  COOKBATCH_ACTUALS_LOCK_REQUEST,
+  COOKBATCH_ACTUALS_LOCK_SUCCESS,
+  COOKBATCH_ACTUALS_LOCK_FAIL,
+  COOKBATCH_ACTUALS_LOCK_RESET,
+
+  //
+  RECIPE_ACTUALS_LOCK_REQUEST,
+  RECIPE_ACTUALS_LOCK_SUCCESS,
+  RECIPE_ACTUALS_LOCK_FAIL,
+  RECIPE_ACTUALS_LOCK_RESET,
+
+  //
+  RECIPE_ACTUALS_UNLOCK_REQUEST,
+  RECIPE_ACTUALS_UNLOCK_SUCCESS,
+  RECIPE_ACTUALS_UNLOCK_FAIL,
+  RECIPE_ACTUALS_UNLOCK_RESET,
 } from "../constants/cookBatchConstants";
 
 // 1) LIST: GET /api/cooking/batches/
@@ -957,6 +975,92 @@ export const recipeCsvUploadReducer = (
       };
 
     case RECIPE_CSV_UPLOAD_RESET:
+      return { loading: false, success: false, result: null };
+
+    default:
+      return state;
+  }
+};
+
+export const cookBatchActualsLockReducer = (
+  state = { loading: false, success: false },
+  action,
+) => {
+  switch (action.type) {
+    case COOKBATCH_ACTUALS_LOCK_REQUEST:
+      return { ...state, loading: true, error: null, success: false };
+
+    case COOKBATCH_ACTUALS_LOCK_SUCCESS:
+      return { loading: false, success: true, error: null };
+
+    case COOKBATCH_ACTUALS_LOCK_FAIL:
+      return { loading: false, success: false, error: action.payload };
+
+    case COOKBATCH_ACTUALS_LOCK_RESET:
+      return { loading: false, success: false };
+
+    default:
+      return state;
+  }
+};
+
+export const recipeActualsLockReducer = (
+  state = { loading: false, success: false, result: null },
+  action,
+) => {
+  switch (action.type) {
+    case RECIPE_ACTUALS_LOCK_REQUEST:
+      return { ...state, loading: true, error: null, success: false };
+
+    case RECIPE_ACTUALS_LOCK_SUCCESS:
+      return {
+        loading: false,
+        success: true,
+        result: action.payload,
+        error: null,
+      };
+
+    case RECIPE_ACTUALS_LOCK_FAIL:
+      return {
+        loading: false,
+        success: false,
+        result: null,
+        error: action.payload,
+      };
+
+    case RECIPE_ACTUALS_LOCK_RESET:
+      return { loading: false, success: false, result: null };
+
+    default:
+      return state;
+  }
+};
+
+export const recipeActualsUnlockReducer = (
+  state = { loading: false, success: false, result: null },
+  action,
+) => {
+  switch (action.type) {
+    case RECIPE_ACTUALS_UNLOCK_REQUEST:
+      return { ...state, loading: true, error: null, success: false };
+
+    case RECIPE_ACTUALS_UNLOCK_SUCCESS:
+      return {
+        loading: false,
+        success: true,
+        result: action.payload,
+        error: null,
+      };
+
+    case RECIPE_ACTUALS_UNLOCK_FAIL:
+      return {
+        loading: false,
+        success: false,
+        result: null,
+        error: action.payload,
+      };
+
+    case RECIPE_ACTUALS_UNLOCK_RESET:
       return { loading: false, success: false, result: null };
 
     default:
