@@ -33,6 +33,7 @@ const ExecutiveRecentBatchesTable = ({ data }) => {
       {
         accessorKey: "createdAt",
         header: "Created At",
+        cell: ({ row }) => formatDateTime(row.original.createdAt),
       },
     ],
     [],
@@ -136,5 +137,20 @@ const ExecutiveRecentBatchesTable = ({ data }) => {
     </div>
   );
 };
+
+function formatDateTime(value) {
+  if (!value) return "-";
+
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return value;
+
+  return date.toLocaleString("en-GB", {
+    day: "2-digit",
+    month: "short",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+}
 
 export default ExecutiveRecentBatchesTable;

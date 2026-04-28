@@ -394,7 +394,7 @@ const CookBatchDetailScreen = () => {
                       <th>Pred</th>
                       <th>Clamped?</th>
                       <th>Actual</th>
-                      <th>Actual (g)</th>
+                      <th>Converted</th>
                       <th>Notes</th>
                     </tr>
                   </thead>
@@ -405,6 +405,7 @@ const CookBatchDetailScreen = () => {
                         actual_kg: "",
                         notes: "",
                       };
+
                       const config = getDisplayConfig(it.ingredient);
 
                       const rawKg = (edit.actual_kg || "").trim();
@@ -458,7 +459,11 @@ const CookBatchDetailScreen = () => {
                             <input
                               className="input"
                               type="text"
-                              value={actualG}
+                              value={
+                                actualG
+                                  ? `${actualG} ${config.backendPreviewUnit}`
+                                  : ""
+                              }
                               disabled
                             />
                           </td>
@@ -551,11 +556,17 @@ const CookBatchDetailScreen = () => {
                         </div>
 
                         <div>
-                          <label className="label">Actual (g)</label>
+                          <label className="label">
+                            {config.backendPreviewLabel}
+                          </label>
                           <input
                             className="input"
                             type="text"
-                            value={actualG}
+                            value={
+                              actualG
+                                ? `${actualG} ${config.backendPreviewUnit}`
+                                : ""
+                            }
                             disabled
                           />
                         </div>
@@ -637,6 +648,8 @@ function getDisplayConfig(ingredientName = "") {
     return {
       unit: "pcs",
       actualLabel: "Actual (pcs)",
+      backendPreviewLabel: "Actual (pcs)",
+      backendPreviewUnit: "ml",
       finalLabel: "Final (pcs)",
       predLabel: "Pred (pcs)",
       inputStep: "1",
@@ -649,6 +662,8 @@ function getDisplayConfig(ingredientName = "") {
     return {
       unit: "L",
       actualLabel: "Actual (L)",
+      backendPreviewLabel: "Actual (ml)",
+      backendPreviewUnit: "ml",
       finalLabel: "Final (L)",
       predLabel: "Pred (L)",
       inputStep: "0.001",
@@ -660,6 +675,8 @@ function getDisplayConfig(ingredientName = "") {
   return {
     unit: "kg",
     actualLabel: "Actual (kg)",
+    backendPreviewLabel: "Actual (g)",
+    backendPreviewUnit: "g",
     finalLabel: "Final (kg)",
     predLabel: "Pred (kg)",
     inputStep: "0.001",

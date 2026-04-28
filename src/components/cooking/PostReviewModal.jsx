@@ -10,6 +10,7 @@ const PostReviewModal = ({
 }) => {
   const [postReviewItems, setPostReviewItems] = useState([]);
   const [postReviewNote, setPostReviewNote] = useState("");
+  const [hideZeroItems, setHideZeroItems] = useState(true);
 
   useEffect(() => {
     if (!isOpen || !batch?.items) return;
@@ -21,10 +22,15 @@ const PostReviewModal = ({
         group: item.group || "",
         actual_kg:
           item.actual_kg !== null && item.actual_kg !== undefined
-            ? String(item.actual_kg)
+            ? formatDisplayKg(item.actual_kg, getDisplayConfig(item.ingredient))
             : item.final_kg !== null && item.final_kg !== undefined
-              ? String(item.final_kg)
+              ? formatDisplayKg(
+                  item.final_kg,
+                  getDisplayConfig(item.ingredient),
+                )
               : "",
+        final_kg: item.final_kg,
+        pred_kg: item.pred_kg,
         notes: item.notes || "",
       })),
     );
@@ -34,18 +40,24 @@ const PostReviewModal = ({
 
   const hasItems = postReviewItems.length > 0;
 
+  const visibleItems = hideZeroItems
+    ? postReviewItems.filter((item) => !isZeroIngredientRow(item))
+    : postReviewItems;
+
   const preparedItems = useMemo(() => {
     return postReviewItems
       .map((item) => {
         const rawKg = String(item.actual_kg || "").trim();
         if (rawKg === "") return null;
 
-        const kg = Number(rawKg);
-        if (!Number.isFinite(kg) || kg < 0) return null;
+        const displayValue = Number(rawKg);
+        if (!Number.isFinite(displayValue) || displayValue < 0) return null;
+
+        const config = getDisplayConfig(item.ingredient);
 
         return {
           id: item.id,
-          actual_g: Math.round(kg * 1000),
+          actual_g: config.displayToActualG(displayValue),
           notes: item.notes || "",
         };
       })
@@ -120,12 +132,27 @@ const PostReviewModal = ({
           <p className="helper">No batch items available.</p>
         ) : (
           <>
+            <div style={{ marginBottom: 10 }}>
+              <label
+                className="label"
+                style={{ display: "flex", gap: 8, alignItems: "center" }}
+              >
+                <input
+                  type="checkbox"
+                  checked={hideZeroItems}
+                  onChange={(e) => setHideZeroItems(e.target.checked)}
+                />
+                Hide zero ingredients
+              </label>
+            </div>
+
             <div className="post-review-modal__list">
-              {postReviewItems.map((item) => {
+              {visibleItems.map((item) => {
                 const rawKg = String(item.actual_kg || "").trim();
+                const config = getDisplayConfig(item.ingredient);
                 const actualG =
                   rawKg !== "" && Number.isFinite(Number(rawKg))
-                    ? String(Math.round(Number(rawKg) * 1000))
+                    ? String(config.displayToActualG(Number(rawKg)))
                     : "";
 
                 return (
@@ -143,12 +170,12 @@ const PostReviewModal = ({
 
                     <div className="post-review-modal__grid">
                       <div>
-                        <label className="label">Actual (kg)</label>
+                        <label className="label">{config.actualLabel}</label>
                         <input
                           className="input"
                           type="number"
                           min="0"
-                          step="0.001"
+                          step={config.inputStep}
                           value={item.actual_kg}
                           disabled={loading}
                           onChange={(e) =>
@@ -158,7 +185,9 @@ const PostReviewModal = ({
                       </div>
 
                       <div>
-                        <label className="label">Actual (g)</label>
+                        <label className="label">
+                          {config.backendPreviewLabel}
+                        </label>
                         <input
                           className="input"
                           type="text"
@@ -223,5 +252,65 @@ const PostReviewModal = ({
     </div>
   );
 };
+
+function getDisplayConfig(ingredientName = "") {
+  const name = ingredientName.toUpperCase();
+
+  if (name.includes("GA KENKEY")) {
+    return {
+      unit: "pcs",
+      actualLabel: "Actual (pcs)",
+      backendPreviewLabel: "Actual (pcs)",
+      backendPreviewUnit: "pcs",
+      inputStep: "1",
+      kgToDisplay: (kg) => Number(kg) * 1000,
+      displayToActualG: (value) => Math.round(Number(value)),
+    };
+  }
+
+  if (name.includes("COOKING OIL")) {
+    return {
+      unit: "L",
+      actualLabel: "Actual (L)",
+      backendPreviewLabel: "Actual (ml)",
+      backendPreviewUnit: "ml",
+      inputStep: "0.001",
+      kgToDisplay: (kg) => Number(kg),
+      displayToActualG: (value) => Math.round(Number(value) * 1000),
+    };
+  }
+
+  return {
+    unit: "kg",
+    actualLabel: "Actual (kg)",
+    backendPreviewLabel: "Actual (g)",
+    backendPreviewUnit: "g",
+    inputStep: "0.001",
+    kgToDisplay: (kg) => Number(kg),
+    displayToActualG: (value) => Math.round(Number(value) * 1000),
+  };
+}
+
+function formatDisplayKg(value, config, decimals = 3) {
+  if (value === null || value === undefined) return "";
+  const n = Number(value);
+  if (!Number.isFinite(n)) return "";
+
+  const converted = config.kgToDisplay(n);
+
+  if (config.unit === "pcs") {
+    return String(Math.round(converted));
+  }
+
+  return converted.toFixed(decimals);
+}
+
+function isZeroIngredientRow(item) {
+  const finalKg = Number(item.final_kg || 0);
+  const predKg = Number(item.pred_kg || 0);
+  const actualKg = Number(item.actual_kg || 0);
+
+  return finalKg === 0 && predKg === 0 && actualKg === 0;
+}
 
 export default PostReviewModal;
