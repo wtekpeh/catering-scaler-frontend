@@ -12,6 +12,7 @@ const initialState = {
   },
   highlights: null,
   recentBatches: [],
+  ingredientCategoryDaily: [],
   loading: false,
   error: null,
 };
@@ -43,6 +44,13 @@ export const useExecutiveDashboardStore = create((set) => ({
       },
       highlights: payload.highlights ?? null,
       recentBatches: payload.recentBatches ?? [],
+      loading: false,
+      error: null,
+    })),
+
+  setIngredientCategoryDaily: (data) =>
+    set(() => ({
+      ingredientCategoryDaily: data,
       loading: false,
       error: null,
     })),

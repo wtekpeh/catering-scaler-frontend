@@ -7,6 +7,7 @@ import {
   getBranchSummary,
   getRecentBatches,
   getBranches,
+  getIngredientCategoryDaily,
 } from "../api/dashboardApi";
 import ExecutiveKpiGrid from "../components/dashboard/ExecutiveKpiGrid";
 import { useDashboardFilterStore } from "../stores/dashboard/useDashboardFilterStore";
@@ -20,6 +21,7 @@ import ExecutiveRecentBatchesTable from "../components/dashboard/ExecutiveRecent
 import DashboardFilterBar from "../components/dashboard/DashboardFilterBar";
 import DashboardLoadingBlock from "../components/dashboard/DashboardLoadingBlock";
 import DashboardErrorBlock from "../components/dashboard/DashboardErrorBlock";
+import IngredientCategoryDailyTable from "../components/dashboard/IngredientCategoryDailyTable";
 
 const ExecutiveDashboardScreen = () => {
   const { startDate, endDate, branchId, groupBy, setBranches } =
@@ -38,6 +40,8 @@ const ExecutiveDashboardScreen = () => {
     setLoading,
     setError,
     setExecutiveDashboardData,
+    ingredientCategoryDaily,
+    setIngredientCategoryDaily,
   } = useExecutiveDashboardStore();
 
   useEffect(() => {
@@ -52,6 +56,9 @@ const ExecutiveDashboardScreen = () => {
           groupBy,
         };
 
+        const reportDate =
+          endDate || startDate || new Date().toISOString().split("T")[0];
+
         const [
           executiveSummaryResponse,
           batchTrendsResponse,
@@ -59,6 +66,7 @@ const ExecutiveDashboardScreen = () => {
           branchSummaryResponse,
           recentBatchesResponse,
           branchesResponse,
+          ingredientCategoryDailyResponse,
         ] = await Promise.all([
           getExecutiveSummary(filters),
           getBatchTrends(filters),
@@ -66,6 +74,7 @@ const ExecutiveDashboardScreen = () => {
           getBranchSummary(filters),
           getRecentBatches(filters),
           getBranches(),
+          getIngredientCategoryDaily(reportDate),
         ]);
 
         setBranches(branchesResponse.branches || []);
@@ -79,6 +88,10 @@ const ExecutiveDashboardScreen = () => {
           roleSummary: staffSummaryResponse.roleSummary,
           recentBatches: recentBatchesResponse.recentBatches,
         });
+
+        setIngredientCategoryDaily(
+          ingredientCategoryDailyResponse.ingredientCategoryDaily || [],
+        );
       } catch (err) {
         setError(
           err?.response?.data?.detail ||
@@ -98,6 +111,7 @@ const ExecutiveDashboardScreen = () => {
     setError,
     setExecutiveDashboardData,
     setBranches,
+    setIngredientCategoryDaily,
   ]);
 
   return (
@@ -134,6 +148,10 @@ const ExecutiveDashboardScreen = () => {
           <div className="dashboard-two-column-grid">
             <ExecutiveHighlightsPanel data={highlights} />
             <ExecutiveRecentBatchesTable data={recentBatches} />
+          </div>
+
+          <div className="dashboard-two-column-grid">
+            <IngredientCategoryDailyTable data={ingredientCategoryDaily} />
           </div>
         </>
       )}

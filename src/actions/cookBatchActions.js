@@ -155,6 +155,36 @@ import {
   RECIPE_ACTUALS_UNLOCK_REQUEST,
   RECIPE_ACTUALS_UNLOCK_SUCCESS,
   RECIPE_ACTUALS_UNLOCK_FAIL,
+
+  //
+  INGREDIENT_CATEGORY_LIST_REQUEST,
+  INGREDIENT_CATEGORY_LIST_SUCCESS,
+  INGREDIENT_CATEGORY_LIST_FAIL,
+
+  //
+  INGREDIENT_CATEGORY_CREATE_REQUEST,
+  INGREDIENT_CATEGORY_CREATE_SUCCESS,
+  INGREDIENT_CATEGORY_CREATE_FAIL,
+
+  //
+  INGREDIENT_CATEGORY_UPDATE_REQUEST,
+  INGREDIENT_CATEGORY_UPDATE_SUCCESS,
+  INGREDIENT_CATEGORY_UPDATE_FAIL,
+
+  //
+  INGREDIENT_CATEGORY_DELETE_REQUEST,
+  INGREDIENT_CATEGORY_DELETE_SUCCESS,
+  INGREDIENT_CATEGORY_DELETE_FAIL,
+
+  //
+  RECIPE_INGREDIENT_ASSIGN_CATEGORY_REQUEST,
+  RECIPE_INGREDIENT_ASSIGN_CATEGORY_SUCCESS,
+  RECIPE_INGREDIENT_ASSIGN_CATEGORY_FAIL,
+
+  //
+  RECIPE_INGREDIENT_GLOBAL_LIST_REQUEST,
+  RECIPE_INGREDIENT_GLOBAL_LIST_SUCCESS,
+  RECIPE_INGREDIENT_GLOBAL_LIST_FAIL,
 } from "../constants/cookBatchConstants";
 
 // Base API URL from Vite env (.env: VITE_API_BASE_URL=http://127.0.0.1:8000)
@@ -205,12 +235,26 @@ export const listCookBatches = () => async (dispatch) => {
 // Input: { recipe_id, n_people, options, notes }
 // options example: { protein: "chicken" }  (adjust to match your backend)
 export const createCookBatch =
-  ({ recipe_id, branch_id, n_people, options = {}, notes = "" }) =>
+  ({
+    recipe_id,
+    branch_id,
+    n_people,
+    used_date = null,
+    options = {},
+    notes = "",
+  }) =>
   async (dispatch) => {
     try {
       dispatch({ type: COOKBATCH_CREATE_REQUEST });
 
-      const body = { recipe_id, branch_id, n_people, options, notes };
+      const body = {
+        recipe_id,
+        branch_id,
+        n_people,
+        used_date,
+        options,
+        notes,
+      };
 
       const { data } = await axios.post(
         `${API_BASE_URL}/api/cooking/batches/create/`,
@@ -925,6 +969,129 @@ export const unlockRecipeActuals = (recipeId) => async (dispatch) => {
   } catch (error) {
     dispatch({
       type: RECIPE_ACTUALS_UNLOCK_FAIL,
+      payload: getErrorMessage(error),
+    });
+  }
+};
+
+export const listIngredientCategories = () => async (dispatch) => {
+  try {
+    dispatch({ type: INGREDIENT_CATEGORY_LIST_REQUEST });
+
+    const { data } = await axios.get(
+      `${API_BASE_URL}/api/ingredient-categories/`,
+    );
+
+    dispatch({
+      type: INGREDIENT_CATEGORY_LIST_SUCCESS,
+      payload: data,
+    });
+  } catch (error) {
+    dispatch({
+      type: INGREDIENT_CATEGORY_LIST_FAIL,
+      payload: getErrorMessage(error),
+    });
+  }
+};
+
+export const createIngredientCategory = (payload) => async (dispatch) => {
+  try {
+    dispatch({ type: INGREDIENT_CATEGORY_CREATE_REQUEST });
+
+    const { data } = await axios.post(
+      `${API_BASE_URL}/api/ingredient-categories/`,
+      payload,
+      { headers: { "Content-Type": "application/json" } },
+    );
+
+    dispatch({
+      type: INGREDIENT_CATEGORY_CREATE_SUCCESS,
+      payload: data,
+    });
+  } catch (error) {
+    dispatch({
+      type: INGREDIENT_CATEGORY_CREATE_FAIL,
+      payload: getErrorMessage(error),
+    });
+  }
+};
+
+export const updateIngredientCategory = (id, payload) => async (dispatch) => {
+  try {
+    dispatch({ type: INGREDIENT_CATEGORY_UPDATE_REQUEST });
+
+    const { data } = await axios.patch(
+      `${API_BASE_URL}/api/ingredient-categories/${id}/`,
+      payload,
+      { headers: { "Content-Type": "application/json" } },
+    );
+
+    dispatch({
+      type: INGREDIENT_CATEGORY_UPDATE_SUCCESS,
+      payload: data,
+    });
+  } catch (error) {
+    dispatch({
+      type: INGREDIENT_CATEGORY_UPDATE_FAIL,
+      payload: getErrorMessage(error),
+    });
+  }
+};
+
+export const deleteIngredientCategory = (id) => async (dispatch) => {
+  try {
+    dispatch({ type: INGREDIENT_CATEGORY_DELETE_REQUEST });
+
+    await axios.delete(`${API_BASE_URL}/api/ingredient-categories/${id}/`);
+
+    dispatch({
+      type: INGREDIENT_CATEGORY_DELETE_SUCCESS,
+      payload: id,
+    });
+  } catch (error) {
+    dispatch({
+      type: INGREDIENT_CATEGORY_DELETE_FAIL,
+      payload: getErrorMessage(error),
+    });
+  }
+};
+
+export const assignCategoryToRecipeIngredient =
+  (ingredientId, categoryId) => async (dispatch) => {
+    try {
+      dispatch({ type: RECIPE_INGREDIENT_ASSIGN_CATEGORY_REQUEST });
+
+      const { data } = await axios.patch(
+        `${API_BASE_URL}/api/recipes/ingredients/${ingredientId}/assign-category/`,
+        { category_id: categoryId },
+        { headers: { "Content-Type": "application/json" } },
+      );
+
+      dispatch({
+        type: RECIPE_INGREDIENT_ASSIGN_CATEGORY_SUCCESS,
+        payload: data,
+      });
+    } catch (error) {
+      dispatch({
+        type: RECIPE_INGREDIENT_ASSIGN_CATEGORY_FAIL,
+        payload: getErrorMessage(error),
+      });
+    }
+  };
+
+export const listAllRecipeIngredients = () => async (dispatch) => {
+  try {
+    dispatch({ type: RECIPE_INGREDIENT_GLOBAL_LIST_REQUEST });
+
+    const { data } = await axios.get(`${API_BASE_URL}/api/recipe-ingredients/`);
+
+    dispatch({
+      type: RECIPE_INGREDIENT_GLOBAL_LIST_SUCCESS,
+      payload: data,
+    });
+  } catch (error) {
+    dispatch({
+      type: RECIPE_INGREDIENT_GLOBAL_LIST_FAIL,
       payload: getErrorMessage(error),
     });
   }

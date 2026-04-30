@@ -8,6 +8,7 @@ import {
   createRecipeIngredient,
   updateRecipeIngredient,
   deleteRecipeIngredient,
+  listIngredientCategories,
 } from "../actions/cookBatchActions";
 
 import RecipeIngredientForm from "../components/recipes/RecipeIngredientForm";
@@ -64,6 +65,12 @@ const RecipeDetailScreen = () => {
     success: deleteIngredientSuccess,
   } = recipeIngredientDelete;
 
+  const ingredientCategoryList = useSelector(
+    (state) => state.ingredientCategoryList,
+  );
+
+  const { categories = [] } = ingredientCategoryList;
+
   const [showIngredientForm, setShowIngredientForm] = useState(false);
   const [editingIngredient, setEditingIngredient] = useState(null);
 
@@ -71,6 +78,7 @@ const RecipeDetailScreen = () => {
     if (id) {
       dispatch(getRecipeDetail(id));
       dispatch(listRecipeIngredients(id));
+      dispatch(listIngredientCategories());
     }
   }, [dispatch, id]);
 
@@ -205,6 +213,7 @@ const RecipeDetailScreen = () => {
                     <RecipeIngredientForm
                       mode={editingIngredient ? "edit" : "create"}
                       initialData={editingIngredient}
+                      categories={categories}
                       onSubmit={
                         editingIngredient
                           ? handleUpdateIngredient

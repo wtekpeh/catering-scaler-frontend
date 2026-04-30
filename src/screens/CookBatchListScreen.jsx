@@ -109,11 +109,12 @@ const CookBatchListScreen = () => {
                       <thead>
                         <tr>
                           <th>ID</th>
+                          <th>Recipe</th>
                           <th>People</th>
                           <th>Prepared By</th>
                           <th>Branch</th>
                           <th>Protein</th>
-                          <th>Protein</th>
+                          <th>Used Date</th>
                           <th>Status</th>
                           <th>Notes</th>
                           <th>Created</th>
@@ -134,6 +135,7 @@ const CookBatchListScreen = () => {
                             <td>{b.created_by_name || "-"}</td>
                             <td>{b.branch_name || "-"}</td>
                             <td>{b.protein_type || "-"}</td>
+                            <td>{formatDate(b.used_date)}</td>
                             <td>
                               <span
                                 className={`badge ${
@@ -201,8 +203,11 @@ const CookBatchListScreen = () => {
                           <div>
                             <b>Protein:</b> {b.protein_type || "-"}
                           </div>
+                          <div>
+                            <b>Used Date:</b> {formatDate(b.used_date)}
+                          </div>
                           <div className="cell-sub">
-                            {formatDateTime(b.created_at)}
+                            Created: {formatDateTime(b.created_at)}
                           </div>
                         </div>
 
@@ -242,6 +247,13 @@ function formatDateTime(value) {
   const d = new Date(value);
   if (Number.isNaN(d.getTime())) return value;
   return d.toLocaleString();
+}
+
+function formatDate(value) {
+  if (!value) return "-";
+  const d = new Date(value);
+  if (Number.isNaN(d.getTime())) return value;
+  return d.toLocaleDateString();
 }
 
 function truncate(text, maxLen) {

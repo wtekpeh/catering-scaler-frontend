@@ -61,6 +61,10 @@ const RecipeManagementScreen = () => {
               View Recipes
             </Link>
 
+            <Link to="/ingredients/categories" className="btn ghost">
+              Ingredient Categories
+            </Link>
+
             <Link to="/recipes/upload" className="btn ghost">
               Upload CSV
             </Link>

@@ -35,6 +35,7 @@ import RecipeListScreen from "./screens/RecipeListScreen";
 import RecipeCSVUploadScreen from "./screens/RecipeCSVUploadScreen";
 import RecipeDetailScreen from "./screens/RecipeDetailScreen";
 import GlobalOnlyRoute from "./components/routes/GlobalOnlyRoute";
+import IngredientCategoryManagementScreen from "./screens/IngredientCategoryManagementScreen";
 
 function AppLayout() {
   const setNotifications = useNotificationStore((s) => s.setNotifications);
@@ -110,6 +111,11 @@ function AppLayout() {
                 <RecipeDetailScreen />
               </GlobalOnlyRoute>
             }
+          />
+
+          <Route
+            path="/ingredients/categories"
+            element={<IngredientCategoryManagementScreen />}
           />
 
           <Route

@@ -184,6 +184,36 @@ import {
   RECIPE_ACTUALS_UNLOCK_SUCCESS,
   RECIPE_ACTUALS_UNLOCK_FAIL,
   RECIPE_ACTUALS_UNLOCK_RESET,
+
+  //
+  INGREDIENT_CATEGORY_LIST_REQUEST,
+  INGREDIENT_CATEGORY_LIST_SUCCESS,
+  INGREDIENT_CATEGORY_LIST_FAIL,
+
+  //
+  INGREDIENT_CATEGORY_CREATE_REQUEST,
+  INGREDIENT_CATEGORY_CREATE_SUCCESS,
+  INGREDIENT_CATEGORY_CREATE_FAIL,
+
+  //
+  INGREDIENT_CATEGORY_UPDATE_REQUEST,
+  INGREDIENT_CATEGORY_UPDATE_SUCCESS,
+  INGREDIENT_CATEGORY_UPDATE_FAIL,
+
+  //
+  INGREDIENT_CATEGORY_DELETE_REQUEST,
+  INGREDIENT_CATEGORY_DELETE_SUCCESS,
+  INGREDIENT_CATEGORY_DELETE_FAIL,
+
+  //
+  RECIPE_INGREDIENT_ASSIGN_CATEGORY_REQUEST,
+  RECIPE_INGREDIENT_ASSIGN_CATEGORY_SUCCESS,
+  RECIPE_INGREDIENT_ASSIGN_CATEGORY_FAIL,
+
+  //
+  RECIPE_INGREDIENT_GLOBAL_LIST_REQUEST,
+  RECIPE_INGREDIENT_GLOBAL_LIST_SUCCESS,
+  RECIPE_INGREDIENT_GLOBAL_LIST_FAIL,
 } from "../constants/cookBatchConstants";
 
 // 1) LIST: GET /api/cooking/batches/
@@ -1062,6 +1092,168 @@ export const recipeActualsUnlockReducer = (
 
     case RECIPE_ACTUALS_UNLOCK_RESET:
       return { loading: false, success: false, result: null };
+
+    default:
+      return state;
+  }
+};
+
+export const ingredientCategoryListReducer = (
+  state = { loading: false, categories: [] },
+  action,
+) => {
+  switch (action.type) {
+    case INGREDIENT_CATEGORY_LIST_REQUEST:
+      return { ...state, loading: true, error: null };
+
+    case INGREDIENT_CATEGORY_LIST_SUCCESS:
+      return { loading: false, categories: action.payload, error: null };
+
+    case INGREDIENT_CATEGORY_LIST_FAIL:
+      return { loading: false, categories: [], error: action.payload };
+
+    default:
+      return state;
+  }
+};
+
+export const ingredientCategoryCreateReducer = (
+  state = { loading: false, success: false, category: null },
+  action,
+) => {
+  switch (action.type) {
+    case INGREDIENT_CATEGORY_CREATE_REQUEST:
+      return { ...state, loading: true, error: null, success: false };
+
+    case INGREDIENT_CATEGORY_CREATE_SUCCESS:
+      return {
+        loading: false,
+        success: true,
+        category: action.payload,
+        error: null,
+      };
+
+    case INGREDIENT_CATEGORY_CREATE_FAIL:
+      return {
+        loading: false,
+        success: false,
+        category: null,
+        error: action.payload,
+      };
+
+    default:
+      return state;
+  }
+};
+
+export const ingredientCategoryUpdateReducer = (
+  state = { loading: false, success: false, category: null },
+  action,
+) => {
+  switch (action.type) {
+    case INGREDIENT_CATEGORY_UPDATE_REQUEST:
+      return { ...state, loading: true, error: null, success: false };
+
+    case INGREDIENT_CATEGORY_UPDATE_SUCCESS:
+      return {
+        loading: false,
+        success: true,
+        category: action.payload,
+        error: null,
+      };
+
+    case INGREDIENT_CATEGORY_UPDATE_FAIL:
+      return {
+        loading: false,
+        success: false,
+        category: null,
+        error: action.payload,
+      };
+
+    default:
+      return state;
+  }
+};
+
+export const ingredientCategoryDeleteReducer = (
+  state = { loading: false, success: false, deletedId: null },
+  action,
+) => {
+  switch (action.type) {
+    case INGREDIENT_CATEGORY_DELETE_REQUEST:
+      return { ...state, loading: true, error: null, success: false };
+
+    case INGREDIENT_CATEGORY_DELETE_SUCCESS:
+      return {
+        loading: false,
+        success: true,
+        deletedId: action.payload,
+        error: null,
+      };
+
+    case INGREDIENT_CATEGORY_DELETE_FAIL:
+      return {
+        loading: false,
+        success: false,
+        deletedId: null,
+        error: action.payload,
+      };
+
+    default:
+      return state;
+  }
+};
+
+export const recipeIngredientAssignCategoryReducer = (
+  state = { loading: false, success: false, ingredient: null },
+  action,
+) => {
+  switch (action.type) {
+    case RECIPE_INGREDIENT_ASSIGN_CATEGORY_REQUEST:
+      return { ...state, loading: true, error: null, success: false };
+
+    case RECIPE_INGREDIENT_ASSIGN_CATEGORY_SUCCESS:
+      return {
+        loading: false,
+        success: true,
+        ingredient: action.payload,
+        error: null,
+      };
+
+    case RECIPE_INGREDIENT_ASSIGN_CATEGORY_FAIL:
+      return {
+        loading: false,
+        success: false,
+        ingredient: null,
+        error: action.payload,
+      };
+
+    default:
+      return state;
+  }
+};
+
+export const recipeIngredientGlobalListReducer = (
+  state = { loading: false, ingredients: [] },
+  action,
+) => {
+  switch (action.type) {
+    case RECIPE_INGREDIENT_GLOBAL_LIST_REQUEST:
+      return { ...state, loading: true, error: null };
+
+    case RECIPE_INGREDIENT_GLOBAL_LIST_SUCCESS:
+      return {
+        loading: false,
+        ingredients: action.payload,
+        error: null,
+      };
+
+    case RECIPE_INGREDIENT_GLOBAL_LIST_FAIL:
+      return {
+        loading: false,
+        ingredients: [],
+        error: action.payload,
+      };
 
     default:
       return state;

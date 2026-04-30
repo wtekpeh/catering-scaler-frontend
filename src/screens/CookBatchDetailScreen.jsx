@@ -291,6 +291,9 @@ const CookBatchDetailScreen = () => {
                 <b>People:</b> {batch.n_people}
               </div>
               <div>
+                <b>Used Date:</b> {formatDate(batch.used_date)}
+              </div>
+              <div>
                 <b>Protein:</b> {batch.protein_type || "-"}
               </div>
               <div>
@@ -697,6 +700,13 @@ function formatDisplayKg(value, config, decimals = 3) {
   }
 
   return converted.toFixed(decimals);
+}
+
+function formatDate(value) {
+  if (!value) return "-";
+  const d = new Date(value);
+  if (Number.isNaN(d.getTime())) return value;
+  return d.toLocaleDateString();
 }
 
 function formatDateTime(value) {

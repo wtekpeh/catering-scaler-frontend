@@ -21,6 +21,7 @@ const CookBatchCreateScreen = () => {
   // ---- Local form state ----
   const [recipeId, setRecipeId] = useState("");
   const [nPeople, setNPeople] = useState(10);
+  const [usedDate, setUsedDate] = useState("");
 
   // Multiple proteins: [{ protein: "FISH", count: "50" }, ...]
   const [proteinRows, setProteinRows] = useState([]);
@@ -134,6 +135,7 @@ const CookBatchCreateScreen = () => {
   const clearForm = () => {
     setRecipeId("");
     setNPeople(10);
+    setUsedDate("");
     setProteinRows([]);
     setNotes("");
 
@@ -260,6 +262,7 @@ const CookBatchCreateScreen = () => {
         recipe_id: Number(recipeId),
         branch_id: Number(selectedBranchId),
         n_people: N,
+        used_date: usedDate || null,
         options,
         notes,
       }),
@@ -350,6 +353,18 @@ const CookBatchCreateScreen = () => {
                 onChange={(e) => setNPeople(e.target.value)}
                 placeholder="e.g. 50"
               />
+            </div>
+
+            {/* used_date */}
+            <div className="field">
+              <label className="label">Used Date</label>
+              <input
+                className="input"
+                type="date"
+                value={usedDate}
+                onChange={(e) => setUsedDate(e.target.value)}
+              />
+              <p className="helper">Date this batch is planned to be used.</p>
             </div>
 
             {/* protein split */}

@@ -39,6 +39,12 @@ import {
   cookBatchActualsLockReducer,
   recipeActualsLockReducer,
   recipeActualsUnlockReducer,
+  ingredientCategoryListReducer,
+  ingredientCategoryCreateReducer,
+  ingredientCategoryUpdateReducer,
+  ingredientCategoryDeleteReducer,
+  recipeIngredientAssignCategoryReducer,
+  recipeIngredientGlobalListReducer,
 } from "./reducers/cookBatchReducers";
 
 const reducer = combineReducers({
@@ -73,6 +79,12 @@ const reducer = combineReducers({
   cookBatchActualsLock: cookBatchActualsLockReducer,
   recipeActualsLock: recipeActualsLockReducer,
   recipeActualsUnlock: recipeActualsUnlockReducer,
+  ingredientCategoryList: ingredientCategoryListReducer,
+  ingredientCategoryCreate: ingredientCategoryCreateReducer,
+  ingredientCategoryUpdate: ingredientCategoryUpdateReducer,
+  ingredientCategoryDelete: ingredientCategoryDeleteReducer,
+  recipeIngredientAssignCategory: recipeIngredientAssignCategoryReducer,
+  recipeIngredientGlobalList: recipeIngredientGlobalListReducer,
 });
 
 const composeEnhancer =

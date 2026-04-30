@@ -130,3 +130,16 @@ export const getBranches = async () => {
     })),
   };
 };
+
+export const getIngredientCategoryDaily = async (date) => {
+  const { data } = await axios.get(
+    `${API_BASE}/reports/ingredient-categories/daily`,
+    {
+      params: { date },
+    },
+  );
+
+  return {
+    ingredientCategoryDaily: data.items || [],
+  };
+};

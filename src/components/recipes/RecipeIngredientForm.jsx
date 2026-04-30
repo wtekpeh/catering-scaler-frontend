@@ -12,6 +12,7 @@ const GROUP_OPTIONS = [
 const RecipeIngredientForm = ({
   mode = "create",
   initialData = null,
+  categories = [],
   onSubmit,
   onCancel,
   loading = false,
@@ -21,6 +22,7 @@ const RecipeIngredientForm = ({
     item_no: "",
     name: "",
     group: "other",
+    category: "",
     q10_g: "",
     b: "1",
     c_g: "0",
@@ -41,6 +43,10 @@ const RecipeIngredientForm = ({
           : String(initialData.item_no),
       name: initialData.name || "",
       group: initialData.group || "other",
+      category:
+        initialData.category === null || initialData.category === undefined
+          ? ""
+          : String(initialData.category),
       q10_g:
         initialData.q10_g === null || initialData.q10_g === undefined
           ? ""
@@ -91,6 +97,7 @@ const RecipeIngredientForm = ({
       item_no: form.item_no === "" ? null : Number(form.item_no),
       name: form.name.trim(),
       group: form.group,
+      category: form.category === "" ? null : Number(form.category),
       q10_g: Number(form.q10_g),
       b: Number(form.b),
       c_g: Number(form.c_g),
@@ -145,6 +152,23 @@ const RecipeIngredientForm = ({
             {GROUP_OPTIONS.map((group) => (
               <option key={group} value={group}>
                 {group}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        <div>
+          <label className="label">Category</label>
+          <select
+            className="input"
+            value={form.category}
+            disabled={loading}
+            onChange={(e) => handleChange("category", e.target.value)}
+          >
+            <option value="">Uncategorized</option>
+            {categories.map((category) => (
+              <option key={category.id} value={category.id}>
+                {category.name}
               </option>
             ))}
           </select>
