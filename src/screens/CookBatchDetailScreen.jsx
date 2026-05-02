@@ -9,6 +9,8 @@ import {
   getCurrentUser,
 } from "../actions/cookBatchActions";
 
+import { useExecutiveDashboardStore } from "../stores/dashboard/useExecutiveDashboardStore";
+
 import PostReviewModal from "../components/cooking/PostReviewModal";
 import ConfirmActionModal from "../components/common/ConfirmActionModal";
 
@@ -46,6 +48,13 @@ const CookBatchDetailScreen = () => {
     error: postReviewError,
     success: postReviewSuccess,
   } = cookBatchPostReview;
+
+  const {
+    exportingBatchDetailExcel,
+    exportBatchDetailExcel,
+    exportingBatchDetailPDF,
+    exportBatchDetailPDF,
+  } = useExecutiveDashboardStore();
 
   // Local edit map: { [itemId]: { actual_kg: string, notes: string } }
   const [actualEdits, setActualEdits] = useState({});
@@ -318,6 +327,24 @@ const CookBatchDetailScreen = () => {
                 onClick={() => dispatch(getCookBatchDetail(batchId))}
               >
                 Refresh
+              </button>
+
+              <button
+                className="btn"
+                type="button"
+                disabled={exportingBatchDetailExcel}
+                onClick={() => exportBatchDetailExcel(batchId)}
+              >
+                {exportingBatchDetailExcel ? "Exporting..." : "Export Excel"}
+              </button>
+
+              <button
+                className="btn"
+                type="button"
+                disabled={exportingBatchDetailPDF}
+                onClick={() => exportBatchDetailPDF(batchId)}
+              >
+                {exportingBatchDetailPDF ? "Exporting..." : "Export PDF"}
               </button>
 
               {canUpdateBatch && !isFinal && !isRecipeActualsLocked && (

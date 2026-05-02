@@ -143,3 +143,37 @@ export const getIngredientCategoryDaily = async (date) => {
     ingredientCategoryDaily: data.items || [],
   };
 };
+
+export const exportIngredientCategoryDailyExcel = async (date) => {
+  const response = await axios.get(
+    `${API_BASE}/reports/ingredient-categories/daily/export/excel`,
+    {
+      params: { date },
+      responseType: "blob",
+    },
+  );
+
+  return response.data;
+};
+
+export const exportBatchDetailExcel = async (batchId) => {
+  const response = await axios.get(
+    `${API_BASE}/reports/batches/${batchId}/export/excel`,
+    {
+      responseType: "blob",
+    },
+  );
+
+  return response.data;
+};
+
+export const exportBatchDetailPDF = async (batchId) => {
+  const response = await axios.get(
+    `${API_BASE}/reports/batches/${batchId}/export/pdf`,
+    {
+      responseType: "blob",
+    },
+  );
+
+  return response.data;
+};

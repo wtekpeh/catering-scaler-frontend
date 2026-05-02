@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import "../styles/dashboard.css";
 import {
   getExecutiveSummary,
@@ -23,9 +23,13 @@ import DashboardLoadingBlock from "../components/dashboard/DashboardLoadingBlock
 import DashboardErrorBlock from "../components/dashboard/DashboardErrorBlock";
 import IngredientCategoryDailyTable from "../components/dashboard/IngredientCategoryDailyTable";
 
+const getTodayDate = () => new Date().toISOString().split("T")[0];
+
 const ExecutiveDashboardScreen = () => {
   const { startDate, endDate, branchId, groupBy, setBranches } =
     useDashboardFilterStore();
+  const [ingredientReportDate, setIngredientReportDate] =
+    useState(getTodayDate());
 
   const {
     summary,
@@ -56,9 +60,6 @@ const ExecutiveDashboardScreen = () => {
           groupBy,
         };
 
-        const reportDate =
-          endDate || startDate || new Date().toISOString().split("T")[0];
-
         const [
           executiveSummaryResponse,
           batchTrendsResponse,
@@ -66,7 +67,6 @@ const ExecutiveDashboardScreen = () => {
           branchSummaryResponse,
           recentBatchesResponse,
           branchesResponse,
-          ingredientCategoryDailyResponse,
         ] = await Promise.all([
           getExecutiveSummary(filters),
           getBatchTrends(filters),
@@ -74,7 +74,6 @@ const ExecutiveDashboardScreen = () => {
           getBranchSummary(filters),
           getRecentBatches(filters),
           getBranches(),
-          getIngredientCategoryDaily(reportDate),
         ]);
 
         setBranches(branchesResponse.branches || []);
@@ -88,10 +87,6 @@ const ExecutiveDashboardScreen = () => {
           roleSummary: staffSummaryResponse.roleSummary,
           recentBatches: recentBatchesResponse.recentBatches,
         });
-
-        setIngredientCategoryDaily(
-          ingredientCategoryDailyResponse.ingredientCategoryDaily || [],
-        );
       } catch (err) {
         setError(
           err?.response?.data?.detail ||
@@ -111,8 +106,27 @@ const ExecutiveDashboardScreen = () => {
     setError,
     setExecutiveDashboardData,
     setBranches,
-    setIngredientCategoryDaily,
   ]);
+
+  useEffect(() => {
+    const loadIngredientCategoryDaily = async () => {
+      try {
+        const reportDate = ingredientReportDate || getTodayDate();
+
+        const response = await getIngredientCategoryDaily(reportDate);
+
+        setIngredientCategoryDaily(response.ingredientCategoryDaily || []);
+      } catch (err) {
+        setError(
+          err?.response?.data?.detail ||
+            err?.message ||
+            "Failed to load ingredient category report.",
+        );
+      }
+    };
+
+    loadIngredientCategoryDaily();
+  }, [ingredientReportDate, setIngredientCategoryDaily, setError]);
 
   return (
     <div className="dashboard-screen">
@@ -151,7 +165,11 @@ const ExecutiveDashboardScreen = () => {
           </div>
 
           <div className="dashboard-two-column-grid">
-            <IngredientCategoryDailyTable data={ingredientCategoryDaily} />
+            <IngredientCategoryDailyTable
+              data={ingredientCategoryDaily}
+              reportDate={ingredientReportDate}
+              onReportDateChange={setIngredientReportDate}
+            />
           </div>
         </>
       )}
