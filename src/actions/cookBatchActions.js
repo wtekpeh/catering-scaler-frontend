@@ -185,6 +185,26 @@ import {
   RECIPE_INGREDIENT_GLOBAL_LIST_REQUEST,
   RECIPE_INGREDIENT_GLOBAL_LIST_SUCCESS,
   RECIPE_INGREDIENT_GLOBAL_LIST_FAIL,
+
+  //
+  BRANCH_DETAIL_REQUEST,
+  BRANCH_DETAIL_SUCCESS,
+  BRANCH_DETAIL_FAIL,
+
+  //
+  BRANCH_CREATE_REQUEST,
+  BRANCH_CREATE_SUCCESS,
+  BRANCH_CREATE_FAIL,
+
+  //
+  BRANCH_UPDATE_REQUEST,
+  BRANCH_UPDATE_SUCCESS,
+  BRANCH_UPDATE_FAIL,
+
+  //
+  BRANCH_DELETE_REQUEST,
+  BRANCH_DELETE_SUCCESS,
+  BRANCH_DELETE_FAIL,
 } from "../constants/cookBatchConstants";
 
 // Base API URL from Vite env (.env: VITE_API_BASE_URL=http://127.0.0.1:8000)
@@ -540,6 +560,96 @@ export const listBranches = () => async (dispatch) => {
   } catch (error) {
     dispatch({
       type: BRANCH_LIST_FAIL,
+      payload: getErrorMessage(error),
+    });
+  }
+};
+
+// BRANCH DETAIL
+export const getBranchDetail = (id) => async (dispatch) => {
+  try {
+    dispatch({ type: BRANCH_DETAIL_REQUEST });
+
+    const { data } = await axios.get(
+      `${API_BASE_URL}/api/accounts/branches/${id}/`,
+    );
+
+    dispatch({
+      type: BRANCH_DETAIL_SUCCESS,
+      payload: data,
+    });
+  } catch (error) {
+    dispatch({
+      type: BRANCH_DETAIL_FAIL,
+      payload: getErrorMessage(error),
+    });
+  }
+};
+
+// CREATE BRANCH
+export const createBranch = (payload) => async (dispatch) => {
+  try {
+    dispatch({ type: BRANCH_CREATE_REQUEST });
+
+    const { data } = await axios.post(
+      `${API_BASE_URL}/api/accounts/branches/create/`,
+      payload,
+      { headers: { "Content-Type": "application/json" } },
+    );
+
+    dispatch({
+      type: BRANCH_CREATE_SUCCESS,
+      payload: data,
+    });
+  } catch (error) {
+    dispatch({
+      type: BRANCH_CREATE_FAIL,
+      payload: getErrorMessage(error),
+    });
+  }
+};
+
+// UPDATE BRANCH
+export const updateBranch = (id, payload) => async (dispatch) => {
+  try {
+    dispatch({ type: BRANCH_UPDATE_REQUEST });
+
+    const { data } = await axios.put(
+      `${API_BASE_URL}/api/accounts/branches/${id}/update/`,
+      payload,
+      { headers: { "Content-Type": "application/json" } },
+    );
+
+    dispatch({
+      type: BRANCH_UPDATE_SUCCESS,
+      payload: data,
+    });
+  } catch (error) {
+    dispatch({
+      type: BRANCH_UPDATE_FAIL,
+      payload: getErrorMessage(error),
+    });
+  }
+};
+
+// UPDATE BRANCH STATUS activate/deactivate
+export const updateBranchStatus = (id, isActive) => async (dispatch) => {
+  try {
+    dispatch({ type: BRANCH_DELETE_REQUEST });
+
+    const { data } = await axios.patch(
+      `${API_BASE_URL}/api/accounts/branches/${id}/status/`,
+      { is_active: isActive },
+      { headers: { "Content-Type": "application/json" } },
+    );
+
+    dispatch({
+      type: BRANCH_DELETE_SUCCESS,
+      payload: data,
+    });
+  } catch (error) {
+    dispatch({
+      type: BRANCH_DELETE_FAIL,
       payload: getErrorMessage(error),
     });
   }

@@ -47,7 +47,7 @@ const BranchRoleEditor = ({ branchRoles, branches, onChange }) => {
               <div className="branch-role-row">
                 <div className="branch-role-fields">
                   <div className="branch-role-field">
-                    <label className="form-label fw-semibold">Branch</label>
+                    <label className="form-label fw-semibold">Site</label>
                     <select
                       className="form-select"
                       value={item.branch_id}
@@ -59,7 +59,7 @@ const BranchRoleEditor = ({ branchRoles, branches, onChange }) => {
                         )
                       }
                     >
-                      <option value="">Select branch</option>
+                      <option value="">Select Site</option>
                       {branches.map((branch) => (
                         <option key={branch.id} value={branch.id}>
                           {branch.name}
@@ -78,10 +78,7 @@ const BranchRoleEditor = ({ branchRoles, branches, onChange }) => {
                       }
                     >
                       <option value="">Select role</option>
-                      <option value="branch_manager">Branch Manager</option>
-                      <option value="chef">Chef</option>
-                      <option value="kitchen_staff">Kitchen Staff</option>
-                      <option value="store">Store</option>
+                      <option value="branch_manager">Project Manager</option>
                     </select>
                   </div>
 

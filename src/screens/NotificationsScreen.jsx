@@ -91,6 +91,14 @@ function NotificationsScreen() {
     return date.toLocaleString();
   };
 
+  const formatNotificationText = (value = "") => {
+    return value
+      .replaceAll("Cook Batch", "Consumption")
+      .replaceAll("Cook batch", "Consumption")
+      .replaceAll("cook batch", "consumption")
+      .replaceAll("cook_batch", "consumption");
+  };
+
   return (
     <div className="page">
       <div className="container">
@@ -142,11 +150,13 @@ function NotificationsScreen() {
                       disabled={isMarking}
                     >
                       <div className="notification-page-item__message">
-                        {notification.message}
+                        {formatNotificationText(notification.message)}
                       </div>
 
                       <div className="notification-page-item__meta">
-                        <span>{notification.action}</span>
+                        <span>
+                          {formatNotificationText(notification.action)}
+                        </span>
                         <span>
                           {formatNotificationTime(notification.created_at)}
                         </span>

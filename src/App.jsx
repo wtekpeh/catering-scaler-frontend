@@ -15,6 +15,7 @@ import CookBatchCreateScreen from "./screens/CookBatchCreateScreen";
 import CookBatchDetailScreen from "./screens/CookBatchDetailScreen";
 
 import AdminUserScreen from "./screens/AdminUserScreen";
+import BranchList from "./components/accounts/branches/BranchList";
 
 //Dashboards
 import ExecutiveDashboardScreen from "./screens/ExecutiveDashboardScreen";
@@ -129,6 +130,7 @@ function AppLayout() {
 
           {/* Admin Ui */}
           <Route path="/admin/users" element={<AdminUserScreen />} />
+          <Route path="/admin/branches" element={<BranchList />} />
           <Route path="/branch/staff" element={<AdminUserScreen />} />
 
           <Route path="/dashboard" element={<ExecutiveDashboardScreen />} />

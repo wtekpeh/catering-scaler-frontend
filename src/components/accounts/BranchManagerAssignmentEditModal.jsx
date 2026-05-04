@@ -78,7 +78,7 @@ const BranchManagerAssignmentEditModal = ({
       <div className="account-modal">
         <div className="account-modal-header">
           <div>
-            <h5 className="account-modal-title">Edit Branch Staff Role</h5>
+            <h5 className="account-modal-title">Edit Site Staff Role</h5>
             <div className="account-modal-subtitle">
               {assignment.full_name ||
                 assignment.email ||
@@ -117,7 +117,7 @@ const BranchManagerAssignmentEditModal = ({
                 </div>
 
                 <div className="account-field">
-                  <label className="form-label fw-semibold">Branch</label>
+                  <label className="form-label fw-semibold">Site</label>
                   <input
                     type="text"
                     className="form-control account-readonly-box"

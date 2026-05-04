@@ -52,10 +52,10 @@ const AccountFilterBar = ({
               <>
                 <option value="boss">Boss</option>
                 <option value="managing_director">Managing Director</option>
-                <option value="branch_manager">Branch Manager</option>
-                <option value="chef">Chef</option>
+                <option value="branch_manager">Project Manager</option>
+                {/*<option value="chef">Chef</option>
                 <option value="kitchen_staff">Kitchen Staff</option>
-                <option value="store">Store</option>
+                <option value="store">Store</option> */}
               </>
             ) : (
               <>
@@ -73,7 +73,7 @@ const AccountFilterBar = ({
               htmlFor="account-branch-filter"
               className="form-label fw-semibold"
             >
-              Branch
+              Site
             </label>
             <select
               id="account-branch-filter"
@@ -81,7 +81,7 @@ const AccountFilterBar = ({
               value={branchFilter}
               onChange={(e) => setBranchFilter(e.target.value)}
             >
-              <option value="">All Branches</option>
+              <option value="">All Sites</option>
               {(branches || []).map((branch) => (
                 <option key={branch.id} value={branch.id}>
                   {branch.name}

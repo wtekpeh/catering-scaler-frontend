@@ -214,6 +214,30 @@ import {
   RECIPE_INGREDIENT_GLOBAL_LIST_REQUEST,
   RECIPE_INGREDIENT_GLOBAL_LIST_SUCCESS,
   RECIPE_INGREDIENT_GLOBAL_LIST_FAIL,
+
+  //
+  BRANCH_DETAIL_REQUEST,
+  BRANCH_DETAIL_SUCCESS,
+  BRANCH_DETAIL_FAIL,
+  BRANCH_DETAIL_RESET,
+
+  //
+  BRANCH_CREATE_REQUEST,
+  BRANCH_CREATE_SUCCESS,
+  BRANCH_CREATE_FAIL,
+  BRANCH_CREATE_RESET,
+
+  //
+  BRANCH_UPDATE_REQUEST,
+  BRANCH_UPDATE_SUCCESS,
+  BRANCH_UPDATE_FAIL,
+  BRANCH_UPDATE_RESET,
+
+  //
+  BRANCH_DELETE_REQUEST,
+  BRANCH_DELETE_SUCCESS,
+  BRANCH_DELETE_FAIL,
+  BRANCH_DELETE_RESET,
 } from "../constants/cookBatchConstants";
 
 // 1) LIST: GET /api/cooking/batches/
@@ -1254,6 +1278,118 @@ export const recipeIngredientGlobalListReducer = (
         ingredients: [],
         error: action.payload,
       };
+
+    default:
+      return state;
+  }
+};
+
+// BRANCH DETAIL
+export const branchDetailReducer = (
+  state = { loading: false, branch: null },
+  action,
+) => {
+  switch (action.type) {
+    case BRANCH_DETAIL_REQUEST:
+      return { ...state, loading: true, error: null };
+
+    case BRANCH_DETAIL_SUCCESS:
+      return { loading: false, branch: action.payload, error: null };
+
+    case BRANCH_DETAIL_FAIL:
+      return { loading: false, branch: null, error: action.payload };
+
+    case BRANCH_DETAIL_RESET:
+      return { loading: false, branch: null };
+
+    default:
+      return state;
+  }
+};
+
+// BRANCH CREATE
+export const branchCreateReducer = (
+  state = { loading: false, success: false, branch: null },
+  action,
+) => {
+  switch (action.type) {
+    case BRANCH_CREATE_REQUEST:
+      return { ...state, loading: true, error: null, success: false };
+
+    case BRANCH_CREATE_SUCCESS:
+      return {
+        loading: false,
+        success: true,
+        branch: action.payload,
+        error: null,
+      };
+
+    case BRANCH_CREATE_FAIL:
+      return {
+        loading: false,
+        success: false,
+        branch: null,
+        error: action.payload,
+      };
+
+    case BRANCH_CREATE_RESET:
+      return { loading: false, success: false, branch: null };
+
+    default:
+      return state;
+  }
+};
+
+// BRANCH UPDATE
+export const branchUpdateReducer = (
+  state = { loading: false, success: false, branch: null },
+  action,
+) => {
+  switch (action.type) {
+    case BRANCH_UPDATE_REQUEST:
+      return { ...state, loading: true, error: null, success: false };
+
+    case BRANCH_UPDATE_SUCCESS:
+      return {
+        loading: false,
+        success: true,
+        branch: action.payload,
+        error: null,
+      };
+
+    case BRANCH_UPDATE_FAIL:
+      return {
+        loading: false,
+        success: false,
+        branch: null,
+        error: action.payload,
+      };
+
+    case BRANCH_UPDATE_RESET:
+      return { loading: false, success: false, branch: null };
+
+    default:
+      return state;
+  }
+};
+
+// BRANCH DELETE
+export const branchDeleteReducer = (
+  state = { loading: false, success: false },
+  action,
+) => {
+  switch (action.type) {
+    case BRANCH_DELETE_REQUEST:
+      return { ...state, loading: true, error: null, success: false };
+
+    case BRANCH_DELETE_SUCCESS:
+      return { loading: false, success: true, error: null };
+
+    case BRANCH_DELETE_FAIL:
+      return { loading: false, success: false, error: action.payload };
+
+    case BRANCH_DELETE_RESET:
+      return { loading: false, success: false };
 
     default:
       return state;

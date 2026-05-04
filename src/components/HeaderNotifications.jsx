@@ -10,6 +10,16 @@ function HeaderNotifications({
   onViewAll,
   formatNotificationTime,
 }) {
+  const formatNotificationText = (value = "") => {
+    return value
+      .replaceAll("Cook Batch", "Consumption")
+      .replaceAll("cook batch", "consumption")
+      .replaceAll("Cook batch", "Consumption")
+      .replaceAll("cook Batch", "consumption")
+      .replaceAll("COOK_BATCH", "CONSUMPTION")
+      .replaceAll("cook_batch", "consumption");
+  };
+
   return (
     <div className="app-header__notifications">
       <button
@@ -72,7 +82,7 @@ function HeaderNotifications({
                     onClick={() => onNotificationClick(notification)}
                   >
                     <div className="app-header__notification-message">
-                      {notification.message}
+                      {formatNotificationText(notification.message)}
                     </div>
                     <div className="app-header__notification-meta">
                       <span>{notification.event_type}</span>

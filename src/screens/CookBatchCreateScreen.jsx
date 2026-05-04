@@ -273,7 +273,7 @@ const CookBatchCreateScreen = () => {
     <div className="page">
       <div className="container container-sm">
         <div className="page-header">
-          <h2 className="page-title">Create Cook Batch</h2>
+          <h2 className="page-title">Create Consumption</h2>
 
           <div className="actions">
             <button
@@ -518,7 +518,7 @@ const CookBatchCreateScreen = () => {
                 type="submit"
                 disabled={loading || !canCreateBatch}
               >
-                {loading ? "Creating…" : "Create Batch"}
+                {loading ? "Creating…" : "Create Consumption"}
               </button>
 
               <button

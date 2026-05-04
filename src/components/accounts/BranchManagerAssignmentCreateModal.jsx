@@ -149,9 +149,9 @@ const BranchManagerAssignmentCreateModal = ({ show, onClose, onSuccess }) => {
       <div className="account-modal">
         <div className="account-modal-header">
           <div>
-            <h5 className="account-modal-title">Add Branch Staff</h5>
+            <h5 className="account-modal-title">Add Site Staff</h5>
             <div className="account-modal-subtitle">
-              Search an existing user and assign them to a managed branch
+              Search an existing user and assign them to a managed site
             </div>
           </div>
 

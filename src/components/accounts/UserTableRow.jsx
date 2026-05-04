@@ -1,3 +1,11 @@
+const formatRoleLabel = (role = "") => {
+  const roleMap = {
+    branch_manager: "site_manager",
+  };
+
+  return roleMap[role] || role;
+};
+
 const UserTableRow = ({ user, onEdit }) => {
   return (
     <tr>
@@ -12,7 +20,7 @@ const UserTableRow = ({ user, onEdit }) => {
           <ul className="account-role-list" style={{ marginBottom: 0 }}>
             {user.branch_roles.map((branchRole) => (
               <li key={branchRole.id}>
-                {branchRole.branch_name} — {branchRole.role}
+                {branchRole.branch_name} — {formatRoleLabel(branchRole.role)}
               </li>
             ))}
           </ul>

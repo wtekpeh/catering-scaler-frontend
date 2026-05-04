@@ -45,6 +45,10 @@ import {
   ingredientCategoryDeleteReducer,
   recipeIngredientAssignCategoryReducer,
   recipeIngredientGlobalListReducer,
+  branchDetailReducer,
+  branchCreateReducer,
+  branchUpdateReducer,
+  branchDeleteReducer,
 } from "./reducers/cookBatchReducers";
 
 const reducer = combineReducers({
@@ -85,6 +89,10 @@ const reducer = combineReducers({
   ingredientCategoryDelete: ingredientCategoryDeleteReducer,
   recipeIngredientAssignCategory: recipeIngredientAssignCategoryReducer,
   recipeIngredientGlobalList: recipeIngredientGlobalListReducer,
+  branchDetail: branchDetailReducer,
+  branchCreate: branchCreateReducer,
+  branchUpdate: branchUpdateReducer,
+  branchDelete: branchDeleteReducer,
 });
 
 const composeEnhancer =

@@ -47,7 +47,7 @@ const CookBatchListScreen = () => {
     <div className="page">
       <div className="container">
         <div className="page-header">
-          <h2 className="page-title">Cook Batches</h2>
+          <h2 className="page-title">Consumptions</h2>
 
           <div className="actions">
             <button type="button" onClick={() => dispatch(listCookBatches())}>
@@ -70,7 +70,7 @@ const CookBatchListScreen = () => {
                 type="button"
                 onClick={() => navigate("/cooking/batches/create")}
               >
-                + Create Batch
+                + Create Consumption
               </button>
             )}
           </div>
@@ -96,7 +96,7 @@ const CookBatchListScreen = () => {
                     type="button"
                     onClick={() => navigate("/cooking/batches/create")}
                   >
-                    Create Batch
+                    Create Consumption
                   </button>
                 )}
               </div>
@@ -172,7 +172,9 @@ const CookBatchListScreen = () => {
                         title="Open batch detail"
                       >
                         <div className="batch-card__top">
-                          <div className="batch-card__title">Batch #{b.id}</div>
+                          <div className="batch-card__title">
+                            Consumption #{b.id}
+                          </div>
 
                           <span
                             className={`badge ${

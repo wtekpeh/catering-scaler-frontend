@@ -276,13 +276,13 @@ const CookBatchDetailScreen = () => {
                 type="button"
                 onClick={() => navigate("/cooking/batches/create")}
               >
-                + New Batch
+                + New Consumption
               </button>
             )}
           </div>
 
           <h2 className="page-title">
-            Batch #{batchId}{" "}
+            Consumption #{batchId}{" "}
             {batch?.recipe_name ? `— ${batch.recipe_name}` : ""}
           </h2>
 

@@ -112,7 +112,7 @@ const PostReviewModal = ({
               Post Review Update
             </h3>
             <p className="post-review-modal__subtitle">
-              Finalized batch corrections for Batch #{batch?.id}
+              Finalized corrections for Consumption #{batch?.id}
             </p>
           </div>
 

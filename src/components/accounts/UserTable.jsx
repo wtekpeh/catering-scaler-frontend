@@ -43,6 +43,14 @@ const UserTable = ({ users }) => {
     }
   }, [dispatch, successUpdate]);
 
+  const formatRoleLabel = (role = "") => {
+    const roleMap = {
+      branch_manager: "site_manager",
+    };
+
+    return roleMap[role] || role;
+  };
+
   return (
     <>
       <div className="account-card">
@@ -59,7 +67,7 @@ const UserTable = ({ users }) => {
                     <th>Username</th>
                     <th>Global Role</th>
                     <th>Active</th>
-                    <th>Branch Roles</th>
+                    <th>Site Roles</th>
                     <th className="text-center">Actions</th>
                   </tr>
                 </thead>
@@ -104,12 +112,12 @@ const UserTable = ({ users }) => {
                   </div>
 
                   <div className="user-card__branches">
-                    <b>Branches:</b>
+                    <b>Sites:</b>
                     {user.branch_roles?.length > 0 ? (
                       <ul>
                         {user.branch_roles.map((br, i) => (
                           <li key={i}>
-                            {br.branch_name} ({br.role})
+                            {br.branch_name} ({formatRoleLabel(br.role)})
                           </li>
                         ))}
                       </ul>

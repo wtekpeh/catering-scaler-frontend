@@ -59,7 +59,7 @@ const UserRoleModal = ({ show, user, onClose, onSave, loading, error }) => {
     );
 
     if (hasEmptyBranch) {
-      setFormError("Every branch role must have a selected branch.");
+      setFormError("Every site role must have a selected site.");
       return;
     }
 

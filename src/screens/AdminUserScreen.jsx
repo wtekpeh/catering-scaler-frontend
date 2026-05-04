@@ -153,14 +153,15 @@ const AdminUserScreen = () => {
     }
   }, [currentPage, totalCount]);
 
-  if (currentUser && !isAdminUser && !isBranchManager) {
-    return null;
+  if (currentUser && !isAdminUser) {
+    return (
+      <div className="container account-page">
+        <div className="alert alert-danger">
+          You are not authorized to access User Management.
+        </div>
+      </div>
+    );
   }
-
-  const handleBranchManagerEdit = (assignment) => {
-    setSelectedAssignment(assignment);
-    setShowEditModal(true);
-  };
 
   const closeEditModalHandler = () => {
     setShowEditModal(false);
@@ -222,18 +223,30 @@ const AdminUserScreen = () => {
     <div className="container account-page">
       <div className="d-flex justify-content-between align-items-center gap-2 flex-wrap mb-4">
         <h2 className="account-page-title mb-0">
-          {isAdminUser ? "User Management" : "Branch Staff Management"}
+          {isAdminUser ? "User Management" : "Site Staff Management"}
         </h2>
 
-        {!isAdminUser && isBranchManager && (
-          <button
-            type="button"
-            className="btn btn-primary"
-            onClick={openCreateModalHandler}
-          >
-            Add Staff
-          </button>
-        )}
+        <div className="d-flex gap-2 flex-wrap">
+          {isAdminUser && (
+            <button
+              type="button"
+              className="btn btn-primary"
+              onClick={() => navigate("/admin/branches")}
+            >
+              Manage Sites
+            </button>
+          )}
+
+          {!isAdminUser && isBranchManager && (
+            <button
+              type="button"
+              className="btn btn-primary"
+              onClick={openCreateModalHandler}
+            >
+              Add Staff
+            </button>
+          )}
+        </div>
       </div>
 
       {deleteError && <div className="alert alert-danger">{deleteError}</div>}
@@ -272,15 +285,7 @@ const AdminUserScreen = () => {
         <div className="alert alert-warning">No records found.</div>
       ) : (
         <>
-          {isAdminUser ? (
-            <UserTable users={users} />
-          ) : (
-            <BranchManagerTable
-              staff={branchManagerStaff}
-              onEdit={handleBranchManagerEdit}
-              onDelete={handleBranchManagerDelete}
-            />
-          )}
+          <UserTable users={users} />
 
           <AccountPagination
             currentPage={currentPage}

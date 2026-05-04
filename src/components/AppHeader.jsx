@@ -195,16 +195,6 @@ function AppHeader() {
             </button>
           )}
 
-          {!isAdminUser && isBranchManager && (
-            <button
-              type="button"
-              className="app-header__logout"
-              onClick={() => navigate("/branch/staff")}
-            >
-              Staff
-            </button>
-          )}
-
           <HeaderNotifications
             isOpen={isNotificationOpen}
             unreadCount={unreadCount}
