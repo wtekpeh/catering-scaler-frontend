@@ -3,10 +3,10 @@ import DashboardStatCard from "./DashboardStatCard";
 const defaultLabels = {
   totalUsers: "Total Users",
   activeUsers: "Active Users",
-  totalBranches: "Total Branches",
-  totalBatches: "Total Batches",
-  batchesThisWeek: "Batches This Week",
-  batchesThisMonth: "Batches This Month",
+  totalBranches: "Total Sites",
+  totalBatches: "Total Consumptions",
+  batchesThisWeek: "Consumptions This Week",
+  batchesThisMonth: "Consumptions This Month",
 };
 
 const ExecutiveKpiGrid = ({ summary, labels = defaultLabels }) => {

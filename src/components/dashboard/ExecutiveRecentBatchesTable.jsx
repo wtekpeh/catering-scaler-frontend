@@ -24,7 +24,7 @@ const ExecutiveRecentBatchesTable = ({ data }) => {
       },
       {
         accessorKey: "branchName",
-        header: "Branch",
+        header: "Site",
       },
       {
         accessorKey: "createdBy",
@@ -54,9 +54,9 @@ const ExecutiveRecentBatchesTable = ({ data }) => {
     return (
       <div className="dashboard-chart-card">
         <div className="dashboard-chart-card__header">
-          <h3 className="dashboard-chart-card__title">Recent Batches</h3>
+          <h3 className="dashboard-chart-card__title">Recent Consumptions</h3>
           <p className="dashboard-chart-card__subtitle">
-            No recent batch data available.
+            No recent consumption data available.
           </p>
         </div>
       </div>
@@ -74,9 +74,9 @@ const ExecutiveRecentBatchesTable = ({ data }) => {
   return (
     <div className="dashboard-chart-card">
       <div className="dashboard-chart-card__header">
-        <h3 className="dashboard-chart-card__title">Recent Batches</h3>
+        <h3 className="dashboard-chart-card__title">Recent Consumptions</h3>
         <p className="dashboard-chart-card__subtitle">
-          Latest cooking activity across branches.
+          Latest cooking activity across sites.
         </p>
       </div>
 

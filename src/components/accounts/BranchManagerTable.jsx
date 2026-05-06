@@ -14,7 +14,7 @@ const BranchManagerTable = ({ staff, onEdit, onDelete }) => {
                   <th>Full Name</th>
                   <th>Email</th>
                   <th>Username</th>
-                  <th>Branch</th>
+                  <th>Site</th>
                   <th>Role</th>
                   <th>Status</th>
                   <th className="text-center">Actions</th>
@@ -81,7 +81,7 @@ const BranchManagerTable = ({ staff, onEdit, onDelete }) => {
                     <b>Username:</b> {item.username}
                   </div>
                   <div>
-                    <b>Branch:</b> {item.branch_name}
+                    <b>Site:</b> {item.branch_name}
                   </div>
                   <div>
                     <b>Status:</b>{" "}

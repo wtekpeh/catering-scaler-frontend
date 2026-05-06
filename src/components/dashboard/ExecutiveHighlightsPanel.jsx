@@ -16,15 +16,15 @@ const ExecutiveHighlightsPanel = ({ data }) => {
 
   const items = [
     {
-      label: "Most Active Branch",
+      label: "Most Active Site",
       value: data.mostActiveBranch || "-",
     },
     {
-      label: "Largest Branch",
+      label: "Largest Site",
       value: data.largestBranch || "-",
     },
     {
-      label: "Peak Batch Day",
+      label: "Peak Site Day",
       value: data.peakBatchDay || "-",
     },
     {
@@ -32,7 +32,7 @@ const ExecutiveHighlightsPanel = ({ data }) => {
       value: data.mostUsedRecipe || "-",
     },
     {
-      label: "Average Batches / Branch",
+      label: "Average Consumptions / Site",
       value:
         data.averageBatchesPerBranch !== undefined
           ? data.averageBatchesPerBranch

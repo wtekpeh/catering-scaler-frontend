@@ -13,9 +13,9 @@ const ExecutiveBranchPerformance = ({ data }) => {
     return (
       <div className="dashboard-chart-card">
         <div className="dashboard-chart-card__header">
-          <h3 className="dashboard-chart-card__title">Branch Performance</h3>
+          <h3 className="dashboard-chart-card__title">Site Performance</h3>
           <p className="dashboard-chart-card__subtitle">
-            No branch performance data available.
+            No site performance data available.
           </p>
         </div>
       </div>
@@ -25,9 +25,9 @@ const ExecutiveBranchPerformance = ({ data }) => {
   return (
     <div className="dashboard-chart-card">
       <div className="dashboard-chart-card__header">
-        <h3 className="dashboard-chart-card__title">Branch Performance</h3>
+        <h3 className="dashboard-chart-card__title">Site Performance</h3>
         <p className="dashboard-chart-card__subtitle">
-          Batch output by branch.
+          Consumption output by site.
         </p>
       </div>
 

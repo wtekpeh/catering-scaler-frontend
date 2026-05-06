@@ -88,13 +88,13 @@ const DashboardFilterBar = () => {
         </div>
 
         <div className="dashboard-filter-bar__group">
-          <label className="dashboard-filter-bar__label">Branch</label>
+          <label className="dashboard-filter-bar__label">Site</label>
           <select
             value={branchId}
             onChange={(event) => setBranchId(event.target.value)}
             className="dashboard-filter-bar__input"
           >
-            <option value="">All Branches</option>
+            <option value="">All Sites</option>
             {branches.map((branch) => (
               <option key={branch.id} value={branch.id}>
                 {branch.name}

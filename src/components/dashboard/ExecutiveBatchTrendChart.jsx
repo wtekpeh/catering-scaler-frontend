@@ -25,9 +25,11 @@ const ExecutiveBatchTrendChart = ({ data }) => {
   return (
     <div className="dashboard-chart-card">
       <div className="dashboard-chart-card__header">
-        <h3 className="dashboard-chart-card__title">Batch Activity Trend</h3>
+        <h3 className="dashboard-chart-card__title">
+          Consumption Activity Trend
+        </h3>
         <p className="dashboard-chart-card__subtitle">
-          Batch volume across the selected period.
+          Consumption volume across the selected period.
         </p>
       </div>
 

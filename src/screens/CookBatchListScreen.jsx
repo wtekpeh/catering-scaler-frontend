@@ -112,7 +112,7 @@ const CookBatchListScreen = () => {
                           <th>Recipe</th>
                           <th>People</th>
                           <th>Prepared By</th>
-                          <th>Branch</th>
+                          <th>Site</th>
                           <th>Protein</th>
                           <th>Used Date</th>
                           <th>Status</th>

@@ -12,6 +12,11 @@ const COLORS = ["#38bdf8", "#34d399", "#f59e0b", "#f87171", "#a78bfa"];
 const ExecutiveRoleDistribution = ({ data }) => {
   const chartData = data?.branchRoles || [];
 
+  const formattedChartData = chartData.map((item) => ({
+    ...item,
+    role: item.role === "branch_manager" ? "project_manager" : item.role,
+  }));
+
   if (!chartData.length) {
     return (
       <div className="dashboard-chart-card">
@@ -30,7 +35,7 @@ const ExecutiveRoleDistribution = ({ data }) => {
       <div className="dashboard-chart-card__header">
         <h3 className="dashboard-chart-card__title">Role Distribution</h3>
         <p className="dashboard-chart-card__subtitle">
-          Branch-level staff role composition.
+          Site-level staff role composition.
         </p>
       </div>
 
@@ -38,7 +43,7 @@ const ExecutiveRoleDistribution = ({ data }) => {
         <ResponsiveContainer width="100%" height={320}>
           <PieChart>
             <Pie
-              data={chartData}
+              data={formattedChartData}
               dataKey="count"
               nameKey="role"
               cx="50%"
@@ -47,7 +52,7 @@ const ExecutiveRoleDistribution = ({ data }) => {
               innerRadius={55}
               paddingAngle={4}
             >
-              {chartData.map((entry, index) => (
+              {formattedChartData.map((entry, index) => (
                 <Cell key={entry.role} fill={COLORS[index % COLORS.length]} />
               ))}
             </Pie>

@@ -98,15 +98,13 @@ const BranchDashboardScreen = () => {
   return (
     <div className="dashboard-screen">
       <div className="dashboard-screen__header">
-        <h1 className="dashboard-screen__title">Branch Dashboard</h1>
+        <h1 className="dashboard-screen__title">Site Dashboard</h1>
         <p className="dashboard-screen__subtitle">
-          Overview of your branch performance.
+          Overview of your site performance.
         </p>
       </div>
 
-      {loading && (
-        <DashboardLoadingBlock message="Loading branch dashboard..." />
-      )}
+      {loading && <DashboardLoadingBlock message="Loading site dashboard..." />}
 
       {error && <DashboardErrorBlock message={error} />}
 
@@ -117,10 +115,10 @@ const BranchDashboardScreen = () => {
             labels={{
               totalUsers: "Total Staff",
               activeUsers: "Active Staff",
-              totalBranches: "Assigned Branches",
-              totalBatches: "Total Batches",
-              batchesThisWeek: "Batches This Week",
-              batchesThisMonth: "Batches This Month",
+              totalBranches: "Assigned Sites",
+              totalBatches: "Total Sites",
+              batchesThisWeek: "Consumptions This Week",
+              batchesThisMonth: "Consumptions This Month",
             }}
           />
 

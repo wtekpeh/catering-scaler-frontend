@@ -49,7 +49,7 @@ function AppHeader() {
     ...(isAdminUser ? [{ label: "Dashboard", path: "/dashboard" }] : []),
 
     ...(!isAdminUser && isBranchManager
-      ? [{ label: "Branch Dashboard", path: "/branch-dashboard" }]
+      ? [{ label: "Site Dashboard", path: "/branch-dashboard" }]
       : []),
 
     { label: "Cooking", path: "/cooking/batches" },
