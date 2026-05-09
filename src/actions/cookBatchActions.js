@@ -205,6 +205,21 @@ import {
   BRANCH_DELETE_REQUEST,
   BRANCH_DELETE_SUCCESS,
   BRANCH_DELETE_FAIL,
+
+  //
+  DAILY_CONSUMPTION_PLAN_LIST_REQUEST,
+  DAILY_CONSUMPTION_PLAN_LIST_SUCCESS,
+  DAILY_CONSUMPTION_PLAN_LIST_FAIL,
+
+  //
+  DAILY_CONSUMPTION_PLAN_CREATE_REQUEST,
+  DAILY_CONSUMPTION_PLAN_CREATE_SUCCESS,
+  DAILY_CONSUMPTION_PLAN_CREATE_FAIL,
+
+  //
+  DAILY_CONSUMPTION_PLAN_DETAIL_REQUEST,
+  DAILY_CONSUMPTION_PLAN_DETAIL_SUCCESS,
+  DAILY_CONSUMPTION_PLAN_DETAIL_FAIL,
 } from "../constants/cookBatchConstants";
 
 // Base API URL from Vite env (.env: VITE_API_BASE_URL=http://127.0.0.1:8000)
@@ -1202,6 +1217,84 @@ export const listAllRecipeIngredients = () => async (dispatch) => {
   } catch (error) {
     dispatch({
       type: RECIPE_INGREDIENT_GLOBAL_LIST_FAIL,
+      payload: getErrorMessage(error),
+    });
+  }
+};
+
+// DAILY CONSUMPTION PLAN LIST
+// GET /api/cooking/daily-plans/
+export const listDailyConsumptionPlans = () => async (dispatch) => {
+  try {
+    dispatch({
+      type: DAILY_CONSUMPTION_PLAN_LIST_REQUEST,
+    });
+
+    const { data } = await axios.get(
+      `${API_BASE_URL}/api/cooking/daily-plans/`,
+    );
+
+    dispatch({
+      type: DAILY_CONSUMPTION_PLAN_LIST_SUCCESS,
+      payload: data,
+    });
+  } catch (error) {
+    dispatch({
+      type: DAILY_CONSUMPTION_PLAN_LIST_FAIL,
+      payload: getErrorMessage(error),
+    });
+  }
+};
+
+// DAILY CONSUMPTION PLAN DETAIL
+// GET /api/cooking/daily-plans/:id/
+export const getDailyConsumptionPlanDetail = (id) => async (dispatch) => {
+  try {
+    dispatch({
+      type: DAILY_CONSUMPTION_PLAN_DETAIL_REQUEST,
+    });
+
+    const { data } = await axios.get(
+      `${API_BASE_URL}/api/cooking/daily-plans/${id}/`,
+    );
+
+    dispatch({
+      type: DAILY_CONSUMPTION_PLAN_DETAIL_SUCCESS,
+      payload: data,
+    });
+  } catch (error) {
+    dispatch({
+      type: DAILY_CONSUMPTION_PLAN_DETAIL_FAIL,
+      payload: getErrorMessage(error),
+    });
+  }
+};
+
+// DAILY CONSUMPTION PLAN CREATE
+// POST /api/cooking/daily-plans/create/
+export const createDailyConsumptionPlan = (payload) => async (dispatch) => {
+  try {
+    dispatch({
+      type: DAILY_CONSUMPTION_PLAN_CREATE_REQUEST,
+    });
+
+    const { data } = await axios.post(
+      `${API_BASE_URL}/api/cooking/daily-plans/create/`,
+      payload,
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      },
+    );
+
+    dispatch({
+      type: DAILY_CONSUMPTION_PLAN_CREATE_SUCCESS,
+      payload: data,
+    });
+  } catch (error) {
+    dispatch({
+      type: DAILY_CONSUMPTION_PLAN_CREATE_FAIL,
       payload: getErrorMessage(error),
     });
   }

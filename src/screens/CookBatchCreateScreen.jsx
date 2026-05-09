@@ -19,6 +19,7 @@ const CookBatchCreateScreen = () => {
   const navigate = useNavigate();
 
   // ---- Local form state ----
+  const [creationMode, setCreationMode] = useState("single"); // single | daily
   const [recipeId, setRecipeId] = useState("");
   const [nPeople, setNPeople] = useState(10);
   const [usedDate, setUsedDate] = useState("");

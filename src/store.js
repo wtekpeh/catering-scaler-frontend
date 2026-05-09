@@ -49,6 +49,9 @@ import {
   branchCreateReducer,
   branchUpdateReducer,
   branchDeleteReducer,
+  dailyConsumptionPlanListReducer,
+  dailyConsumptionPlanCreateReducer,
+  dailyConsumptionPlanDetailReducer,
 } from "./reducers/cookBatchReducers";
 
 const reducer = combineReducers({
@@ -93,6 +96,9 @@ const reducer = combineReducers({
   branchCreate: branchCreateReducer,
   branchUpdate: branchUpdateReducer,
   branchDelete: branchDeleteReducer,
+  dailyConsumptionPlanList: dailyConsumptionPlanListReducer,
+  dailyConsumptionPlanCreate: dailyConsumptionPlanCreateReducer,
+  dailyConsumptionPlanDetail: dailyConsumptionPlanDetailReducer,
 });
 
 const composeEnhancer =

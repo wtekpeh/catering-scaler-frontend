@@ -238,6 +238,24 @@ import {
   BRANCH_DELETE_SUCCESS,
   BRANCH_DELETE_FAIL,
   BRANCH_DELETE_RESET,
+
+  //
+  DAILY_CONSUMPTION_PLAN_LIST_REQUEST,
+  DAILY_CONSUMPTION_PLAN_LIST_SUCCESS,
+  DAILY_CONSUMPTION_PLAN_LIST_FAIL,
+  DAILY_CONSUMPTION_PLAN_LIST_RESET,
+
+  //
+  DAILY_CONSUMPTION_PLAN_CREATE_REQUEST,
+  DAILY_CONSUMPTION_PLAN_CREATE_SUCCESS,
+  DAILY_CONSUMPTION_PLAN_CREATE_FAIL,
+  DAILY_CONSUMPTION_PLAN_CREATE_RESET,
+
+  //
+  DAILY_CONSUMPTION_PLAN_DETAIL_REQUEST,
+  DAILY_CONSUMPTION_PLAN_DETAIL_SUCCESS,
+  DAILY_CONSUMPTION_PLAN_DETAIL_FAIL,
+  DAILY_CONSUMPTION_PLAN_DETAIL_RESET,
 } from "../constants/cookBatchConstants";
 
 // 1) LIST: GET /api/cooking/batches/
@@ -1390,6 +1408,101 @@ export const branchDeleteReducer = (
 
     case BRANCH_DELETE_RESET:
       return { loading: false, success: false };
+
+    default:
+      return state;
+  }
+};
+
+// DAILY CONSUMPTION PLAN - LIST
+export const dailyConsumptionPlanListReducer = (
+  state = { loading: false, plans: [] },
+  action,
+) => {
+  switch (action.type) {
+    case DAILY_CONSUMPTION_PLAN_LIST_REQUEST:
+      return { ...state, loading: true, error: null };
+
+    case DAILY_CONSUMPTION_PLAN_LIST_SUCCESS:
+      return {
+        loading: false,
+        plans: action.payload,
+        error: null,
+      };
+
+    case DAILY_CONSUMPTION_PLAN_LIST_FAIL:
+      return {
+        loading: false,
+        plans: [],
+        error: action.payload,
+      };
+
+    case DAILY_CONSUMPTION_PLAN_LIST_RESET:
+      return { loading: false, plans: [] };
+
+    default:
+      return state;
+  }
+};
+
+// DAILY CONSUMPTION PLAN - CREATE
+export const dailyConsumptionPlanCreateReducer = (
+  state = { loading: false, success: false, plan: null },
+  action,
+) => {
+  switch (action.type) {
+    case DAILY_CONSUMPTION_PLAN_CREATE_REQUEST:
+      return { ...state, loading: true, error: null, success: false };
+
+    case DAILY_CONSUMPTION_PLAN_CREATE_SUCCESS:
+      return {
+        loading: false,
+        success: true,
+        plan: action.payload,
+        error: null,
+      };
+
+    case DAILY_CONSUMPTION_PLAN_CREATE_FAIL:
+      return {
+        loading: false,
+        success: false,
+        plan: null,
+        error: action.payload,
+      };
+
+    case DAILY_CONSUMPTION_PLAN_CREATE_RESET:
+      return { loading: false, success: false, plan: null };
+
+    default:
+      return state;
+  }
+};
+
+// DAILY CONSUMPTION PLAN - DETAIL
+export const dailyConsumptionPlanDetailReducer = (
+  state = { loading: false, plan: null },
+  action,
+) => {
+  switch (action.type) {
+    case DAILY_CONSUMPTION_PLAN_DETAIL_REQUEST:
+      return { ...state, loading: true, error: null };
+
+    case DAILY_CONSUMPTION_PLAN_DETAIL_SUCCESS:
+      return {
+        loading: false,
+        plan: action.payload,
+        error: null,
+      };
+
+    case DAILY_CONSUMPTION_PLAN_DETAIL_FAIL:
+      return {
+        loading: false,
+        plan: null,
+        error: action.payload,
+      };
+
+    case DAILY_CONSUMPTION_PLAN_DETAIL_RESET:
+      return { loading: false, plan: null };
 
     default:
       return state;

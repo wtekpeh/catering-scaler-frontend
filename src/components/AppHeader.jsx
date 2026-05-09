@@ -52,7 +52,8 @@ function AppHeader() {
       ? [{ label: "Site Dashboard", path: "/branch-dashboard" }]
       : []),
 
-    { label: "Cooking", path: "/cooking/batches" },
+    { label: "Consumptions", path: "/cooking/batches" },
+    { label: "Daily Plans", path: "/cooking/daily-plans" },
 
     ...(isAdminUser ? [{ label: "Recipes", path: "/recipes" }] : []),
 
@@ -62,6 +63,10 @@ function AppHeader() {
   const isActivePath = (path) => {
     if (path === "/cooking/batches") {
       return location.pathname.startsWith("/cooking/batches");
+    }
+
+    if (path === "/cooking/daily-plans") {
+      return location.pathname.startsWith("/cooking/daily-plans");
     }
 
     if (path === "/recipes") {
