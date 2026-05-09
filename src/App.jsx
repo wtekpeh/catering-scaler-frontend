@@ -15,6 +15,7 @@ import CookBatchCreateScreen from "./screens/CookBatchCreateScreen";
 import CookBatchDetailScreen from "./screens/CookBatchDetailScreen";
 import DailyConsumptionPlanCreateScreen from "./screens/DailyConsumptionPlanCreateScreen";
 import DailyConsumptionPlanListScreen from "./screens/DailyConsumptionPlanListScreen";
+import DailyConsumptionPlanDetailScreen from "./screens/DailyConsumptionPlanDetailScreen";
 
 import AdminUserScreen from "./screens/AdminUserScreen";
 import BranchList from "./components/accounts/branches/BranchList";
@@ -132,6 +133,10 @@ function AppLayout() {
           <Route
             path="/cooking/daily-plans"
             element={<DailyConsumptionPlanListScreen />}
+          />
+          <Route
+            path="/cooking/daily-plans/:id"
+            element={<DailyConsumptionPlanDetailScreen />}
           />
           <Route
             path="/cooking/batches/:id"
