@@ -1,8 +1,11 @@
-import { useEffect } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 
-import { getDailyConsumptionPlanDetail } from "../actions/cookBatchActions";
+import {
+  getDailyConsumptionPlanDetail,
+  updateDailyConsumptionPlanActuals,
+} from "../actions/cookBatchActions";
 
 const DailyConsumptionPlanDetailScreen = () => {
   const dispatch = useDispatch();
@@ -16,9 +19,73 @@ const DailyConsumptionPlanDetailScreen = () => {
 
   const { loading, error, plan = null } = dailyConsumptionPlanDetail || {};
 
+  const dailyConsumptionPlanActualsUpdate = useSelector(
+    (state) => state.dailyConsumptionPlanActualsUpdate,
+  );
+
+  const {
+    loading: updatingActuals,
+    success: updateSuccess,
+    error: updateError,
+  } = dailyConsumptionPlanActualsUpdate || {};
+
+  const [actualEdits, setActualEdits] = useState({});
+
   useEffect(() => {
     dispatch(getDailyConsumptionPlanDetail(id));
   }, [dispatch, id]);
+
+  useEffect(() => {
+    if (!plan?.ingredient_summaries) return;
+
+    const next = {};
+
+    plan.ingredient_summaries.forEach((item) => {
+      next[item.id] =
+        item.actual_total_g !== null && item.actual_total_g !== undefined
+          ? String(formatInputValue(item.actual_total_g, item.unit_display))
+          : "";
+    });
+
+    setActualEdits(next);
+  }, [plan]);
+
+  useEffect(() => {
+    if (updateSuccess) {
+      dispatch(getDailyConsumptionPlanDetail(id));
+    }
+  }, [dispatch, id, updateSuccess]);
+
+  const submitActuals = (finalize = false) => {
+    if (!plan) return;
+
+    const items = (plan.ingredient_summaries || [])
+      .filter((item) => item.is_shared_adjusted)
+      .map((item) => {
+        const rawValue = actualEdits[item.id];
+
+        let actual_total_g = null;
+
+        if (rawValue !== "" && rawValue !== undefined) {
+          actual_total_g = convertInputToG(rawValue, item.unit_display);
+        } else if (finalize) {
+          actual_total_g = Number(item.adjusted_total_g || 0);
+        }
+
+        return {
+          id: item.id,
+          actual_total_g,
+        };
+      })
+      .filter((x) => x.actual_total_g !== null);
+
+    dispatch(
+      updateDailyConsumptionPlanActuals(plan.id, {
+        items,
+        finalize,
+      }),
+    );
+  };
 
   return (
     <div className="page">
@@ -128,7 +195,7 @@ const DailyConsumptionPlanDetailScreen = () => {
                             className="row-link"
                             onClick={() =>
                               navigate(
-                                `/cooking/batches/${recipeRow.cook_batch}`,
+                                `/cooking/daily-plans/${plan.id}/children/${recipeRow.cook_batch}`,
                               )
                             }
                             title="Open recipe consumption detail"
@@ -156,7 +223,9 @@ const DailyConsumptionPlanDetailScreen = () => {
                         key={recipeRow.id}
                         className="batch-card"
                         onClick={() =>
-                          navigate(`/cooking/batches/${recipeRow.cook_batch}`)
+                          navigate(
+                            `/cooking/daily-plans/${plan.id}/children/${recipeRow.cook_batch}`,
+                          )
                         }
                         title="Open recipe consumption detail"
                       >
@@ -204,6 +273,7 @@ const DailyConsumptionPlanDetailScreen = () => {
                         <th>Unit</th>
                         <th>Raw Total</th>
                         <th>Adjusted Total</th>
+                        <th>Actual Total</th>
                         <th>Adjustment</th>
                         <th>Factor</th>
                         <th>Shared</th>
@@ -228,6 +298,31 @@ const DailyConsumptionPlanDetailScreen = () => {
                             {formatIngredientValue(
                               item.adjusted_total_g,
                               item.unit_display,
+                            )}
+                          </td>
+
+                          <td>
+                            {plan.status !== "final" &&
+                            item.is_shared_adjusted ? (
+                              <input
+                                className="input"
+                                type="number"
+                                min="0"
+                                step={item.unit_display === "pc" ? "1" : "0.01"}
+                                value={actualEdits[item.id] || ""}
+                                onChange={(e) =>
+                                  setActualEdits((prev) => ({
+                                    ...prev,
+                                    [item.id]: e.target.value,
+                                  }))
+                                }
+                                placeholder={getDisplayUnit(item.unit_display)}
+                              />
+                            ) : (
+                              formatIngredientValue(
+                                item.actual_total_g,
+                                item.unit_display,
+                              )
                             )}
                           </td>
 
@@ -280,6 +375,32 @@ const DailyConsumptionPlanDetailScreen = () => {
                         </div>
 
                         <div>
+                          <b>Actual:</b>{" "}
+                          {plan.status !== "final" &&
+                          item.is_shared_adjusted ? (
+                            <input
+                              className="input"
+                              type="number"
+                              min="0"
+                              step={item.unit_display === "pc" ? "1" : "0.01"}
+                              value={actualEdits[item.id] || ""}
+                              onChange={(e) =>
+                                setActualEdits((prev) => ({
+                                  ...prev,
+                                  [item.id]: e.target.value,
+                                }))
+                              }
+                              placeholder={getDisplayUnit(item.unit_display)}
+                            />
+                          ) : (
+                            formatIngredientValue(
+                              item.actual_total_g,
+                              item.unit_display,
+                            )
+                          )}
+                        </div>
+
+                        <div>
                           <b>Factor:</b> {item.daily_factor}
                         </div>
                       </div>
@@ -294,6 +415,50 @@ const DailyConsumptionPlanDetailScreen = () => {
                 </div>
               </div>
             </div>
+
+            {updateError && (
+              <p style={{ color: "crimson", marginTop: 12 }}>{updateError}</p>
+            )}
+
+            {updateSuccess && (
+              <p style={{ color: "green", marginTop: 12 }}>
+                Daily plan actuals updated successfully.
+              </p>
+            )}
+
+            {plan.status !== "final" && (
+              <div className="actions" style={{ marginTop: 16 }}>
+                <button
+                  type="button"
+                  className="btn primary"
+                  disabled={updatingActuals}
+                  onClick={() => submitActuals(false)}
+                >
+                  {updatingActuals ? "Saving..." : "Save Actuals"}
+                </button>
+
+                <button
+                  type="button"
+                  className="btn"
+                  disabled={updatingActuals}
+                  onClick={() => {
+                    const ok = window.confirm(
+                      "Finalize this daily plan? You will not be able to edit actual totals after finalization.",
+                    );
+
+                    if (ok) submitActuals(true);
+                  }}
+                >
+                  {updatingActuals ? "Finalizing..." : "Finalize Daily Plan"}
+                </button>
+              </div>
+            )}
+
+            {plan.status === "final" && (
+              <p className="helper" style={{ marginTop: 16 }}>
+                This daily plan is <b>final</b>. Actual totals are locked.
+              </p>
+            )}
           </>
         )}
       </div>
@@ -333,6 +498,40 @@ function formatIngredientValue(valueG, unit) {
   }
 
   return (value / 1000).toFixed(2);
+}
+
+function formatInputValue(valueG, unit) {
+  if (valueG === null || valueG === undefined) return "";
+
+  const value = Number(valueG);
+
+  if (!Number.isFinite(value)) return "";
+
+  if (unit === "ml") {
+    return (value / 1000).toFixed(2);
+  }
+
+  if (unit === "pc") {
+    return value.toFixed(0);
+  }
+
+  return (value / 1000).toFixed(2);
+}
+
+function convertInputToG(value, unit) {
+  const numeric = Number(value);
+
+  if (!Number.isFinite(numeric)) return null;
+
+  if (unit === "ml") {
+    return numeric * 1000;
+  }
+
+  if (unit === "pc") {
+    return numeric;
+  }
+
+  return numeric * 1000;
 }
 
 export default DailyConsumptionPlanDetailScreen;

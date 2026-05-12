@@ -52,6 +52,8 @@ import {
   dailyConsumptionPlanListReducer,
   dailyConsumptionPlanCreateReducer,
   dailyConsumptionPlanDetailReducer,
+  dailyConsumptionPlanActualsUpdateReducer,
+  dailyConsumptionPlanChildDetailReducer,
 } from "./reducers/cookBatchReducers";
 
 const reducer = combineReducers({
@@ -99,6 +101,8 @@ const reducer = combineReducers({
   dailyConsumptionPlanList: dailyConsumptionPlanListReducer,
   dailyConsumptionPlanCreate: dailyConsumptionPlanCreateReducer,
   dailyConsumptionPlanDetail: dailyConsumptionPlanDetailReducer,
+  dailyConsumptionPlanActualsUpdate: dailyConsumptionPlanActualsUpdateReducer,
+  dailyConsumptionPlanChildDetail: dailyConsumptionPlanChildDetailReducer,
 });
 
 const composeEnhancer =

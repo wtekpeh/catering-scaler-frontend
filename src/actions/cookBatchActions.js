@@ -220,6 +220,16 @@ import {
   DAILY_CONSUMPTION_PLAN_DETAIL_REQUEST,
   DAILY_CONSUMPTION_PLAN_DETAIL_SUCCESS,
   DAILY_CONSUMPTION_PLAN_DETAIL_FAIL,
+
+  //
+  DAILY_CONSUMPTION_PLAN_ACTUALS_UPDATE_REQUEST,
+  DAILY_CONSUMPTION_PLAN_ACTUALS_UPDATE_SUCCESS,
+  DAILY_CONSUMPTION_PLAN_ACTUALS_UPDATE_FAIL,
+
+  //
+  DAILY_CONSUMPTION_PLAN_CHILD_DETAIL_REQUEST,
+  DAILY_CONSUMPTION_PLAN_CHILD_DETAIL_SUCCESS,
+  DAILY_CONSUMPTION_PLAN_CHILD_DETAIL_FAIL,
 } from "../constants/cookBatchConstants";
 
 // Base API URL from Vite env (.env: VITE_API_BASE_URL=http://127.0.0.1:8000)
@@ -1299,3 +1309,62 @@ export const createDailyConsumptionPlan = (payload) => async (dispatch) => {
     });
   }
 };
+
+// DAILY CONSUMPTION PLAN UPDATE ACTUALS / FINALIZE
+// PATCH /api/cooking/daily-plans/:id/actuals/
+export const updateDailyConsumptionPlanActuals =
+  (id, { items = [], finalize = false } = {}) =>
+  async (dispatch) => {
+    try {
+      dispatch({
+        type: DAILY_CONSUMPTION_PLAN_ACTUALS_UPDATE_REQUEST,
+      });
+
+      const body = { items, finalize };
+
+      const { data } = await axios.patch(
+        `${API_BASE_URL}/api/cooking/daily-plans/${id}/actuals/`,
+        body,
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        },
+      );
+
+      dispatch({
+        type: DAILY_CONSUMPTION_PLAN_ACTUALS_UPDATE_SUCCESS,
+        payload: data,
+      });
+    } catch (error) {
+      dispatch({
+        type: DAILY_CONSUMPTION_PLAN_ACTUALS_UPDATE_FAIL,
+        payload: getErrorMessage(error),
+      });
+    }
+  };
+
+// DAILY CONSUMPTION PLAN CHILD BATCH DETAIL
+// GET /api/cooking/daily-plans/:planId/children/:batchId/
+export const getDailyConsumptionPlanChildDetail =
+  (planId, batchId) => async (dispatch) => {
+    try {
+      dispatch({
+        type: DAILY_CONSUMPTION_PLAN_CHILD_DETAIL_REQUEST,
+      });
+
+      const { data } = await axios.get(
+        `${API_BASE_URL}/api/cooking/daily-plans/${planId}/children/${batchId}/`,
+      );
+
+      dispatch({
+        type: DAILY_CONSUMPTION_PLAN_CHILD_DETAIL_SUCCESS,
+        payload: data,
+      });
+    } catch (error) {
+      dispatch({
+        type: DAILY_CONSUMPTION_PLAN_CHILD_DETAIL_FAIL,
+        payload: getErrorMessage(error),
+      });
+    }
+  };

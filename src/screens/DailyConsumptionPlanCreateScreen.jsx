@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 
 import {
   listRecipes,
@@ -11,6 +12,7 @@ import DailyPlanRecipeRow from "../components/cooking/DailyPlanRecipeRow";
 
 const DailyConsumptionPlanCreateScreen = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   // ---------------------------------
   // LOCAL STATE
@@ -50,6 +52,7 @@ const DailyConsumptionPlanCreateScreen = () => {
     loading: loadingCreate,
     error: errorCreate,
     success: successCreate,
+    plan: createdPlan,
   } = dailyPlanCreate;
 
   const userMe = useSelector((state) => state.userMe || {});
@@ -87,6 +90,12 @@ const DailyConsumptionPlanCreateScreen = () => {
     dispatch(listRecipes());
     dispatch(getCurrentUser());
   }, [dispatch]);
+
+  useEffect(() => {
+    if (successCreate && createdPlan?.id) {
+      navigate(`/cooking/daily-plans/${createdPlan.id}`);
+    }
+  }, [successCreate, createdPlan, navigate]);
 
   // ---------------------------------
   // SUBMIT

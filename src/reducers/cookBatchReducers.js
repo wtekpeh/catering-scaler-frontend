@@ -256,6 +256,18 @@ import {
   DAILY_CONSUMPTION_PLAN_DETAIL_SUCCESS,
   DAILY_CONSUMPTION_PLAN_DETAIL_FAIL,
   DAILY_CONSUMPTION_PLAN_DETAIL_RESET,
+
+  //
+  DAILY_CONSUMPTION_PLAN_ACTUALS_UPDATE_REQUEST,
+  DAILY_CONSUMPTION_PLAN_ACTUALS_UPDATE_SUCCESS,
+  DAILY_CONSUMPTION_PLAN_ACTUALS_UPDATE_FAIL,
+  DAILY_CONSUMPTION_PLAN_ACTUALS_UPDATE_RESET,
+
+  //
+  DAILY_CONSUMPTION_PLAN_CHILD_DETAIL_REQUEST,
+  DAILY_CONSUMPTION_PLAN_CHILD_DETAIL_SUCCESS,
+  DAILY_CONSUMPTION_PLAN_CHILD_DETAIL_FAIL,
+  DAILY_CONSUMPTION_PLAN_CHILD_DETAIL_RESET,
 } from "../constants/cookBatchConstants";
 
 // 1) LIST: GET /api/cooking/batches/
@@ -1503,6 +1515,70 @@ export const dailyConsumptionPlanDetailReducer = (
 
     case DAILY_CONSUMPTION_PLAN_DETAIL_RESET:
       return { loading: false, plan: null };
+
+    default:
+      return state;
+  }
+};
+
+// DAILY CONSUMPTION PLAN - UPDATE ACTUALS / FINALIZE
+export const dailyConsumptionPlanActualsUpdateReducer = (
+  state = { loading: false, success: false, plan: null },
+  action,
+) => {
+  switch (action.type) {
+    case DAILY_CONSUMPTION_PLAN_ACTUALS_UPDATE_REQUEST:
+      return { ...state, loading: true, error: null, success: false };
+
+    case DAILY_CONSUMPTION_PLAN_ACTUALS_UPDATE_SUCCESS:
+      return {
+        loading: false,
+        success: true,
+        plan: action.payload,
+        error: null,
+      };
+
+    case DAILY_CONSUMPTION_PLAN_ACTUALS_UPDATE_FAIL:
+      return {
+        loading: false,
+        success: false,
+        plan: null,
+        error: action.payload,
+      };
+
+    case DAILY_CONSUMPTION_PLAN_ACTUALS_UPDATE_RESET:
+      return { loading: false, success: false, plan: null };
+
+    default:
+      return state;
+  }
+};
+
+// DAILY CONSUMPTION PLAN CHILD BATCH DETAIL
+export const dailyConsumptionPlanChildDetailReducer = (
+  state = { loading: false, batch: null },
+  action,
+) => {
+  switch (action.type) {
+    case DAILY_CONSUMPTION_PLAN_CHILD_DETAIL_REQUEST:
+      return { ...state, loading: true, error: null };
+
+    case DAILY_CONSUMPTION_PLAN_CHILD_DETAIL_SUCCESS:
+      return {
+        loading: false,
+        batch: action.payload,
+        error: null,
+      };
+
+    case DAILY_CONSUMPTION_PLAN_CHILD_DETAIL_FAIL:
+      return {
+        loading: false,
+        batch: null,
+        error: action.payload,
+      };
+
+    case DAILY_CONSUMPTION_PLAN_CHILD_DETAIL_RESET:
+      return { loading: false, batch: null };
 
     default:
       return state;
