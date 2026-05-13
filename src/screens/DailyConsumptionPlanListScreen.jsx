@@ -1,24 +1,40 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
 import {
   listDailyConsumptionPlans,
   getCurrentUser,
+  rebuildDailyPlanLearning,
 } from "../actions/cookBatchActions";
+
+import ConfirmActionModal from "../components/common/ConfirmActionModal";
 
 const DailyConsumptionPlanListScreen = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
+  const [showRebuildConfirm, setShowRebuildConfirm] = useState(false);
+
   const userMe = useSelector((state) => state.userMe);
   const { user } = userMe;
 
   const canCreateBatch = user?.can_create_batch_any;
+  const canRebuildLearning = user?.can_recalibrate;
 
   const dailyPlanList = useSelector((state) => state.dailyConsumptionPlanList);
 
   const { loading, error, plans = [] } = dailyPlanList || {};
+
+  const dailyPlanLearningRebuild = useSelector(
+    (state) => state.dailyPlanLearningRebuild,
+  );
+
+  const {
+    loading: rebuildLoading,
+    success: rebuildSuccess,
+    error: rebuildError,
+  } = dailyPlanLearningRebuild || {};
 
   useEffect(() => {
     dispatch(listDailyConsumptionPlans());
@@ -39,6 +55,25 @@ const DailyConsumptionPlanListScreen = () => {
               Refresh
             </button>
 
+            {canRebuildLearning && (
+              <button
+                type="button"
+                className="btn warning"
+                onClick={() => setShowRebuildConfirm(true)}
+                disabled={rebuildLoading}
+              >
+                {rebuildLoading ? "Rebuilding..." : "Rebuild Learning"}
+              </button>
+            )}
+
+            <button
+              type="button"
+              className="btn"
+              onClick={() => navigate("/cooking/daily-shared-rules")}
+            >
+              Manage Shared Rules
+            </button>
+
             {canCreateBatch && (
               <button
                 type="button"
@@ -49,6 +84,12 @@ const DailyConsumptionPlanListScreen = () => {
             )}
           </div>
         </div>
+
+        {rebuildError && <p style={{ color: "crimson" }}>{rebuildError}</p>}
+
+        {rebuildSuccess && !rebuildError && (
+          <p style={{ color: "green" }}>Daily plan learning rebuilt.</p>
+        )}
 
         {loading && <p>Loading daily plans...</p>}
         {error && <p style={{ color: "crimson" }}>{error}</p>}
@@ -197,6 +238,21 @@ const DailyConsumptionPlanListScreen = () => {
           </>
         )}
       </div>
+
+      <ConfirmActionModal
+        isOpen={showRebuildConfirm}
+        title="Rebuild Daily Plan Learning?"
+        message="This will rebuild shared ingredient learning from finalized daily consumption plans. Only continue if you want to refresh the daily plan learning model."
+        confirmLabel="Yes, Rebuild"
+        cancelLabel="Cancel"
+        variant="warning"
+        loading={rebuildLoading}
+        onClose={() => setShowRebuildConfirm(false)}
+        onConfirm={async () => {
+          await dispatch(rebuildDailyPlanLearning());
+          setShowRebuildConfirm(false);
+        }}
+      />
     </div>
   );
 };

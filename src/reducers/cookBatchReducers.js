@@ -268,6 +268,35 @@ import {
   DAILY_CONSUMPTION_PLAN_CHILD_DETAIL_SUCCESS,
   DAILY_CONSUMPTION_PLAN_CHILD_DETAIL_FAIL,
   DAILY_CONSUMPTION_PLAN_CHILD_DETAIL_RESET,
+
+  //
+  DAILY_PLAN_LEARNING_REBUILD_REQUEST,
+  DAILY_PLAN_LEARNING_REBUILD_SUCCESS,
+  DAILY_PLAN_LEARNING_REBUILD_FAIL,
+  DAILY_PLAN_LEARNING_REBUILD_RESET,
+
+  //
+  DAILY_SHARED_RULE_LIST_REQUEST,
+  DAILY_SHARED_RULE_LIST_SUCCESS,
+  DAILY_SHARED_RULE_LIST_FAIL,
+
+  //
+  DAILY_SHARED_RULE_CREATE_REQUEST,
+  DAILY_SHARED_RULE_CREATE_SUCCESS,
+  DAILY_SHARED_RULE_CREATE_FAIL,
+  DAILY_SHARED_RULE_CREATE_RESET,
+
+  //
+  DAILY_SHARED_RULE_UPDATE_REQUEST,
+  DAILY_SHARED_RULE_UPDATE_SUCCESS,
+  DAILY_SHARED_RULE_UPDATE_FAIL,
+  DAILY_SHARED_RULE_UPDATE_RESET,
+
+  //
+  DAILY_SHARED_RULE_DELETE_REQUEST,
+  DAILY_SHARED_RULE_DELETE_SUCCESS,
+  DAILY_SHARED_RULE_DELETE_FAIL,
+  DAILY_SHARED_RULE_DELETE_RESET,
 } from "../constants/cookBatchConstants";
 
 // 1) LIST: GET /api/cooking/batches/
@@ -1579,6 +1608,162 @@ export const dailyConsumptionPlanChildDetailReducer = (
 
     case DAILY_CONSUMPTION_PLAN_CHILD_DETAIL_RESET:
       return { loading: false, batch: null };
+
+    default:
+      return state;
+  }
+};
+
+export const dailyPlanLearningRebuildReducer = (
+  state = { loading: false, success: false, result: null },
+  action,
+) => {
+  switch (action.type) {
+    case DAILY_PLAN_LEARNING_REBUILD_REQUEST:
+      return {
+        ...state,
+        loading: true,
+        error: null,
+        success: false,
+      };
+
+    case DAILY_PLAN_LEARNING_REBUILD_SUCCESS:
+      return {
+        loading: false,
+        success: true,
+        result: action.payload,
+        error: null,
+      };
+
+    case DAILY_PLAN_LEARNING_REBUILD_FAIL:
+      return {
+        loading: false,
+        success: false,
+        result: null,
+        error: action.payload,
+      };
+
+    case DAILY_PLAN_LEARNING_REBUILD_RESET:
+      return {
+        loading: false,
+        success: false,
+        result: null,
+      };
+
+    default:
+      return state;
+  }
+};
+
+export const dailySharedRuleListReducer = (
+  state = { loading: false, rules: [] },
+  action,
+) => {
+  switch (action.type) {
+    case DAILY_SHARED_RULE_LIST_REQUEST:
+      return { ...state, loading: true, error: null };
+
+    case DAILY_SHARED_RULE_LIST_SUCCESS:
+      return { loading: false, rules: action.payload, error: null };
+
+    case DAILY_SHARED_RULE_LIST_FAIL:
+      return { loading: false, rules: [], error: action.payload };
+
+    default:
+      return state;
+  }
+};
+
+export const dailySharedRuleCreateReducer = (
+  state = { loading: false, success: false, rule: null },
+  action,
+) => {
+  switch (action.type) {
+    case DAILY_SHARED_RULE_CREATE_REQUEST:
+      return { ...state, loading: true, error: null, success: false };
+
+    case DAILY_SHARED_RULE_CREATE_SUCCESS:
+      return {
+        loading: false,
+        success: true,
+        rule: action.payload,
+        error: null,
+      };
+
+    case DAILY_SHARED_RULE_CREATE_FAIL:
+      return {
+        loading: false,
+        success: false,
+        rule: null,
+        error: action.payload,
+      };
+
+    case DAILY_SHARED_RULE_CREATE_RESET:
+      return { loading: false, success: false, rule: null };
+
+    default:
+      return state;
+  }
+};
+
+export const dailySharedRuleUpdateReducer = (
+  state = { loading: false, success: false, rule: null },
+  action,
+) => {
+  switch (action.type) {
+    case DAILY_SHARED_RULE_UPDATE_REQUEST:
+      return { ...state, loading: true, error: null, success: false };
+
+    case DAILY_SHARED_RULE_UPDATE_SUCCESS:
+      return {
+        loading: false,
+        success: true,
+        rule: action.payload,
+        error: null,
+      };
+
+    case DAILY_SHARED_RULE_UPDATE_FAIL:
+      return {
+        loading: false,
+        success: false,
+        rule: null,
+        error: action.payload,
+      };
+
+    case DAILY_SHARED_RULE_UPDATE_RESET:
+      return { loading: false, success: false, rule: null };
+
+    default:
+      return state;
+  }
+};
+
+export const dailySharedRuleDeleteReducer = (
+  state = { loading: false, success: false, deletedId: null },
+  action,
+) => {
+  switch (action.type) {
+    case DAILY_SHARED_RULE_DELETE_REQUEST:
+      return { ...state, loading: true, error: null, success: false };
+
+    case DAILY_SHARED_RULE_DELETE_SUCCESS:
+      return {
+        loading: false,
+        success: true,
+        deletedId: action.payload,
+        error: null,
+      };
+
+    case DAILY_SHARED_RULE_DELETE_FAIL:
+      return {
+        loading: false,
+        success: false,
+        deletedId: null,
+        error: action.payload,
+      };
+
+    case DAILY_SHARED_RULE_DELETE_RESET:
+      return { loading: false, success: false, deletedId: null };
 
     default:
       return state;

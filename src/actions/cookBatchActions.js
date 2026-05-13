@@ -230,6 +230,29 @@ import {
   DAILY_CONSUMPTION_PLAN_CHILD_DETAIL_REQUEST,
   DAILY_CONSUMPTION_PLAN_CHILD_DETAIL_SUCCESS,
   DAILY_CONSUMPTION_PLAN_CHILD_DETAIL_FAIL,
+
+  //
+  DAILY_PLAN_LEARNING_REBUILD_REQUEST,
+  DAILY_PLAN_LEARNING_REBUILD_SUCCESS,
+  DAILY_PLAN_LEARNING_REBUILD_FAIL,
+  DAILY_SHARED_RULE_LIST_REQUEST,
+  DAILY_SHARED_RULE_LIST_SUCCESS,
+  DAILY_SHARED_RULE_LIST_FAIL,
+
+  //
+  DAILY_SHARED_RULE_CREATE_REQUEST,
+  DAILY_SHARED_RULE_CREATE_SUCCESS,
+  DAILY_SHARED_RULE_CREATE_FAIL,
+
+  //
+  DAILY_SHARED_RULE_UPDATE_REQUEST,
+  DAILY_SHARED_RULE_UPDATE_SUCCESS,
+  DAILY_SHARED_RULE_UPDATE_FAIL,
+
+  //
+  DAILY_SHARED_RULE_DELETE_REQUEST,
+  DAILY_SHARED_RULE_DELETE_SUCCESS,
+  DAILY_SHARED_RULE_DELETE_FAIL,
 } from "../constants/cookBatchConstants";
 
 // Base API URL from Vite env (.env: VITE_API_BASE_URL=http://127.0.0.1:8000)
@@ -1368,3 +1391,134 @@ export const getDailyConsumptionPlanChildDetail =
       });
     }
   };
+
+// DAILY PLAN LEARNING REBUILD
+// POST /api/cooking/daily-plans/rebuild-learning/
+export const rebuildDailyPlanLearning = () => async (dispatch) => {
+  try {
+    dispatch({
+      type: DAILY_PLAN_LEARNING_REBUILD_REQUEST,
+    });
+
+    const { data } = await axios.post(
+      `${API_BASE_URL}/api/cooking/daily-plans/rebuild-learning/`,
+      {},
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      },
+    );
+
+    dispatch({
+      type: DAILY_PLAN_LEARNING_REBUILD_SUCCESS,
+      payload: data,
+    });
+  } catch (error) {
+    dispatch({
+      type: DAILY_PLAN_LEARNING_REBUILD_FAIL,
+      payload: getErrorMessage(error),
+    });
+  }
+};
+
+// DAILY SHARED RULES
+export const listDailySharedRules = () => async (dispatch) => {
+  try {
+    dispatch({
+      type: DAILY_SHARED_RULE_LIST_REQUEST,
+    });
+
+    const { data } = await axios.get(
+      `${API_BASE_URL}/api/cooking/daily-shared-rules/`,
+    );
+
+    dispatch({
+      type: DAILY_SHARED_RULE_LIST_SUCCESS,
+      payload: data,
+    });
+  } catch (error) {
+    dispatch({
+      type: DAILY_SHARED_RULE_LIST_FAIL,
+      payload: getErrorMessage(error),
+    });
+  }
+};
+
+export const createDailySharedRule = (payload) => async (dispatch) => {
+  try {
+    dispatch({
+      type: DAILY_SHARED_RULE_CREATE_REQUEST,
+    });
+
+    const { data } = await axios.post(
+      `${API_BASE_URL}/api/cooking/daily-shared-rules/`,
+      payload,
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      },
+    );
+
+    dispatch({
+      type: DAILY_SHARED_RULE_CREATE_SUCCESS,
+      payload: data,
+    });
+  } catch (error) {
+    dispatch({
+      type: DAILY_SHARED_RULE_CREATE_FAIL,
+      payload: getErrorMessage(error),
+    });
+  }
+};
+
+export const updateDailySharedRule = (ruleId, payload) => async (dispatch) => {
+  try {
+    dispatch({
+      type: DAILY_SHARED_RULE_UPDATE_REQUEST,
+    });
+
+    const { data } = await axios.patch(
+      `${API_BASE_URL}/api/cooking/daily-shared-rules/${ruleId}/`,
+      payload,
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      },
+    );
+
+    dispatch({
+      type: DAILY_SHARED_RULE_UPDATE_SUCCESS,
+      payload: data,
+    });
+  } catch (error) {
+    dispatch({
+      type: DAILY_SHARED_RULE_UPDATE_FAIL,
+      payload: getErrorMessage(error),
+    });
+  }
+};
+
+export const deleteDailySharedRule = (ruleId) => async (dispatch) => {
+  try {
+    dispatch({
+      type: DAILY_SHARED_RULE_DELETE_REQUEST,
+    });
+
+    await axios.delete(
+      `${API_BASE_URL}/api/cooking/daily-shared-rules/${ruleId}/`,
+    );
+
+    dispatch({
+      type: DAILY_SHARED_RULE_DELETE_SUCCESS,
+      payload: ruleId,
+    });
+  } catch (error) {
+    dispatch({
+      type: DAILY_SHARED_RULE_DELETE_FAIL,
+      payload: getErrorMessage(error),
+    });
+  }
+};

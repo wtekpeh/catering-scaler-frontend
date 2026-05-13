@@ -54,6 +54,11 @@ import {
   dailyConsumptionPlanDetailReducer,
   dailyConsumptionPlanActualsUpdateReducer,
   dailyConsumptionPlanChildDetailReducer,
+  dailyPlanLearningRebuildReducer,
+  dailySharedRuleListReducer,
+  dailySharedRuleCreateReducer,
+  dailySharedRuleUpdateReducer,
+  dailySharedRuleDeleteReducer,
 } from "./reducers/cookBatchReducers";
 
 const reducer = combineReducers({
@@ -103,6 +108,11 @@ const reducer = combineReducers({
   dailyConsumptionPlanDetail: dailyConsumptionPlanDetailReducer,
   dailyConsumptionPlanActualsUpdate: dailyConsumptionPlanActualsUpdateReducer,
   dailyConsumptionPlanChildDetail: dailyConsumptionPlanChildDetailReducer,
+  dailyPlanLearningRebuild: dailyPlanLearningRebuildReducer,
+  dailySharedRuleList: dailySharedRuleListReducer,
+  dailySharedRuleCreate: dailySharedRuleCreateReducer,
+  dailySharedRuleUpdate: dailySharedRuleUpdateReducer,
+  dailySharedRuleDelete: dailySharedRuleDeleteReducer,
 });
 
 const composeEnhancer =
