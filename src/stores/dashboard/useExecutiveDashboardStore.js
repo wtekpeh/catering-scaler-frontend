@@ -21,6 +21,7 @@ const initialState = {
   exportingIngredientCategoryDailyExcel: false,
   exportingBatchDetailExcel: false,
   exportingBatchDetailPDF: false,
+  topRecipeVariance: [],
   loading: false,
   error: null,
 };
@@ -141,6 +142,13 @@ export const useExecutiveDashboardStore = create((set) => ({
       });
     }
   },
+
+  setTopRecipeVariance: (topRecipeVariance) =>
+    set(() => ({
+      topRecipeVariance,
+      loading: false,
+      error: null,
+    })),
 
   resetExecutiveDashboard: () =>
     set(() => ({

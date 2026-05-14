@@ -177,3 +177,13 @@ export const exportBatchDetailPDF = async (batchId) => {
 
   return response.data;
 };
+
+export const getTopRecipeVariance = async (filters = {}) => {
+  const { data } = await axios.get(`${API_BASE}/reports/top-recipe-variance`, {
+    params: buildParams(filters),
+  });
+
+  return {
+    topRecipeVariance: data.items || [],
+  };
+};

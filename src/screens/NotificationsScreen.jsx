@@ -61,6 +61,12 @@ function NotificationsScreen() {
 
       if (notification.target_type === "cook_batch" && notification.target_id) {
         navigate(`/cooking/batches/${notification.target_id}`);
+        return;
+      }
+
+      if (notification.target_type === "daily_plan" && notification.target_id) {
+        navigate(`/cooking/daily-plans/${notification.target_id}`);
+        return;
       }
     } catch (error) {
       console.error("Failed to mark notification as read", error);

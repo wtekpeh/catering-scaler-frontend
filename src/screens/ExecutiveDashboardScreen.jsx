@@ -8,6 +8,7 @@ import {
   getRecentBatches,
   getBranches,
   getIngredientCategoryDaily,
+  getTopRecipeVariance,
 } from "../api/dashboardApi";
 import ExecutiveKpiGrid from "../components/dashboard/ExecutiveKpiGrid";
 import { useDashboardFilterStore } from "../stores/dashboard/useDashboardFilterStore";
@@ -22,6 +23,7 @@ import DashboardFilterBar from "../components/dashboard/DashboardFilterBar";
 import DashboardLoadingBlock from "../components/dashboard/DashboardLoadingBlock";
 import DashboardErrorBlock from "../components/dashboard/DashboardErrorBlock";
 import IngredientCategoryDailyTable from "../components/dashboard/IngredientCategoryDailyTable";
+import ExecutiveTopRecipeVariance from "../components/dashboard/ExecutiveTopRecipeVariance";
 
 const getTodayDate = () => new Date().toISOString().split("T")[0];
 
@@ -46,6 +48,8 @@ const ExecutiveDashboardScreen = () => {
     setExecutiveDashboardData,
     ingredientCategoryDaily,
     setIngredientCategoryDaily,
+    topRecipeVariance,
+    setTopRecipeVariance,
   } = useExecutiveDashboardStore();
 
   useEffect(() => {
@@ -67,6 +71,7 @@ const ExecutiveDashboardScreen = () => {
           branchSummaryResponse,
           recentBatchesResponse,
           branchesResponse,
+          topRecipeVarianceResponse,
         ] = await Promise.all([
           getExecutiveSummary(filters),
           getBatchTrends(filters),
@@ -74,9 +79,11 @@ const ExecutiveDashboardScreen = () => {
           getBranchSummary(filters),
           getRecentBatches(filters),
           getBranches(),
+          getTopRecipeVariance(filters),
         ]);
 
         setBranches(branchesResponse.branches || []);
+        setTopRecipeVariance(topRecipeVarianceResponse.topRecipeVariance || []);
 
         setExecutiveDashboardData({
           summary: executiveSummaryResponse.summary,
@@ -106,6 +113,7 @@ const ExecutiveDashboardScreen = () => {
     setError,
     setExecutiveDashboardData,
     setBranches,
+    setTopRecipeVariance,
   ]);
 
   useEffect(() => {
@@ -161,10 +169,11 @@ const ExecutiveDashboardScreen = () => {
 
           <div className="dashboard-two-column-grid">
             <ExecutiveHighlightsPanel data={highlights} />
-            <ExecutiveRecentBatchesTable data={recentBatches} />
+            <ExecutiveTopRecipeVariance items={topRecipeVariance} />
           </div>
 
           <div className="dashboard-two-column-grid">
+            <ExecutiveRecentBatchesTable data={recentBatches} />
             <IngredientCategoryDailyTable
               data={ingredientCategoryDaily}
               reportDate={ingredientReportDate}
