@@ -4,11 +4,15 @@ const defaultLabels = {
   totalUsers: "Total Users",
   activeUsers: "Active Users",
   totalBranches: "Total Sites",
+
   totalBatches: "Total Consumptions",
   batchesThisWeek: "Consumptions This Week",
   batchesThisMonth: "Consumptions This Month",
-};
 
+  totalDailyPlans: "Total Daily Plans",
+  finalizedDailyPlans: "Finalized Daily Plans",
+  draftDailyPlans: "Draft Daily Plans",
+};
 const ExecutiveKpiGrid = ({ summary, labels = defaultLabels }) => {
   if (!summary) {
     return null;
@@ -38,6 +42,18 @@ const ExecutiveKpiGrid = ({ summary, labels = defaultLabels }) => {
     {
       title: labels.batchesThisMonth,
       value: summary.batchesThisMonth ?? 0,
+    },
+    {
+      title: labels.totalDailyPlans,
+      value: summary.totalDailyPlans ?? 0,
+    },
+    {
+      title: labels.finalizedDailyPlans,
+      value: summary.finalizedDailyPlans ?? 0,
+    },
+    {
+      title: labels.draftDailyPlans,
+      value: summary.draftDailyPlans ?? 0,
     },
   ];
 

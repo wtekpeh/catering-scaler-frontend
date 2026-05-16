@@ -21,9 +21,14 @@ export const getExecutiveSummary = async (filters = {}) => {
       totalUsers: data?.kpis?.total_users ?? 0,
       activeUsers: data?.kpis?.total_active_users ?? 0,
       totalBranches: data?.kpis?.total_branches ?? 0,
+
       totalBatches: data?.kpis?.total_batches ?? 0,
       batchesThisWeek: data?.kpis?.batches_this_week ?? 0,
       batchesThisMonth: data?.kpis?.batches_this_month ?? 0,
+
+      totalDailyPlans: data?.kpis?.total_daily_plans ?? 0,
+      finalizedDailyPlans: data?.kpis?.finalized_daily_plans ?? 0,
+      draftDailyPlans: data?.kpis?.draft_daily_plans ?? 0,
     },
     highlights: {
       mostActiveBranch:
@@ -131,11 +136,14 @@ export const getBranches = async () => {
   };
 };
 
-export const getIngredientCategoryDaily = async (date) => {
+export const getIngredientCategoryDaily = async (startDate, endDate) => {
   const { data } = await axios.get(
     `${API_BASE}/reports/ingredient-categories/daily`,
     {
-      params: { date },
+      params: {
+        start_date: startDate,
+        end_date: endDate,
+      },
     },
   );
 
@@ -144,11 +152,32 @@ export const getIngredientCategoryDaily = async (date) => {
   };
 };
 
-export const exportIngredientCategoryDailyExcel = async (date) => {
+export const exportIngredientCategoryDailyExcel = async (
+  startDate,
+  endDate,
+) => {
   const response = await axios.get(
     `${API_BASE}/reports/ingredient-categories/daily/export/excel`,
     {
-      params: { date },
+      params: {
+        start_date: startDate,
+        end_date: endDate,
+      },
+      responseType: "blob",
+    },
+  );
+
+  return response.data;
+};
+
+export const exportIngredientCategoryDailyPDF = async (startDate, endDate) => {
+  const response = await axios.get(
+    `${API_BASE}/reports/ingredient-categories/daily/export/pdf`,
+    {
+      params: {
+        start_date: startDate,
+        end_date: endDate,
+      },
       responseType: "blob",
     },
   );
@@ -185,5 +214,41 @@ export const getTopRecipeVariance = async (filters = {}) => {
 
   return {
     topRecipeVariance: data.items || [],
+  };
+};
+
+export const getDailyPlanTrends = async (filters = {}) => {
+  const params = {};
+
+  if (filters.branchId) {
+    params.branch_id = filters.branchId;
+  }
+
+  if (filters.groupBy) {
+    params.group_by = filters.groupBy;
+  }
+
+  const { data } = await axios.get(`${API_BASE}/reports/daily-plan-trends`, {
+    params,
+  });
+
+  return {
+    dailyPlanTrends: data.series || [],
+  };
+};
+
+export const getRecentDailyPlans = async (filters = {}) => {
+  const params = {};
+
+  if (filters.branchId) {
+    params.branch_id = filters.branchId;
+  }
+
+  const { data } = await axios.get(`${API_BASE}/reports/recent-daily-plans`, {
+    params,
+  });
+
+  return {
+    recentDailyPlans: data.items || [],
   };
 };

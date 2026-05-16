@@ -4,10 +4,14 @@ const initialState = {
   summary: null,
 
   batchTrends: [],
+  dailyPlanTrends: [],
+
   roleSummary: {
     branchRoles: [],
   },
+
   recentBatches: [],
+  recentDailyPlans: [],
 
   loading: false,
   error: null,
@@ -52,5 +56,15 @@ export const useBranchDashboardStore = create((set) => ({
   setRecentBatches: (recentBatches) =>
     set(() => ({
       recentBatches,
+    })),
+
+  setDailyPlanTrends: (dailyPlanTrends) =>
+    set(() => ({
+      dailyPlanTrends,
+    })),
+
+  setRecentDailyPlans: (recentDailyPlans) =>
+    set(() => ({
+      recentDailyPlans,
     })),
 }));

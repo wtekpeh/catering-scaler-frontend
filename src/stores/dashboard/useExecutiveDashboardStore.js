@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import {
   exportIngredientCategoryDailyExcel,
+  exportIngredientCategoryDailyPDF,
   exportBatchDetailExcel,
   exportBatchDetailPDF,
 } from "../../api/dashboardApi";
@@ -8,6 +9,7 @@ import {
 const initialState = {
   summary: null,
   batchTrends: [],
+  dailyPlanTrends: [],
   userTrends: [],
   branchSummary: [],
   roleSummary: {
@@ -17,8 +19,10 @@ const initialState = {
   },
   highlights: null,
   recentBatches: [],
+  recentDailyPlans: [],
   ingredientCategoryDaily: [],
   exportingIngredientCategoryDailyExcel: false,
+  exportingIngredientCategoryDailyPDF: false,
   exportingBatchDetailExcel: false,
   exportingBatchDetailPDF: false,
   topRecipeVariance: [],
@@ -44,6 +48,7 @@ export const useExecutiveDashboardStore = create((set) => ({
     set(() => ({
       summary: payload.summary ?? null,
       batchTrends: payload.batchTrends ?? [],
+      dailyPlanTrends: payload.dailyPlanTrends ?? [],
       userTrends: payload.userTrends ?? [],
       branchSummary: payload.branchSummary ?? [],
       roleSummary: payload.roleSummary ?? {
@@ -53,6 +58,7 @@ export const useExecutiveDashboardStore = create((set) => ({
       },
       highlights: payload.highlights ?? null,
       recentBatches: payload.recentBatches ?? [],
+      recentDailyPlans: payload.recentDailyPlans ?? [],
       loading: false,
       error: null,
     })),
@@ -64,17 +70,17 @@ export const useExecutiveDashboardStore = create((set) => ({
       error: null,
     })),
 
-  exportIngredientCategoryDailyExcel: async (date) => {
+  exportIngredientCategoryDailyExcel: async (startDate, endDate) => {
     try {
       set({ exportingIngredientCategoryDailyExcel: true });
 
-      const blob = await exportIngredientCategoryDailyExcel(date);
+      const blob = await exportIngredientCategoryDailyExcel(startDate, endDate);
 
       const url = window.URL.createObjectURL(blob);
       const link = document.createElement("a");
 
       link.href = url;
-      link.download = `ingredient_category_daily_${date}.xlsx`;
+      link.download = `ingredient_category_daily_${startDate}_to_${endDate}.xlsx`;
 
       document.body.appendChild(link);
       link.click();
@@ -112,6 +118,33 @@ export const useExecutiveDashboardStore = create((set) => ({
       set({
         exportingBatchDetailExcel: false,
         error: err?.message || "Batch export failed",
+      });
+    }
+  },
+
+  exportIngredientCategoryDailyPDF: async (startDate, endDate) => {
+    try {
+      set({ exportingIngredientCategoryDailyPDF: true });
+
+      const blob = await exportIngredientCategoryDailyPDF(startDate, endDate);
+
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement("a");
+
+      link.href = url;
+      link.download = `ingredient_category_daily_${startDate}_to_${endDate}.pdf`;
+
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+
+      window.URL.revokeObjectURL(url);
+
+      set({ exportingIngredientCategoryDailyPDF: false });
+    } catch (err) {
+      set({
+        exportingIngredientCategoryDailyPDF: false,
+        error: err?.message || "PDF export failed",
       });
     }
   },

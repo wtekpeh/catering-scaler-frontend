@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
-
+import axios from "../api/axiosInstance";
 import {
   getDailyConsumptionPlanDetail,
   updateDailyConsumptionPlanActuals,
@@ -87,6 +87,36 @@ const DailyConsumptionPlanDetailScreen = () => {
     );
   };
 
+  const exportRequisitionPDF = async () => {
+    try {
+      const response = await axios.get(
+        `${import.meta.env.VITE_GO_API_BASE_URL}/reports/daily-plans/${id}/export/pdf`,
+        {
+          responseType: "blob",
+        },
+      );
+
+      const blob = new Blob([response.data], {
+        type: "application/pdf",
+      });
+
+      const url = window.URL.createObjectURL(blob);
+
+      const link = document.createElement("a");
+
+      link.href = url;
+      link.download = `daily_plan_requisition_${id}.pdf`;
+
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+
+      window.URL.revokeObjectURL(url);
+    } catch (err) {
+      console.error("Failed to export requisition PDF", err);
+    }
+  };
+
   return (
     <div className="page">
       <div className="container">
@@ -102,6 +132,12 @@ const DailyConsumptionPlanDetailScreen = () => {
           </div>
 
           <div className="actions">
+            {plan?.status === "final" && (
+              <button type="button" onClick={exportRequisitionPDF}>
+                Export Requisition PDF
+              </button>
+            )}
+
             <button
               type="button"
               onClick={() => navigate("/cooking/daily-plans")}

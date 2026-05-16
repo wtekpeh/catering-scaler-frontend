@@ -33,3 +33,11 @@ export const getBranchRecentBatches = async () => {
 
   return data;
 };
+
+export const getBranchDailyPlanTrends = async () => {
+  const { data } = await axios.get(
+    `${GO_REPORTING_BASE_URL}/branch-dashboard/daily-plan-trends`,
+  );
+
+  return data;
+};

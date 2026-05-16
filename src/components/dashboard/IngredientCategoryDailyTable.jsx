@@ -31,18 +31,22 @@ const formatBaseValue = (value, unit) => {
 
 const IngredientCategoryDailyTable = ({
   data = [],
-  reportDate,
-  onReportDateChange,
+  startDate,
+  endDate,
+  onStartDateChange,
+  onEndDateChange,
 }) => {
   const {
     exportingIngredientCategoryDailyExcel,
+    exportingIngredientCategoryDailyPDF,
     exportIngredientCategoryDailyExcel,
+    exportIngredientCategoryDailyPDF,
   } = useExecutiveDashboardStore();
 
   return (
     <div className="dashboard-chart-card">
-      <div className="dashboard-chart-card__header dashboard-chart-card__header--with-action">
-        <div>
+      <div className="dashboard-chart-card__header ingredient-category-report__header">
+        <div className="ingredient-category-report__intro">
           <h3 className="dashboard-chart-card__title">
             Ingredient Category Report
           </h3>
@@ -52,33 +56,68 @@ const IngredientCategoryDailyTable = ({
           </p>
 
           <p className="dashboard-chart-card__meta">
-            Showing report for used date: <strong>{reportDate}</strong>
+            Showing report from <strong>{startDate}</strong> to{" "}
+            <strong>{endDate}</strong>
           </p>
         </div>
+      </div>
 
-        <div className="dashboard-card-actions">
+      <div className="ingredient-category-report__controls">
+        <div className="ingredient-category-report__date-row">
           <div className="dashboard-card-date-filter">
             <label className="dashboard-card-date-filter__label">
-              Used date
+              Start date
             </label>
 
             <input
               type="date"
               className="dashboard-card-date-filter__input"
-              value={reportDate || ""}
-              onChange={(e) => onReportDateChange(e.target.value)}
+              value={startDate || ""}
+              onChange={(e) => onStartDateChange(e.target.value)}
             />
           </div>
 
+          <div className="dashboard-card-date-filter">
+            <label className="dashboard-card-date-filter__label">
+              End date
+            </label>
+
+            <input
+              type="date"
+              className="dashboard-card-date-filter__input"
+              value={endDate || ""}
+              onChange={(e) => onEndDateChange(e.target.value)}
+            />
+          </div>
+        </div>
+
+        <div className="ingredient-category-report__export-row">
           <button
             type="button"
             className="dashboard-export-btn"
-            onClick={() => exportIngredientCategoryDailyExcel(reportDate)}
-            disabled={exportingIngredientCategoryDailyExcel || !reportDate}
+            onClick={() =>
+              exportIngredientCategoryDailyExcel(startDate, endDate)
+            }
+            disabled={
+              exportingIngredientCategoryDailyExcel || !startDate || !endDate
+            }
           >
             {exportingIngredientCategoryDailyExcel
               ? "Exporting..."
               : "Export Excel"}
+          </button>
+
+          <button
+            type="button"
+            className="dashboard-export-btn"
+            onClick={() => exportIngredientCategoryDailyPDF(startDate, endDate)}
+            disabled={
+              exportingIngredientCategoryDailyPDF || !startDate || !endDate
+            }
+          >
+            {exportingIngredientCategoryDailyPDF
+              ? "Exporting..."
+              : "Export PDF"}
           </button>
         </div>
       </div>
@@ -87,7 +126,7 @@ const IngredientCategoryDailyTable = ({
         {!data || data.length === 0 ? (
           <div className="dashboard-feedback">
             <p className="dashboard-feedback__text">
-              No ingredient category data for selected date.
+              No ingredient category data for selected date range.
             </p>
           </div>
         ) : (
@@ -110,21 +149,26 @@ const IngredientCategoryDailyTable = ({
                   <tr
                     key={`${item.used_date}-${item.category_name}-${item.unit}-${index}`}
                   >
-                    <td>{item.used_date || reportDate}</td>
+                    <td>{item.used_date}</td>
 
                     <td className="dashboard-table__primary-cell">
                       {item.category_name}
                     </td>
+
                     <td>{item.unit}</td>
+
                     <td>
                       {formatDisplayValue(item.total_final_value, item.unit)}
                     </td>
+
                     <td>
                       {formatDisplayValue(item.total_actual_value, item.unit)}
                     </td>
+
                     <td>
                       {formatBaseValue(item.total_final_value, item.unit)}
                     </td>
+
                     <td>
                       {formatBaseValue(item.total_actual_value, item.unit)}
                     </td>

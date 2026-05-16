@@ -3,9 +3,11 @@ import "../styles/dashboard.css";
 import {
   getExecutiveSummary,
   getBatchTrends,
+  getDailyPlanTrends,
   getStaffSummary,
   getBranchSummary,
   getRecentBatches,
+  getRecentDailyPlans,
   getBranches,
   getIngredientCategoryDaily,
   getTopRecipeVariance,
@@ -24,14 +26,18 @@ import DashboardLoadingBlock from "../components/dashboard/DashboardLoadingBlock
 import DashboardErrorBlock from "../components/dashboard/DashboardErrorBlock";
 import IngredientCategoryDailyTable from "../components/dashboard/IngredientCategoryDailyTable";
 import ExecutiveTopRecipeVariance from "../components/dashboard/ExecutiveTopRecipeVariance";
+import ExecutiveDailyPlanTrendChart from "../components/dashboard/ExecutiveDailyPlanTrendChart";
+import ExecutiveRecentDailyPlansTable from "../components/dashboard/ExecutiveRecentDailyPlansTable";
 
 const getTodayDate = () => new Date().toISOString().split("T")[0];
 
 const ExecutiveDashboardScreen = () => {
   const { startDate, endDate, branchId, groupBy, setBranches } =
     useDashboardFilterStore();
-  const [ingredientReportDate, setIngredientReportDate] =
+  const [ingredientStartDate, setIngredientStartDate] =
     useState(getTodayDate());
+
+  const [ingredientEndDate, setIngredientEndDate] = useState(getTodayDate());
 
   const {
     summary,
@@ -50,6 +56,8 @@ const ExecutiveDashboardScreen = () => {
     setIngredientCategoryDaily,
     topRecipeVariance,
     setTopRecipeVariance,
+    dailyPlanTrends,
+    recentDailyPlans,
   } = useExecutiveDashboardStore();
 
   useEffect(() => {
@@ -67,17 +75,21 @@ const ExecutiveDashboardScreen = () => {
         const [
           executiveSummaryResponse,
           batchTrendsResponse,
+          dailyPlanTrendsResponse,
           staffSummaryResponse,
           branchSummaryResponse,
           recentBatchesResponse,
+          recentDailyPlansResponse,
           branchesResponse,
           topRecipeVarianceResponse,
         ] = await Promise.all([
           getExecutiveSummary(filters),
           getBatchTrends(filters),
+          getDailyPlanTrends(filters),
           getStaffSummary(filters),
           getBranchSummary(filters),
           getRecentBatches(filters),
+          getRecentDailyPlans(filters),
           getBranches(),
           getTopRecipeVariance(filters),
         ]);
@@ -89,10 +101,12 @@ const ExecutiveDashboardScreen = () => {
           summary: executiveSummaryResponse.summary,
           highlights: executiveSummaryResponse.highlights,
           batchTrends: batchTrendsResponse.batchTrends,
+          dailyPlanTrends: dailyPlanTrendsResponse.dailyPlanTrends,
           userTrends: staffSummaryResponse.userTrends,
           branchSummary: branchSummaryResponse.branchSummary,
           roleSummary: staffSummaryResponse.roleSummary,
           recentBatches: recentBatchesResponse.recentBatches,
+          recentDailyPlans: recentDailyPlansResponse.recentDailyPlans,
         });
       } catch (err) {
         setError(
@@ -119,9 +133,10 @@ const ExecutiveDashboardScreen = () => {
   useEffect(() => {
     const loadIngredientCategoryDaily = async () => {
       try {
-        const reportDate = ingredientReportDate || getTodayDate();
+        const start = ingredientStartDate || getTodayDate();
+        const end = ingredientEndDate || getTodayDate();
 
-        const response = await getIngredientCategoryDaily(reportDate);
+        const response = await getIngredientCategoryDaily(start, end);
 
         setIngredientCategoryDaily(response.ingredientCategoryDaily || []);
       } catch (err) {
@@ -134,7 +149,12 @@ const ExecutiveDashboardScreen = () => {
     };
 
     loadIngredientCategoryDaily();
-  }, [ingredientReportDate, setIngredientCategoryDaily, setError]);
+  }, [
+    ingredientStartDate,
+    ingredientEndDate,
+    setIngredientCategoryDaily,
+    setError,
+  ]);
 
   return (
     <div className="dashboard-screen">
@@ -163,6 +183,11 @@ const ExecutiveDashboardScreen = () => {
           </div>
 
           <div className="dashboard-two-column-grid">
+            <ExecutiveDailyPlanTrendChart data={dailyPlanTrends} />
+            <ExecutiveRecentDailyPlansTable plans={recentDailyPlans} />
+          </div>
+
+          <div className="dashboard-two-column-grid">
             <ExecutiveBranchPerformance data={branchSummary} />
             <ExecutiveRoleDistribution data={roleSummary} />
           </div>
@@ -176,8 +201,10 @@ const ExecutiveDashboardScreen = () => {
             <ExecutiveRecentBatchesTable data={recentBatches} />
             <IngredientCategoryDailyTable
               data={ingredientCategoryDaily}
-              reportDate={ingredientReportDate}
-              onReportDateChange={setIngredientReportDate}
+              startDate={ingredientStartDate}
+              endDate={ingredientEndDate}
+              onStartDateChange={setIngredientStartDate}
+              onEndDateChange={setIngredientEndDate}
             />
           </div>
         </>
