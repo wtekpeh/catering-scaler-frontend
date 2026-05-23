@@ -46,7 +46,12 @@ function AppHeader() {
     ) || false;
 
   const navItems = [
-    ...(isAdminUser ? [{ label: "Dashboard", path: "/dashboard" }] : []),
+    ...(isAdminUser
+      ? [
+          { label: "Dashboard", path: "/dashboard" },
+          { label: "AI Assistant", path: "/dashboard/ai-assistant" },
+        ]
+      : []),
 
     ...(!isAdminUser && isBranchManager
       ? [{ label: "Site Dashboard", path: "/branch-dashboard" }]

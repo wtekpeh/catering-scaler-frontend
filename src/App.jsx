@@ -43,6 +43,9 @@ import RecipeDetailScreen from "./screens/RecipeDetailScreen";
 import GlobalOnlyRoute from "./components/routes/GlobalOnlyRoute";
 import IngredientCategoryManagementScreen from "./screens/IngredientCategoryManagementScreen";
 
+//AI
+import ExecutiveAIAssistantScreen from "./screens/ExecutiveAIAssistantScreen";
+
 function AppLayout() {
   const setNotifications = useNotificationStore((s) => s.setNotifications);
   const setUnreadCount = useNotificationStore((s) => s.setUnreadCount);
@@ -135,6 +138,10 @@ function AppLayout() {
           <Route
             path="/cooking/daily-plans"
             element={<DailyConsumptionPlanListScreen />}
+          />
+          <Route
+            path="/dashboard/ai-assistant"
+            element={<ExecutiveAIAssistantScreen />}
           />
           <Route
             path="/cooking/daily-plans/:id"
