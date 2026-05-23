@@ -4,6 +4,7 @@ import {
   exportIngredientCategoryDailyPDF,
   exportBatchDetailExcel,
   exportBatchDetailPDF,
+  sendAIChatMessage,
 } from "../../api/dashboardApi";
 
 const initialState = {
@@ -26,6 +27,10 @@ const initialState = {
   exportingBatchDetailExcel: false,
   exportingBatchDetailPDF: false,
   topRecipeVariance: [],
+  aiChatMessages: [],
+  aiChatLoading: false,
+  aiChatError: null,
+  aiChatSessionId: `executive-ai-${Date.now()}`,
   loading: false,
   error: null,
 };
@@ -182,6 +187,51 @@ export const useExecutiveDashboardStore = create((set) => ({
       loading: false,
       error: null,
     })),
+
+  sendAIChatMessage: async (message, filters = {}) => {
+    try {
+      set({ aiChatLoading: true, aiChatError: null });
+
+      const state = useExecutiveDashboardStore.getState();
+
+      const userMessage = {
+        role: "user",
+        content: message,
+      };
+
+      set({
+        aiChatMessages: [...state.aiChatMessages, userMessage],
+      });
+
+      const response = await sendAIChatMessage({
+        session_id: state.aiChatSessionId,
+        message,
+        start_date: filters.startDate || "",
+        end_date: filters.endDate || "",
+        branch_id: filters.branchId ? Number(filters.branchId) : null,
+      });
+
+      const assistantMessage = {
+        role: "assistant",
+        content: response.assistant_response,
+        intent: response.intent,
+        usedTools: response.used_tools || [],
+        chartSuggestions: response.chart_suggestions || [],
+        chartData: response.chart_data || {},
+      };
+
+      set((currentState) => ({
+        aiChatMessages: [...currentState.aiChatMessages, assistantMessage],
+        aiChatLoading: false,
+        aiChatError: null,
+      }));
+    } catch (err) {
+      set({
+        aiChatLoading: false,
+        aiChatError: err?.message || "AI chat failed",
+      });
+    }
+  },
 
   resetExecutiveDashboard: () =>
     set(() => ({

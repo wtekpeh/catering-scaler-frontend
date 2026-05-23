@@ -28,6 +28,7 @@ import IngredientCategoryDailyTable from "../components/dashboard/IngredientCate
 import ExecutiveTopRecipeVariance from "../components/dashboard/ExecutiveTopRecipeVariance";
 import ExecutiveDailyPlanTrendChart from "../components/dashboard/ExecutiveDailyPlanTrendChart";
 import ExecutiveRecentDailyPlansTable from "../components/dashboard/ExecutiveRecentDailyPlansTable";
+import ExecutiveAIAssistantPanel from "../components/dashboard/ExecutiveAIAssistantPanel";
 
 const getTodayDate = () => new Date().toISOString().split("T")[0];
 
@@ -207,6 +208,15 @@ const ExecutiveDashboardScreen = () => {
               onEndDateChange={setIngredientEndDate}
             />
           </div>
+
+          <ExecutiveAIAssistantPanel
+            filters={{
+              startDate,
+              endDate,
+              branchId,
+              groupBy,
+            }}
+          />
         </>
       )}
     </div>

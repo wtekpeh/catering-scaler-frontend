@@ -252,3 +252,9 @@ export const getRecentDailyPlans = async (filters = {}) => {
     recentDailyPlans: data.items || [],
   };
 };
+
+export const sendAIChatMessage = async (payload) => {
+  const { data } = await axios.post(`${API_BASE}/ai/chat`, payload);
+
+  return data;
+};
