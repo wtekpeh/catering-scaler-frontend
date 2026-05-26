@@ -206,9 +206,9 @@ export const useExecutiveDashboardStore = create((set) => ({
       const response = await sendAIChatMessage({
         session_id: state.aiChatSessionId,
         message,
-        start_date: filters.startDate || "",
-        end_date: filters.endDate || "",
-        branch_id: filters.branchId ? Number(filters.branchId) : null,
+        start_date: "",
+        end_date: "",
+        branch_id: null,
       });
 
       const assistantMessage = {

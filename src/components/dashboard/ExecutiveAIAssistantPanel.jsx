@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useExecutiveDashboardStore } from "../../stores/dashboard/useExecutiveDashboardStore";
+import ExecutiveAIChartRenderer from "./ExecutiveAIChartRenderer";
 
 const ExecutiveAIAssistantPanel = ({ filters }) => {
   const [message, setMessage] = useState("");
@@ -87,12 +88,15 @@ const ExecutiveAIAssistantPanel = ({ filters }) => {
             <div className="ai-chat-message__bubble">
               <p>{item.content}</p>
 
-              {item.chartSuggestions?.length > 0 && (
-                <div className="ai-chat-message__chart">
-                  Suggested chart:{" "}
-                  <strong>{item.chartSuggestions[0].title}</strong>
-                </div>
-              )}
+              {item.role === "assistant" &&
+                item.chartSuggestions?.length > 0 &&
+                !item.content?.toLowerCase().includes("management should") &&
+                !item.content?.toLowerCase().includes("shows") && (
+                  <ExecutiveAIChartRenderer
+                    chartSuggestions={item.chartSuggestions}
+                    chartData={item.chartData}
+                  />
+                )}
             </div>
           </div>
         ))}
