@@ -4,10 +4,15 @@ import {
   BarChart,
   CartesianGrid,
   Cell,
+  Line,
+  LineChart,
+  Pie,
+  PieChart,
   ResponsiveContainer,
   Tooltip,
   XAxis,
   YAxis,
+  Legend,
 } from "recharts";
 
 const BAR_COLORS = [
@@ -164,7 +169,158 @@ const ExecutiveAIChartRenderer = ({
           );
         }
 
-        return null;
+        if (chart.chart_type === "line") {
+          return (
+            <div
+              className="dashboard-chart-card ai-chart-card"
+              key={`${chart.dataset}-${index}`}
+            >
+              <div className="dashboard-chart-card__header">
+                <h3 className="dashboard-chart-card__title">{chart.title}</h3>
+
+                <p className="dashboard-chart-card__subtitle">
+                  Operational trend analysis
+                </p>
+              </div>
+
+              <div className="dashboard-chart-card__body">
+                <ResponsiveContainer width="100%" height={isMobile ? 240 : 320}>
+                  <LineChart
+                    data={data}
+                    margin={{
+                      top: 10,
+                      right: 10,
+                      left: -10,
+                      bottom: isMobile ? 35 : 55,
+                    }}
+                  >
+                    <CartesianGrid
+                      strokeDasharray="3 3"
+                      stroke="rgba(148, 163, 184, 0.18)"
+                    />
+
+                    <XAxis
+                      dataKey={chart.x_field}
+                      tickFormatter={shortenLabel}
+                      tick={{
+                        fill: "#cbd5e1",
+                        fontSize: isMobile ? 9 : 11,
+                      }}
+                      angle={isMobile ? -10 : -18}
+                      textAnchor="end"
+                      interval={0}
+                      height={isMobile ? 55 : 80}
+                    />
+
+                    <YAxis
+                      tick={{
+                        fill: "#cbd5e1",
+                        fontSize: isMobile ? 9 : 11,
+                      }}
+                    />
+
+                    <Tooltip
+                      contentStyle={{
+                        background: "#0f172a",
+                        border: "1px solid rgba(148,163,184,0.2)",
+                        borderRadius: "12px",
+                        color: "#f8fafc",
+                      }}
+                      labelStyle={{
+                        color: "#f8fafc",
+                        fontWeight: 700,
+                      }}
+                    />
+
+                    <Line
+                      type="monotone"
+                      dataKey={chart.y_field}
+                      stroke="#38bdf8"
+                      strokeWidth={3}
+                      dot={{
+                        r: isMobile ? 2 : 4,
+                        fill: "#38bdf8",
+                      }}
+                      activeDot={{
+                        r: isMobile ? 4 : 6,
+                      }}
+                    />
+                  </LineChart>
+                </ResponsiveContainer>
+              </div>
+            </div>
+          );
+        }
+
+        if (chart.chart_type === "pie") {
+          return (
+            <div
+              className="dashboard-chart-card ai-chart-card"
+              key={`${chart.dataset}-${index}`}
+            >
+              <div className="dashboard-chart-card__header">
+                <h3 className="dashboard-chart-card__title">{chart.title}</h3>
+
+                <p className="dashboard-chart-card__subtitle">
+                  Operational distribution analysis
+                </p>
+              </div>
+
+              <div className="dashboard-chart-card__body">
+                <ResponsiveContainer width="100%" height={isMobile ? 260 : 340}>
+                  <PieChart>
+                    <Pie
+                      data={data}
+                      dataKey={chart.y_field}
+                      nameKey={chart.x_field}
+                      cx="50%"
+                      cy="50%"
+                      outerRadius={isMobile ? 70 : 110}
+                      label
+                    >
+                      {data.map((entry, pieIndex) => (
+                        <Cell
+                          key={`cell-${pieIndex}`}
+                          fill={BAR_COLORS[pieIndex % BAR_COLORS.length]}
+                        />
+                      ))}
+                    </Pie>
+
+                    <Tooltip
+                      contentStyle={{
+                        background: "#0f172a",
+                        border: "1px solid rgba(148,163,184,0.2)",
+                        borderRadius: "12px",
+                        color: "#f8fafc",
+                      }}
+                      labelStyle={{
+                        color: "#f8fafc",
+                        fontWeight: 700,
+                      }}
+                    />
+
+                    <Legend />
+                  </PieChart>
+                </ResponsiveContainer>
+              </div>
+            </div>
+          );
+        }
+
+        return (
+          <div
+            className="dashboard-chart-card ai-chart-card"
+            key={`${chart.dataset}-${index}`}
+          >
+            <div className="dashboard-chart-card__header">
+              <h3 className="dashboard-chart-card__title">{chart.title}</h3>
+
+              <p className="dashboard-chart-card__subtitle">
+                Unsupported chart type: {chart.chart_type}
+              </p>
+            </div>
+          </div>
+        );
       })}
     </div>
   );
