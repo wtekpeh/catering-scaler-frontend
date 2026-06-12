@@ -54,7 +54,10 @@ function AppHeader() {
       : []),
 
     ...(!isAdminUser && isBranchManager
-      ? [{ label: "Site Dashboard", path: "/branch-dashboard" }]
+      ? [
+          { label: "Site Dashboard", path: "/branch-dashboard" },
+          { label: "AI Assistant", path: "/dashboard/ai-assistant" },
+        ]
       : []),
 
     { label: "Consumptions", path: "/cooking/batches" },

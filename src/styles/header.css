@@ -5,12 +5,12 @@
 }
 
 .app-header__inner {
-  max-width: 1140px;
-  margin: 0 auto;
-  padding: 0.85rem 1rem;
+  width: 100%;
+  max-width: none;
+  margin: 0;
+  padding: 0.85rem 1.4rem;
   display: flex;
   align-items: center;
-  justify-content: space-between;
   gap: 1rem;
 }
 
@@ -71,6 +71,7 @@
   .app-logo {
     min-width: 0;
     flex: 1;
+    flex-shrink: 0;
   }
 
   .app-logo img {
@@ -381,10 +382,12 @@
 .app-header__nav {
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 0.35rem;
   flex: 1;
-  margin-left: 1rem;
   min-width: 0;
+  overflow-x: auto;
+  padding: 0 0.5rem;
 }
 
 .app-header__nav-link {
@@ -488,6 +491,8 @@
 
   .app-header__actions {
     display: none !important;
+    flex-shrink: 0;
+    margin-left: auto;
   }
 
   .app-header__menu-toggle {

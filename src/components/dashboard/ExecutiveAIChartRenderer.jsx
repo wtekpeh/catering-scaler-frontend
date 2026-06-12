@@ -64,6 +64,28 @@ const formatTooltipValue = (value) => {
   return `${value.toFixed(2)}%`;
 };
 
+const getChartSubtitle = (datasetName) => {
+  switch (datasetName) {
+    case "branch_summary":
+      return "Site performance analysis";
+
+    case "site_staff_load":
+      return "Site workload and staffing analysis";
+
+    case "ingredient_variance_risk":
+      return "Ingredient variance analysis";
+
+    case "planning_risk_summary":
+      return "Planning readiness analysis";
+
+    case "management_action_summary":
+      return "Management workload focus";
+
+    default:
+      return "Operational analysis";
+  }
+};
+
 const ExecutiveAIChartRenderer = ({
   chartSuggestions = [],
   chartData = {},
@@ -100,7 +122,7 @@ const ExecutiveAIChartRenderer = ({
                 <h3 className="dashboard-chart-card__title">{chart.title}</h3>
 
                 <p className="dashboard-chart-card__subtitle">
-                  Operational variance analysis
+                  {getChartSubtitle(chart.dataset)}
                 </p>
               </div>
 
@@ -179,7 +201,7 @@ const ExecutiveAIChartRenderer = ({
                 <h3 className="dashboard-chart-card__title">{chart.title}</h3>
 
                 <p className="dashboard-chart-card__subtitle">
-                  Operational trend analysis
+                  {getChartSubtitle(chart.dataset)}
                 </p>
               </div>
 
@@ -262,7 +284,7 @@ const ExecutiveAIChartRenderer = ({
                 <h3 className="dashboard-chart-card__title">{chart.title}</h3>
 
                 <p className="dashboard-chart-card__subtitle">
-                  Operational distribution analysis
+                  {getChartSubtitle(chart.dataset)}
                 </p>
               </div>
 
